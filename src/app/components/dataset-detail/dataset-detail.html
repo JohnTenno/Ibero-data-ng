@@ -1,0 +1,153 @@
+<div class="pagina">
+  <a [routerLink]="['/organizations', organizationId]" class="volver">&larr; Datasets</a>
+
+  @if (dataset(); as ds) {
+    <section class="metadata">
+      <div class="metadata-etiquetas">
+        <span class="chip">{{ ds.visibility }}</span>
+        @if (ds.survey) {
+          <span class="chip">{{ ds.survey }}</span>
+        }
+        @if (ds.year) {
+          <span class="chip">{{ ds.year }}</span>
+        }
+        @if (ds.periodType) {
+          <span class="chip">{{ ds.periodType }}</span>
+        }
+        <span class="chip">v{{ ds.revision }}</span>
+      </div>
+      <h1>{{ ds.title }}</h1>
+      @if (ds.description) {
+        <p class="descripcion">{{ ds.description }}</p>
+      }
+
+      <div class="metadata-detalle">
+        @if (ds.sourceOrg) {
+          <span><strong>Fuente:</strong> {{ ds.sourceOrg }}</span>
+        }
+        @if (ds.licenseId) {
+          <span><strong>Licencia:</strong> {{ ds.licenseId }}</span>
+        }
+        @if (ds.tags.length > 0) {
+          <span><strong>Etiquetas:</strong> {{ ds.tags.join(', ') }}</span>
+        }
+      </div>
+
+      @if (ds.revisionOf) {
+        <p class="nota-version">
+          Revisión de
+          <a [routerLink]="['/organizations', organizationId, 'datasets', ds.revisionOf.id]">{{ ds.revisionOf.title }}</a>
+          (v{{ ds.revisionOf.revision }}).
+          @if (ds.changelog) {
+            Cambios: {{ ds.changelog }}
+          }
+        </p>
+      }
+      @if (ds.supersededBy) {
+        <p class="nota-version alerta">
+          ⚠ Hay una revisión más reciente:
+          <a [routerLink]="['/organizations', organizationId, 'datasets', ds.supersededBy.id]">{{ ds.supersededBy.title }}</a>
+          (v{{ ds.supersededBy.revision }}).
+        </p>
+      }
+      @if (!ds.supersededBy) {
+        <a
+          class="boton boton-secundario"
+          [routerLink]="['/organizations', organizationId, 'datasets', 'new']"
+          [queryParams]="{ revisionOf: ds.id }"
+        >
+          Crear revisión de este dataset
+        </a>
+      }
+    </section>
+  }
+
+  <section>
+    <h2>Subir archivo Parquet</h2>
+    <input type="file" accept=".parquet" (change)="onFileSelected($event)" [disabled]="uploading()" />
+    @if (uploading()) {
+      <p class="nota">Subiendo…</p>
+    }
+    @if (uploadError()) {
+      <p class="ayuda-error">{{ uploadError() }}</p>
+    }
+  </section>
+
+  <section>
+    <h2>Recursos</h2>
+    @if (loadingResources()) {
+      <p>Cargando…</p>
+    } @else if (resources().length === 0) {
+      <p>Todavía no hay archivos subidos.</p>
+    } @else {
+      <select [(ngModel)]="selectedResourceId" name="resource">
+        @for (resource of resources(); track resource.id) {
+          <option [value]="resource.id">
+            {{ resource.filename }} ({{ (resource.sizeBytes / 1024).toFixed(1) }} KB)
+          </option>
+        }
+      </select>
+      <button
+        type="button"
+        class="boton boton-secundario"
+        (click)="openInVizCanvas()"
+        [disabled]="openingVizCanvas() || !selectedResourceId"
+      >
+        {{ openingVizCanvas() ? 'Abriendo…' : 'Abrir en VizCanvas' }}
+      </button>
+      @if (vizCanvasError()) {
+        <p class="ayuda-error">{{ vizCanvasError() }}</p>
+      }
+    }
+  </section>
+
+  @if (selectedResourceId) {
+    <section>
+      <h2>Análisis por pasos</h2>
+      <app-analysis-builder
+        [organizationId]="organizationId"
+        [datasetId]="datasetId"
+        [resourceId]="selectedResourceId"
+        [resourceColumns]="selectedResource()?.columns ?? null"
+      />
+    </section>
+  }
+
+  <section>
+    <h2>Análisis SQL libre</h2>
+    <p class="nota">La tabla del recurso seleccionado siempre se llama <code>data</code>.</p>
+    <textarea rows="4" [(ngModel)]="sql" name="sql"></textarea>
+    <button type="button" class="boton" (click)="runQuery()" [disabled]="running() || !selectedResourceId">
+      {{ running() ? 'Ejecutando…' : 'Ejecutar' }}
+    </button>
+    @if (queryError()) {
+      <p class="ayuda-error">{{ queryError() }}</p>
+    }
+  </section>
+
+  @if (result(); as res) {
+    <section>
+      <h2>Resultados ({{ res.rows.length }} filas)</h2>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              @for (col of res.columns; track col) {
+                <th>{{ col }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of res.rows; track $index) {
+              <tr>
+                @for (col of res.columns; track col) {
+                  <td>{{ row[col] }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

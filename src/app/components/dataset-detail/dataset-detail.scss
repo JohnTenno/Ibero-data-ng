@@ -1,0 +1,75 @@
+.pagina {
+  max-width: 900px;
+  margin: 0 auto;
+
+  section {
+    margin: 1.5rem 0;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.volver {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto-tenue);
+}
+
+.nota {
+  color: var(--texto-tenue);
+  font-size: 0.85rem;
+}
+
+textarea {
+  width: 100%;
+  font-family: var(--tipografia-codigo, monospace);
+  margin-bottom: 0.5rem;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+.metadata {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1.25rem;
+
+  h1 {
+    font-size: 1.4rem;
+    margin: 0.5rem 0;
+  }
+
+  .descripcion {
+    color: var(--texto-tenue);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.metadata-etiquetas {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.metadata-detalle {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.75rem;
+}
+
+.nota-version {
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.75rem;
+}
+
+.nota-version.alerta {
+  color: #b45309;
+}

@@ -1,0 +1,43 @@
+.pagina {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.migaja {
+  font-size: 0.8rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.tarjeta {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.fila {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.fila:last-child {
+  border-bottom: none;
+}
+
+.etiqueta {
+  color: var(--texto-tenue);
+  font-size: 0.9rem;
+}
+
+.nota {
+  margin-top: 1rem;
+  color: var(--texto-tenue);
+  font-size: 0.85rem;
+}

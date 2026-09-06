@@ -1,0 +1,263 @@
+<div class="builder">
+  <div class="agregar-paso">
+    <select [(ngModel)]="newOp" name="newOp">
+      @for (op of opNames(); track op) {
+        <option [value]="op">{{ opLabels[op] }}</option>
+      }
+    </select>
+    <button type="button" class="boton boton-secundario" (click)="addStep()">+ Agregar paso</button>
+  </div>
+  @if (opCatalog() && newOp) {
+    <p class="ayuda-op">{{ opCatalog()![newOp].description }}</p>
+  }
+
+  @if (steps().length > 0) {
+    <ol class="pasos">
+      @for (step of steps(); track $index) {
+        <li class="paso">
+          <div class="paso-header">
+            <span class="paso-num">{{ $index + 1 }}</span>
+            <strong>{{ opLabels[step.op] }}</strong>
+            <button type="button" class="quitar" (click)="removeStep($index)" aria-label="Quitar paso">✕</button>
+          </div>
+
+          @switch (step.op) {
+            @case ('group_by') {
+              <div class="chips-seleccion">
+                @for (col of availableColumns(); track col) {
+                  <button
+                    type="button"
+                    class="chip-toggle"
+                    [class.activo]="isGroupByColumnSelected(step, col)"
+                    (click)="toggleGroupByColumn(step, col)"
+                  >
+                    {{ col }}
+                  </button>
+                }
+              </div>
+            }
+            @case ('aggregate') {
+              <div class="paso-campos">
+                <select [(ngModel)]="step.params['func']" name="func{{ $index }}">
+                  @for (f of aggFuncs; track f) {
+                    <option [value]="f">{{ f }}</option>
+                  }
+                </select>
+                <select [(ngModel)]="step.params['column']" name="col{{ $index }}">
+                  <option value="">columna…</option>
+                  <option value="*">* (todas las filas)</option>
+                  @for (col of availableColumns(); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                </select>
+                <input type="text" placeholder="nombre del resultado" [(ngModel)]="step.params['as']" (ngModelChange)="touchSteps()" name="as{{ $index }}" />
+                <label class="check">
+                  <input type="checkbox" [(ngModel)]="step.params['distinct']" name="distinct{{ $index }}" />
+                  distinct
+                </label>
+              </div>
+            }
+            @case ('compute') {
+              <div class="paso-campos">
+                <select [(ngModel)]="step.params['left']" name="left{{ $index }}">
+                  <option value="">columna A…</option>
+                  @for (col of availableColumns(); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                </select>
+                <span>×</span>
+                <select [(ngModel)]="step.params['right']" name="right{{ $index }}">
+                  <option value="">columna B (o número)…</option>
+                  @for (col of availableColumns(); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                </select>
+                <input type="text" placeholder="o escribe un número en 'columna B'" [(ngModel)]="step.params['right']" name="rightNum{{ $index }}" />
+                <input type="text" placeholder="nombre del resultado" [(ngModel)]="step.params['as']" (ngModelChange)="touchSteps()" name="computeAs{{ $index }}" />
+              </div>
+            }
+            @case ('percentage') {
+              <div class="paso-campos">
+                <span>% de</span>
+                <select [(ngModel)]="step.params['of']" name="of{{ $index }}">
+                  <option value="">agregado…</option>
+                  @for (alias of aggregateAliases(); track alias) {
+                    <option [value]="alias">{{ alias }}</option>
+                  }
+                </select>
+                <input type="text" placeholder="nombre del resultado" [(ngModel)]="step.params['as']" (ngModelChange)="touchSteps()" name="pctAs{{ $index }}" />
+              </div>
+            }
+            @case ('filter') {
+              <div class="paso-campos">
+                <select [(ngModel)]="step.params['column']" name="fcol{{ $index }}">
+                  <option value="">columna…</option>
+                  @for (col of availableColumns(); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                </select>
+                <select [(ngModel)]="step.params['operator']" name="fop{{ $index }}">
+                  @for (op of operators; track op) {
+                    <option [value]="op">{{ op }}</option>
+                  }
+                </select>
+                <input type="text" placeholder="valor" [(ngModel)]="step.params['value']" name="fval{{ $index }}" />
+              </div>
+            }
+            @case ('sort') {
+              <div class="paso-campos">
+                <select [(ngModel)]="step.params['column']" name="scol{{ $index }}">
+                  <option value="">columna…</option>
+                  @for (col of availableColumns(); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                  @for (alias of aggregateAliases(); track alias) {
+                    <option [value]="alias">{{ alias }}</option>
+                  }
+                </select>
+                <select [(ngModel)]="step.params['dir']" name="sdir{{ $index }}">
+                  <option value="asc">ascendente</option>
+                  <option value="desc">descendente</option>
+                </select>
+              </div>
+            }
+            @case ('limit') {
+              <div class="paso-campos">
+                <input type="number" min="1" [(ngModel)]="step.params['n']" name="n{{ $index }}" />
+                <span>filas</span>
+              </div>
+            }
+          }
+        </li>
+      }
+    </ol>
+
+    <div class="fila-preview">
+      <label class="redondeo">
+        Redondear a
+        <input type="number" min="0" max="15" placeholder="sin redondeo" [(ngModel)]="roundDecimals" name="roundDecimals" />
+        decimales
+      </label>
+      <button type="button" class="boton" (click)="runPreview()" [disabled]="previewing()">
+        {{ previewing() ? 'Probando…' : 'Probar (preview)' }}
+      </button>
+    </div>
+
+    @if (previewError()) {
+      <p class="ayuda-error">{{ previewError() }}</p>
+    }
+
+    @if (previewResult(); as res) {
+      <div class="contenedor-tabla">
+        <p class="nota">{{ res.rowCount }} filas (muestra)</p>
+        <table>
+          <thead>
+            <tr>
+              @for (col of res.columns; track col) {
+                <th>{{ col }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of res.rows; track $index) {
+              <tr>
+                @for (col of res.columns; track col) {
+                  <td>{{ row[col] }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guardar">
+        @if (!showSaveForm()) {
+          <button type="button" class="boton" (click)="showSaveForm.set(true)">Guardar este análisis</button>
+        } @else {
+          <form (ngSubmit)="save()" novalidate class="form-guardar">
+            <input type="text" placeholder="Título" [(ngModel)]="title" name="title" />
+            <input type="text" placeholder="slug-en-minusculas" [(ngModel)]="slug" name="slug" />
+            <input type="text" placeholder="Carpeta (ej: enigh)" [(ngModel)]="folder" name="folder" />
+            <textarea rows="2" placeholder="Descripción (opcional)" [(ngModel)]="description" name="description"></textarea>
+            <select [(ngModel)]="visibility" name="visibility">
+              <option value="PRIVATE">Privado</option>
+              <option value="PUBLIC">Público</option>
+            </select>
+            <button type="submit" class="boton" [disabled]="saving()">
+              {{ saving() ? 'Guardando…' : 'Confirmar' }}
+            </button>
+          </form>
+          @if (saveError()) {
+            <p class="ayuda-error">{{ saveError() }}</p>
+          }
+        }
+      </div>
+    }
+
+    @if (savedAnalysis(); as saved) {
+      <p class="confirmacion">✓ Análisis "{{ saved.title }}" guardado en la carpeta "{{ saved.folder }}".</p>
+    }
+  }
+
+  <div class="analisis-guardados">
+    <h3>Análisis guardados</h3>
+    @if (vizCanvasError()) {
+      <p class="ayuda-error">{{ vizCanvasError() }}</p>
+    }
+    @if (loadingAnalyses()) {
+      <p>Cargando…</p>
+    } @else if (analyses().length === 0) {
+      <p class="nota">Todavía no hay análisis guardados para este dataset.</p>
+    } @else {
+      <ul>
+        @for (analysis of analyses(); track analysis.id) {
+          <li class="fila-analisis-contenedor">
+            <button type="button" class="fila-analisis" (click)="openAnalysis(analysis)">
+              <span class="chip">{{ analysis.folder }}</span>
+              <span class="titulo">{{ analysis.title }}</span>
+              <span class="estado" [class]="analysis.status.toLowerCase()">{{ analysis.status }}</span>
+            </button>
+            @if (analysis.status === 'DONE') {
+              <button
+                type="button"
+                class="boton boton-secundario boton-chico"
+                (click)="openInVizCanvas(analysis, $event)"
+                [disabled]="openingVizCanvasId() === analysis.id"
+              >
+                {{ openingVizCanvasId() === analysis.id ? 'Abriendo…' : 'Abrir en VizCanvas' }}
+              </button>
+            }
+            @if (openAnalysisId() === analysis.id) {
+              @if (analysis.status === 'FAILED') {
+                <p class="ayuda-error">{{ analysis.errorMessage }}</p>
+              } @else if (openAnalysisData(); as data) {
+                <div class="contenedor-tabla">
+                  <table>
+                    <thead>
+                      <tr>
+                        @for (col of data.columns; track col) {
+                          <th>{{ col }}</th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of data.rows; track $index) {
+                        <tr>
+                          @for (col of data.columns; track col) {
+                            <td>{{ row[col] }}</td>
+                          }
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <p class="nota">Cargando resultado…</p>
+              }
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

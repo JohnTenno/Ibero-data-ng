@@ -1,0 +1,44 @@
+<div class="pagina">
+  <a routerLink="/organizations" class="volver">&larr; Organizaciones</a>
+
+  <div class="encabezado">
+    <h1>Datasets</h1>
+    <a [routerLink]="['/organizations', organizationId, 'datasets', 'new']" class="boton">+ Nuevo dataset</a>
+  </div>
+
+  @if (error()) {
+    <p class="ayuda-error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p>Cargando…</p>
+  } @else if (datasets().length === 0) {
+    <p>Todavía no hay datasets en esta organización.</p>
+  } @else {
+    <div class="tarjetas">
+      @for (dataset of datasets(); track dataset.id) {
+        <a
+          class="tarjeta"
+          [routerLink]="['/organizations', organizationId, 'datasets', dataset.id]"
+        >
+          <div class="tarjeta-etiquetas">
+            <span class="chip">{{ dataset.visibility }}</span>
+            @if (dataset.survey) {
+              <span class="chip">{{ dataset.survey }}</span>
+            }
+            @if (dataset.year) {
+              <span class="chip">{{ dataset.year }}</span>
+            }
+            @if (dataset.revision > 1) {
+              <span class="chip">v{{ dataset.revision }}</span>
+            }
+          </div>
+          <p class="titulo">{{ dataset.title }}</p>
+          @if (dataset.supersededById) {
+            <p class="meta">⚠ Hay una revisión más reciente</p>
+          }
+        </a>
+      }
+    </div>
+  }
+</div>

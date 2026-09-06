@@ -1,0 +1,119 @@
+.pagina {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.migaja {
+  font-size: 0.8rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.subtitulo {
+  color: var(--texto-tenue);
+  font-size: 0.9rem;
+}
+
+.formulario-crear {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.busqueda-fila {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.busqueda {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 0 0.75rem;
+  color: var(--texto-tenue);
+
+  input {
+    border: none;
+    flex: 1;
+    padding: 0.55rem 0;
+  }
+
+  input:focus {
+    outline: none;
+  }
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.tarjeta-org {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease;
+}
+
+.tarjeta-org:hover {
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
+}
+
+.tarjeta-org-portada {
+  height: 130px;
+  background: var(--tinta);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tarjeta-org-cuerpo {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  .titulo {
+    font-weight: 700;
+  }
+
+  .descripcion {
+    font-size: 0.85rem;
+    color: var(--texto-tenue);
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--texto-tenue);
+    margin-top: 0.25rem;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+  }
+}

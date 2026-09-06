@@ -1,0 +1,96 @@
+<div class="inicio">
+  <p class="migaja">Inicio</p>
+  <h1>Inicio</h1>
+  <p class="subtitulo">
+    Banco de bases de datos de Social Data Ibero. Datasets abiertos y privados, con acceso programático vía DuckDB.
+  </p>
+
+  <section class="banda-oscura">
+    <div class="banda-contenido">
+      <h2>Cómo funciona</h2>
+      <ul>
+        <li>
+          <strong>Catálogo por organizaciones:</strong> cada organización publica y administra sus propios datasets.
+        </li>
+        <li>
+          <strong>Acceso programático:</strong> corre SQL directo sobre los archivos Parquet con DuckDB, sin
+          descargarlos enteros.
+        </li>
+        <li><strong>Permisos por rol:</strong> ADMIN/EDITOR suben datos; cualquier miembro puede analizarlos.</li>
+      </ul>
+    </div>
+
+    <div class="tarjetas-acceso">
+      <a routerLink="/datasets" class="tarjeta-acceso">
+        <app-icon name="layers" [size]="22" />
+        <p class="titulo">Conjuntos de datos</p>
+        <p class="descripcion">Explora los datasets del catálogo.</p>
+        <p class="dato">{{ totalDatasets() }} en total</p>
+      </a>
+      <a routerLink="/organizations" class="tarjeta-acceso">
+        <app-icon name="users" [size]="22" />
+        <p class="titulo">Organizaciones</p>
+        <p class="descripcion">Consulta organizaciones y miembros.</p>
+        <p class="dato">{{ totalOrganizations() }} organizaciones</p>
+      </a>
+      <a routerLink="/profile" class="tarjeta-acceso">
+        <app-icon name="user" [size]="22" />
+        <p class="titulo">Configuración de perfil</p>
+        <p class="descripcion">Tus datos de cuenta.</p>
+        <p class="dato">Ver perfil</p>
+      </a>
+    </div>
+  </section>
+
+  @if (!loading()) {
+    <section class="recientes">
+      <div class="columna">
+        <div class="columna-header">
+          <h2>Conjuntos de datos recientes</h2>
+          <a routerLink="/datasets">Ver todos</a>
+        </div>
+        @if (recentDatasets().length === 0) {
+          <p class="vacio">Todavía no hay datasets.</p>
+        }
+        @for (dataset of recentDatasets(); track dataset.id) {
+          <a
+            class="tarjeta-dataset"
+            [routerLink]="['/organizations', dataset.organizationId, 'datasets', dataset.id]"
+          >
+            <p class="titulo">{{ dataset.title }}</p>
+            <span class="chip">{{ dataset.visibility }}</span>
+            @if (dataset.organization) {
+              <p class="meta"><strong>Organización:</strong> {{ dataset.organization.name }}</p>
+            }
+          </a>
+        }
+      </div>
+
+      <div class="divisor"></div>
+
+      <div class="columna">
+        <div class="columna-header">
+          <h2>Organizaciones recientes</h2>
+          <a routerLink="/organizations">Ver todas</a>
+        </div>
+        @if (recentOrganizations().length === 0) {
+          <p class="vacio">Todavía no hay organizaciones.</p>
+        }
+        @for (org of recentOrganizations(); track org.id) {
+          <a class="tarjeta-org" [routerLink]="['/organizations', org.id]">
+            <div class="tarjeta-org-cuerpo">
+              <p class="titulo">{{ org.name }}</p>
+              @if (org.description) {
+                <p class="meta">{{ org.description }}</p>
+              }
+              <p class="stats">
+                <span><app-icon name="layers" [size]="14" /> {{ org._count?.datasets ?? 0 }}</span>
+                <span><app-icon name="users" [size]="14" /> {{ org._count?.members ?? 0 }}</span>
+              </p>
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</div>

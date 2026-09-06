@@ -1,0 +1,44 @@
+.login-pagina {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-tarjeta {
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 2rem;
+}
+
+.marca {
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.grupo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem;
+    color: var(--texto-tenue);
+    margin-top: 0.5rem;
+  }
+
+  button {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: center;
+  }
+}

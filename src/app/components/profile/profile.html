@@ -1,0 +1,22 @@
+<div class="pagina">
+  <p class="migaja">Inicio / Configuración de perfil</p>
+  <h1>Configuración de perfil</h1>
+
+  @if (authService.currentUser(); as user) {
+    <div class="tarjeta">
+      <div class="fila">
+        <span class="etiqueta">Nombre</span>
+        <span>{{ user.fullName }}</span>
+      </div>
+      <div class="fila">
+        <span class="etiqueta">Email</span>
+        <span>{{ user.email }}</span>
+      </div>
+      <div class="fila">
+        <span class="etiqueta">Sysadmin</span>
+        <span>{{ user.isSysadmin ? 'Sí' : 'No' }}</span>
+      </div>
+    </div>
+    <p class="nota">Editar nombre/contraseña todavía no está implementado.</p>
+  }
+</div>
