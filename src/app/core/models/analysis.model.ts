@@ -1,6 +1,6 @@
 import type { DatasetVisibility } from './dataset.model';
 
-export type OpName = 'group_by' | 'aggregate' | 'compute' | 'percentage' | 'filter' | 'sort' | 'limit';
+export type OpName = 'join' | 'group_by' | 'aggregate' | 'compute' | 'percentage' | 'filter' | 'sort' | 'limit';
 
 export interface OpDef {
   kind: string;

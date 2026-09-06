@@ -1,11 +1,12 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AnalysesService } from '../../core/services/analyses.service';
 import type { Analysis, OpCatalog, OpName, PreviewResult, Step } from '../../core/models/analysis.model';
 import type { DatasetVisibility } from '../../core/models/dataset.model';
-import type { ResourceColumn } from '../../core/models/resource.model';
+import type { Resource, ResourceColumn } from '../../core/models/resource.model';
 
 const OP_LABELS: Record<OpName, string> = {
+  join: 'Cruzar con otro recurso',
   group_by: 'Agrupar por',
   aggregate: 'Calcular (suma/promedio/…)',
   compute: 'Crear columna (multiplicar)',
@@ -17,6 +18,7 @@ const OP_LABELS: Record<OpName, string> = {
 
 const AGG_FUNCS = ['SUM', 'AVG', 'COUNT', 'MIN', 'MAX', 'MEDIAN'];
 const OPERATORS = ['=', '!=', '<', '<=', '>', '>='];
+const JOIN_TYPES = ['inner', 'left'];
 
 @Component({
   selector: 'app-analysis-builder',
@@ -30,10 +32,15 @@ export class AnalysisBuilder implements OnInit, OnChanges {
   @Input({ required: true }) datasetId!: string;
   @Input({ required: true }) resourceId!: string;
   @Input() resourceColumns: ResourceColumn[] | null = null;
+  @Input() datasetResources: Resource[] = [];
+  @Input() editingAnalysis: Analysis | null = null;
+  @Output() requestEditResource = new EventEmitter<Analysis>();
+  @Output() editingConsumed = new EventEmitter<void>();
 
   readonly opLabels = OP_LABELS;
   readonly aggFuncs = AGG_FUNCS;
   readonly operators = OPERATORS;
+  readonly joinTypes = JOIN_TYPES;
   readonly opCatalog = signal<OpCatalog | null>(null);
   readonly opNames = computed<OpName[]>(() =>
     this.opCatalog() ? (Object.keys(this.opCatalog()!) as OpName[]) : [],
@@ -45,12 +52,39 @@ export class AnalysisBuilder implements OnInit, OnChanges {
   readonly availableColumns = computed<string[]>(() => {
     const base = (this.resourceColumns ?? []).map((c) => c.name);
     const derived: string[] = [];
+    const joined: string[] = [];
     for (const step of this.steps()) {
       if (step.op === 'compute' && typeof step.params['as'] === 'string') derived.push(step.params['as'] as string);
       if (step.op === 'aggregate' && typeof step.params['as'] === 'string') derived.push(step.params['as'] as string);
+      if (step.op === 'join' && typeof step.params['resourceId'] === 'string') {
+        joined.push(...this.columnsForResource(step.params['resourceId'] as string));
+      }
     }
-    return [...new Set([...base, ...derived])];
+    return [...new Set([...base, ...joined, ...derived])];
   });
+
+  otherResources(): Resource[] {
+    return this.datasetResources.filter((r) => r.id !== this.resourceId);
+  }
+
+  columnsForResource(resourceId: string): string[] {
+    return (this.datasetResources.find((r) => r.id === resourceId)?.columns ?? []).map((c) => c.name);
+  }
+
+  columnsForJoinStep(step: Step): string[] {
+    return this.columnsForResource(step.params['resourceId'] as string);
+  }
+
+  onJoinResourceChange(step: Step): void {
+    const resourceId = step.params['resourceId'] as string;
+    if (!step.params['alias']) {
+      const resource = this.datasetResources.find((r) => r.id === resourceId);
+      if (resource) {
+        step.params['alias'] = resource.filename.replace(/\.[^./]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
+      }
+    }
+    this.touchSteps();
+  }
 
   readonly aggregateAliases = computed<string[]>(() =>
     this.steps()
@@ -67,6 +101,7 @@ export class AnalysisBuilder implements OnInit, OnChanges {
   readonly saving = signal(false);
   readonly saveError = signal<string | null>(null);
   readonly savedAnalysis = signal<Analysis | null>(null);
+  readonly editingAnalysisId = signal<string | null>(null);
   title = '';
   slug = '';
   folder = '';
@@ -89,10 +124,47 @@ export class AnalysisBuilder implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['editingAnalysis'] && this.editingAnalysis) {
+      this.applyEditingAnalysis(this.editingAnalysis);
+      return;
+    }
     if (changes['resourceId'] && !changes['resourceId'].firstChange) {
       this.steps.set([]);
       this.previewResult.set(null);
     }
+  }
+
+  requestEdit(analysis: Analysis): void {
+    this.requestEditResource.emit(analysis);
+  }
+
+  private applyEditingAnalysis(analysis: Analysis): void {
+    this.editingAnalysisId.set(analysis.id);
+    this.steps.set(analysis.recipe as Step[]);
+    this.title = analysis.title;
+    this.slug = analysis.slug;
+    this.folder = analysis.folder;
+    this.description = analysis.description ?? '';
+    this.visibility = analysis.visibility;
+    this.roundDecimals = null;
+    this.showSaveForm.set(true);
+    this.previewResult.set(null);
+    this.previewError.set(null);
+    this.saveError.set(null);
+    this.savedAnalysis.set(null);
+    this.editingConsumed.emit();
+  }
+
+  cancelEdit(): void {
+    this.editingAnalysisId.set(null);
+    this.steps.set([]);
+    this.showSaveForm.set(false);
+    this.title = '';
+    this.slug = '';
+    this.folder = '';
+    this.description = '';
+    this.previewResult.set(null);
+    this.saveError.set(null);
   }
 
   async reloadAnalyses(): Promise<void> {
@@ -106,6 +178,7 @@ export class AnalysisBuilder implements OnInit, OnChanges {
 
   addStep(): void {
     const defaults: Record<OpName, Record<string, unknown>> = {
+      join: { resourceId: '', alias: '', type: 'inner', onLeft: '', onRight: '' },
       group_by: { columns: [] },
       aggregate: { func: 'SUM', column: '', as: '', distinct: false },
       compute: { left: '', right: '', as: '' },
@@ -161,26 +234,34 @@ export class AnalysisBuilder implements OnInit, OnChanges {
     if (!this.title || !this.slug || !this.folder) return;
     this.saving.set(true);
     this.saveError.set(null);
+    const editingId = this.editingAnalysisId();
+    const payload = {
+      resourceId: this.resourceId,
+      title: this.title,
+      slug: this.slug,
+      folder: this.folder,
+      description: this.description || undefined,
+      visibility: this.visibility,
+      steps: this.steps(),
+      roundDecimals: this.roundDecimals ?? undefined,
+    };
     try {
-      const analysis = await this.analysesService.create(this.organizationId, this.datasetId, {
-        resourceId: this.resourceId,
-        title: this.title,
-        slug: this.slug,
-        folder: this.folder,
-        description: this.description || undefined,
-        visibility: this.visibility,
-        steps: this.steps(),
-        roundDecimals: this.roundDecimals ?? undefined,
-      });
+      const analysis = editingId
+        ? await this.analysesService.update(this.organizationId, this.datasetId, editingId, payload)
+        : await this.analysesService.create(this.organizationId, this.datasetId, payload);
       this.savedAnalysis.set(analysis);
       this.showSaveForm.set(false);
+      this.editingAnalysisId.set(null);
       this.title = '';
       this.slug = '';
       this.folder = '';
       this.description = '';
+      this.steps.set([]);
       await this.reloadAnalyses();
     } catch (err: any) {
-      this.saveError.set(err?.error?.message ?? 'No se pudo guardar el análisis.');
+      this.saveError.set(
+        err?.error?.message ?? (editingId ? 'No se pudo actualizar el análisis.' : 'No se pudo guardar el análisis.'),
+      );
     } finally {
       this.saving.set(false);
     }

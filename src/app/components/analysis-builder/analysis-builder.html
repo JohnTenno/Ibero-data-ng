@@ -1,16 +1,4 @@
 <div class="builder">
-  <div class="agregar-paso">
-    <select [(ngModel)]="newOp" name="newOp">
-      @for (op of opNames(); track op) {
-        <option [value]="op">{{ opLabels[op] }}</option>
-      }
-    </select>
-    <button type="button" class="boton boton-secundario" (click)="addStep()">+ Agregar paso</button>
-  </div>
-  @if (opCatalog() && newOp) {
-    <p class="ayuda-op">{{ opCatalog()![newOp].description }}</p>
-  }
-
   @if (steps().length > 0) {
     <ol class="pasos">
       @for (step of steps(); track $index) {
@@ -22,6 +10,45 @@
           </div>
 
           @switch (step.op) {
+            @case ('join') {
+              <div class="paso-campos">
+                <select
+                  [(ngModel)]="step.params['resourceId']"
+                  (ngModelChange)="onJoinResourceChange(step)"
+                  name="joinResource{{ $index }}"
+                >
+                  <option value="">recurso a cruzar…</option>
+                  @for (r of otherResources(); track r.id) {
+                    <option [value]="r.id">{{ r.filename }}</option>
+                  }
+                </select>
+                <select [(ngModel)]="step.params['type']" name="joinType{{ $index }}">
+                  @for (t of joinTypes; track t) {
+                    <option [value]="t">{{ t === 'inner' ? 'inner (solo con match)' : 'left (conserva todo este lado)' }}</option>
+                  }
+                </select>
+                <select [(ngModel)]="step.params['onLeft']" name="joinOnLeft{{ $index }}">
+                  <option value="">columna de este recurso…</option>
+                  @for (col of resourceColumns ?? []; track col.name) {
+                    <option [value]="col.name">{{ col.name }}</option>
+                  }
+                </select>
+                <span>=</span>
+                <select [(ngModel)]="step.params['onRight']" name="joinOnRight{{ $index }}">
+                  <option value="">columna del otro recurso…</option>
+                  @for (col of columnsForJoinStep(step); track col) {
+                    <option [value]="col">{{ col }}</option>
+                  }
+                </select>
+                <input
+                  type="text"
+                  placeholder="alias (ej: expansion)"
+                  [(ngModel)]="step.params['alias']"
+                  (ngModelChange)="touchSteps()"
+                  name="joinAlias{{ $index }}"
+                />
+              </div>
+            }
             @case ('group_by') {
               <div class="chips-seleccion">
                 @for (col of availableColumns(); track col) {
@@ -131,7 +158,25 @@
         </li>
       }
     </ol>
+  }
 
+  <div class="agregar-paso">
+    <select [(ngModel)]="newOp" name="newOp">
+      @for (op of opNames(); track op) {
+        <option [value]="op">{{ opLabels[op] }}</option>
+      }
+    </select>
+    <button type="button" class="boton boton-secundario" (click)="addStep()">+ Agregar paso</button>
+  </div>
+  @if (opCatalog() && newOp) {
+    <p class="ayuda-op">{{ opCatalog()![newOp].description }}</p>
+  }
+
+  @if (editingAnalysisId()) {
+    <p class="nota-edicion">✎ Editando análisis existente — al confirmar se sobrescribe (no se crea uno nuevo).</p>
+  }
+
+  @if (steps().length > 0) {
     <div class="fila-preview">
       <label class="redondeo">
         Redondear a
@@ -172,7 +217,9 @@
 
       <div class="guardar">
         @if (!showSaveForm()) {
-          <button type="button" class="boton" (click)="showSaveForm.set(true)">Guardar este análisis</button>
+          <button type="button" class="boton" (click)="showSaveForm.set(true)">
+            {{ editingAnalysisId() ? 'Actualizar este análisis' : 'Guardar este análisis' }}
+          </button>
         } @else {
           <form (ngSubmit)="save()" novalidate class="form-guardar">
             <input type="text" placeholder="Título" [(ngModel)]="title" name="title" />
@@ -184,8 +231,11 @@
               <option value="PUBLIC">Público</option>
             </select>
             <button type="submit" class="boton" [disabled]="saving()">
-              {{ saving() ? 'Guardando…' : 'Confirmar' }}
+              {{ saving() ? (editingAnalysisId() ? 'Actualizando…' : 'Guardando…') : (editingAnalysisId() ? 'Actualizar' : 'Confirmar') }}
             </button>
+            @if (editingAnalysisId()) {
+              <button type="button" class="boton boton-secundario" (click)="cancelEdit()">Cancelar edición</button>
+            }
           </form>
           @if (saveError()) {
             <p class="ayuda-error">{{ saveError() }}</p>
@@ -212,21 +262,30 @@
       <ul>
         @for (analysis of analyses(); track analysis.id) {
           <li class="fila-analisis-contenedor">
-            <button type="button" class="fila-analisis" (click)="openAnalysis(analysis)">
-              <span class="chip">{{ analysis.folder }}</span>
-              <span class="titulo">{{ analysis.title }}</span>
-              <span class="estado" [class]="analysis.status.toLowerCase()">{{ analysis.status }}</span>
-            </button>
-            @if (analysis.status === 'DONE') {
+            <div class="fila-analisis-encabezado">
+              <button type="button" class="fila-analisis" (click)="openAnalysis(analysis)">
+                <span class="chip">{{ analysis.folder }}</span>
+                <span class="titulo">{{ analysis.title }}</span>
+                <span class="estado" [class]="analysis.status.toLowerCase()">{{ analysis.status }}</span>
+              </button>
               <button
                 type="button"
                 class="boton boton-secundario boton-chico"
-                (click)="openInVizCanvas(analysis, $event)"
-                [disabled]="openingVizCanvasId() === analysis.id"
+                (click)="requestEdit(analysis); $event.stopPropagation()"
               >
-                {{ openingVizCanvasId() === analysis.id ? 'Abriendo…' : 'Abrir en VizCanvas' }}
+                Editar
               </button>
-            }
+              @if (analysis.status === 'DONE') {
+                <button
+                  type="button"
+                  class="boton boton-secundario boton-chico"
+                  (click)="openInVizCanvas(analysis, $event)"
+                  [disabled]="openingVizCanvasId() === analysis.id"
+                >
+                  {{ openingVizCanvasId() === analysis.id ? 'Abriendo…' : 'Abrir en VizCanvas' }}
+                </button>
+              }
+            </div>
             @if (openAnalysisId() === analysis.id) {
               @if (analysis.status === 'FAILED') {
                 <p class="ayuda-error">{{ analysis.errorMessage }}</p>

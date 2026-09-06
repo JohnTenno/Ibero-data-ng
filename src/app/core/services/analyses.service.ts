@@ -52,6 +52,17 @@ export class AnalysesService {
     return firstValueFrom(this.http.post<Analysis>(this.base(organizationId, datasetId), payload));
   }
 
+  update(
+    organizationId: string,
+    datasetId: string,
+    analysisId: string,
+    payload: CreateAnalysisPayload,
+  ): Promise<Analysis> {
+    return firstValueFrom(
+      this.http.patch<Analysis>(`${this.base(organizationId, datasetId)}/${analysisId}`, payload),
+    );
+  }
+
   getData(organizationId: string, datasetId: string, analysisId: string): Promise<PreviewResult> {
     return firstValueFrom(
       this.http.get<PreviewResult>(`${this.base(organizationId, datasetId)}/${analysisId}/data`),

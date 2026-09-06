@@ -3,9 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ResourcesService } from '../../core/services/resources.service';
 import { DatasetsService } from '../../core/services/datasets.service';
+import { IntermediarioService } from '../../core/services/intermediario.service';
 import { AnalysisBuilder } from '../analysis-builder/analysis-builder';
-import type { QueryResult, Resource } from '../../core/models/resource.model';
+import type { Resource } from '../../core/models/resource.model';
 import type { Dataset } from '../../core/models/dataset.model';
+import type { Analysis } from '../../core/models/analysis.model';
+import type { IntermediarioDatasetSummary, IntermediarioSurveySummary } from '../../core/models/intermediario.model';
 
 @Component({
   selector: 'app-dataset-detail',
@@ -29,18 +32,19 @@ export class DatasetDetail implements OnInit {
     () => this.resources().find((r) => r.id === this.selectedResourceId) ?? null,
   );
 
-  sql = 'SELECT * FROM data LIMIT 100';
-  readonly running = signal(false);
-  readonly queryError = signal<string | null>(null);
-  readonly result = signal<QueryResult | null>(null);
-
   readonly openingVizCanvas = signal(false);
   readonly vizCanvasError = signal<string | null>(null);
+  readonly editingAnalysis = signal<Analysis | null>(null);
+  readonly intermediarioSurveys = signal<IntermediarioSurveySummary[] | null>(null);
+  readonly loadingIntermediario = signal(false);
+  readonly intermediarioError = signal<string | null>(null);
+  readonly importingKey = signal<string | null>(null);
 
   constructor(
     route: ActivatedRoute,
     private readonly resourcesService: ResourcesService,
     private readonly datasetsService: DatasetsService,
+    private readonly intermediarioService: IntermediarioService,
   ) {
     this.organizationId = route.snapshot.paramMap.get('organizationId')!;
     this.datasetId = route.snapshot.paramMap.get('datasetId')!;
@@ -86,21 +90,68 @@ export class DatasetDetail implements OnInit {
     }
   }
 
-  async runQuery(): Promise<void> {
-    if (!this.selectedResourceId || !this.sql.trim()) {
-      return;
-    }
-    this.running.set(true);
-    this.queryError.set(null);
-    this.result.set(null);
+  onRequestEditResource(analysis: Analysis): void {
+    this.selectedResourceId = analysis.sourceResourceId;
+    this.editingAnalysis.set(analysis);
+  }
+
+  async loadIntermediarioCatalog(): Promise<void> {
+    this.loadingIntermediario.set(true);
+    this.intermediarioError.set(null);
     try {
-      this.result.set(
-        await this.resourcesService.runQuery(this.organizationId, this.datasetId, this.selectedResourceId, this.sql),
-      );
+      this.intermediarioSurveys.set(await this.intermediarioService.catalog(this.organizationId, this.datasetId));
     } catch (err: any) {
-      this.queryError.set(err?.error?.message ?? 'La consulta falló.');
+      this.intermediarioError.set(
+        err?.error?.message ?? 'No se pudo conectar con el intermediario (sectei-intermediario). ¿Está corriendo?',
+      );
     } finally {
-      this.running.set(false);
+      this.loadingIntermediario.set(false);
+    }
+  }
+
+  private slugify(name: string): string {
+    const clean = name
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    return clean || 'armonizado';
+  }
+
+  async importSurvey(survey: IntermediarioSurveySummary): Promise<void> {
+    const key = `survey-${survey.id}`;
+    this.importingKey.set(key);
+    this.intermediarioError.set(null);
+    try {
+      await this.intermediarioService.import(this.organizationId, this.datasetId, {
+        kind: 'survey',
+        sourceId: survey.id,
+        filename: `${this.slugify(survey.name)}_armonizado.parquet`,
+      });
+      await this.reloadResources();
+    } catch (err: any) {
+      this.intermediarioError.set(err?.error?.message ?? 'No se pudo importar la encuesta.');
+    } finally {
+      this.importingKey.set(null);
+    }
+  }
+
+  async importDataset(survey: IntermediarioSurveySummary, ds: IntermediarioDatasetSummary): Promise<void> {
+    const key = `dataset-${ds.id}`;
+    this.importingKey.set(key);
+    this.intermediarioError.set(null);
+    try {
+      await this.intermediarioService.import(this.organizationId, this.datasetId, {
+        kind: 'dataset',
+        sourceId: ds.id,
+        filename: `${this.slugify(survey.name)}_${ds.year}.parquet`,
+      });
+      await this.reloadResources();
+    } catch (err: any) {
+      this.intermediarioError.set(err?.error?.message ?? 'No se pudo importar ese año.');
+    } finally {
+      this.importingKey.set(null);
     }
   }
 

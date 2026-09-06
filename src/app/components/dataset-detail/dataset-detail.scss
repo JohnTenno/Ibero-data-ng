@@ -23,16 +23,6 @@
   font-size: 0.85rem;
 }
 
-textarea {
-  width: 100%;
-  font-family: var(--tipografia-codigo, monospace);
-  margin-bottom: 0.5rem;
-}
-
-.tabla-scroll {
-  overflow-x: auto;
-}
-
 .metadata {
   border: 1px solid var(--borde);
   border-radius: var(--radio);
@@ -72,4 +62,46 @@ textarea {
 
 .nota-version.alerta {
   color: #b45309;
+}
+
+.lista-intermediario {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+
+  > li {
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 0.75rem 1rem;
+  }
+}
+
+.fila-intermediario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lista-anios {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  > li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--borde);
+  }
 }

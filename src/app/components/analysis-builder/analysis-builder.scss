@@ -9,6 +9,15 @@
   gap: 0.5rem;
 }
 
+.nota-edicion {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tinta);
+  background: color-mix(in srgb, var(--tinta) 10%, transparent);
+  border-radius: var(--radio);
+  padding: 0.5rem 0.75rem;
+}
+
 .ayuda-op {
   font-size: 0.85rem;
   color: var(--texto-tenue);
@@ -123,6 +132,15 @@
 
 .contenedor-tabla {
   overflow-x: auto;
+  table {
+    width: auto;
+    min-width: 100%;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+  }
 }
 
 .nota {
@@ -178,6 +196,12 @@
 }
 
 .fila-analisis-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fila-analisis-encabezado {
   display: flex;
   align-items: stretch;
   gap: 0.4rem;
