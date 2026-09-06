@@ -44,6 +44,15 @@
     <div class="tarjetas">
       @for (org of filtered(); track org.id) {
         <a class="tarjeta-org" [routerLink]="['/organizations', org.id]">
+          <button
+            type="button"
+            class="boton-pictograma boton-borrar-tarjeta"
+            aria-label="Borrar organización"
+            [disabled]="removingId() === org.id"
+            (click)="removeOrganization(org, $event)"
+          >
+            <app-icon name="trash" [size]="14" />
+          </button>
           <div class="tarjeta-org-portada">{{ org.name.charAt(0) }}</div>
           <div class="tarjeta-org-cuerpo">
             <p class="titulo">{{ org.name }}</p>

@@ -20,6 +20,7 @@ export class OrganizationsList implements OnInit {
   readonly error = signal<string | null>(null);
   readonly creating = signal(false);
   readonly showCreateForm = signal(false);
+  readonly removingId = signal<string | null>(null);
 
   query = '';
   orden: Orden = 'reciente';
@@ -76,6 +77,24 @@ export class OrganizationsList implements OnInit {
       this.error.set('No se pudo crear la organización (¿el slug ya existe?).');
     } finally {
       this.creating.set(false);
+    }
+  }
+
+  async removeOrganization(org: Organization, event: Event): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!confirm(`¿Borrar la organización "${org.name}"? Se borran TODOS sus datasets, resources y análisis. Esto no se puede deshacer.`)) {
+      return;
+    }
+    this.removingId.set(org.id);
+    this.error.set(null);
+    try {
+      await this.organizationsService.remove(org.id);
+      await this.reload();
+    } catch {
+      this.error.set('No se pudo borrar la organización.');
+    } finally {
+      this.removingId.set(null);
     }
   }
 }

@@ -67,6 +67,7 @@ h1 {
 }
 
 .tarjeta-org {
+  position: relative;
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   overflow: hidden;
@@ -75,6 +76,30 @@ h1 {
 
 .tarjeta-org:hover {
   box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
+}
+
+.boton-borrar-tarjeta {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
+.boton-borrar-tarjeta:hover {
+  background: var(--error, #b91c1c);
+}
+
+.boton-borrar-tarjeta:disabled {
+  opacity: 0.5;
 }
 
 .tarjeta-org-portada {

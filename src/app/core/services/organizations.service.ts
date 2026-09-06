@@ -27,4 +27,8 @@ export class OrganizationsService {
       this.http.post<Organization>(`${environment.apiUrl}/organizations`, { name, slug, description }),
     );
   }
+
+  remove(organizationId: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${environment.apiUrl}/organizations/${organizationId}`));
+  }
 }

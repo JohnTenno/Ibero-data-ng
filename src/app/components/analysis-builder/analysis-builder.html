@@ -285,6 +285,14 @@
                   {{ openingVizCanvasId() === analysis.id ? 'Abriendo…' : 'Abrir en VizCanvas' }}
                 </button>
               }
+              <button
+                type="button"
+                class="boton boton-secundario boton-chico boton-borrar"
+                (click)="removeAnalysis(analysis, $event)"
+                [disabled]="removingId() === analysis.id"
+              >
+                {{ removingId() === analysis.id ? 'Borrando…' : 'Borrar' }}
+              </button>
             </div>
             @if (openAnalysisId() === analysis.id) {
               @if (analysis.status === 'FAILED') {

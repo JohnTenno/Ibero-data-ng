@@ -46,4 +46,10 @@ export class DatasetsService {
       this.http.post<Dataset>(`${environment.apiUrl}/organizations/${organizationId}/datasets`, payload),
     );
   }
+
+  remove(organizationId: string, datasetId: string): Promise<void> {
+    return firstValueFrom(
+      this.http.delete<void>(`${environment.apiUrl}/organizations/${organizationId}/datasets/${datasetId}`),
+    );
+  }
 }

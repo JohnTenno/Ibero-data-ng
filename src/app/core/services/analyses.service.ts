@@ -74,4 +74,8 @@ export class AnalysesService {
       this.http.get<{ url: string }>(`${this.base(organizationId, datasetId)}/${analysisId}/vizcanvas-handoff`),
     );
   }
+
+  remove(organizationId: string, datasetId: string, analysisId: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.base(organizationId, datasetId)}/${analysisId}`));
+  }
 }

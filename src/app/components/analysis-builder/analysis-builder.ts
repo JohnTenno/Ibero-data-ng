@@ -115,6 +115,7 @@ export class AnalysisBuilder implements OnInit, OnChanges {
 
   readonly openingVizCanvasId = signal<string | null>(null);
   readonly vizCanvasError = signal<string | null>(null);
+  readonly removingId = signal<string | null>(null);
 
   constructor(private readonly analysesService: AnalysesService) { }
 
@@ -292,6 +293,27 @@ export class AnalysisBuilder implements OnInit, OnChanges {
     } catch (err: any) {
       this.vizCanvasError.set(err?.error?.message ?? 'No se pudo abrir en VizCanvas.');
       this.openingVizCanvasId.set(null);
+    }
+  }
+
+  async removeAnalysis(analysis: Analysis, event: Event): Promise<void> {
+    event.stopPropagation();
+    if (!confirm(`¿Borrar el análisis "${analysis.title}"? Esto no se puede deshacer.`)) {
+      return;
+    }
+    this.removingId.set(analysis.id);
+    this.vizCanvasError.set(null);
+    try {
+      await this.analysesService.remove(this.organizationId, this.datasetId, analysis.id);
+      if (this.openAnalysisId() === analysis.id) {
+        this.openAnalysisId.set(null);
+        this.openAnalysisData.set(null);
+      }
+      await this.reloadAnalyses();
+    } catch (err: any) {
+      this.vizCanvasError.set(err?.error?.message ?? 'No se pudo borrar el análisis.');
+    } finally {
+      this.removingId.set(null);
     }
   }
 }

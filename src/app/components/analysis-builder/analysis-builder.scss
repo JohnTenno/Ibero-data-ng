@@ -238,3 +238,8 @@
     color: var(--error);
   }
 }
+
+.boton-borrar {
+  color: var(--error, #b91c1c);
+  border-color: var(--error, #b91c1c);
+}

@@ -21,6 +21,15 @@
           class="tarjeta"
           [routerLink]="['/organizations', organizationId, 'datasets', dataset.id]"
         >
+          <button
+            type="button"
+            class="boton-pictograma boton-borrar-tarjeta"
+            aria-label="Borrar dataset"
+            [disabled]="removingId() === dataset.id"
+            (click)="removeDataset(dataset, $event)"
+          >
+            <app-icon name="trash" [size]="14" />
+          </button>
           <div class="tarjeta-etiquetas">
             <span class="chip">{{ dataset.visibility }}</span>
             @if (dataset.survey) {
