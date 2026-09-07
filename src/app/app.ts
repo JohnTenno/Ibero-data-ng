@@ -1,8 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MenuAccesibilidad } from './components/shared/menu-accesibilidad/menu-accesibilidad';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, MenuAccesibilidad],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

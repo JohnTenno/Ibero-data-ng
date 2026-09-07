@@ -17,20 +17,32 @@
 
 <div class="shell">
   <aside class="barra-lateral">
-    <form class="busqueda" (ngSubmit)="search()">
-      <input type="search" placeholder="Busca &quot;conjuntos&quot;, &quot;análisis&quot;..." [(ngModel)]="searchText" name="q" />
-      <button type="submit" aria-label="Buscar">
-        <app-icon name="search" [size]="16" />
-      </button>
-    </form>
+    <div class="menu-lateral-busqueda">
+      <app-campo-busqueda
+        [catalogo]="navItems"
+        propiedadBusqueda="label"
+        etiqueta='Busca "conjuntos", "análisis"…'
+        idCampo="busqueda-lateral"
+        (alFiltrar)="alFiltrarMenu($event)"
+      />
+    </div>
 
-    <nav class="nav-lateral">
-      @for (item of navItems; track item.path) {
-        <a [routerLink]="item.path" routerLinkActive="activo" class="nav-item">
-          <app-icon [name]="item.icon" [size]="18" />
-          <span>{{ item.label }}</span>
-        </a>
-      }
+    <nav class="nav-lateral" aria-label="Menú secundario">
+      <ul>
+        @if (filtrados.length === 0) {
+          <li class="menu-lateral-vacio">
+            <span>Sin resultados</span>
+          </li>
+        }
+        @for (item of filtrados; track item.path) {
+          <li>
+            <a [routerLink]="item.path" routerLinkActive="activo" class="nav-item">
+              <app-icon [name]="item.icon" [size]="18" />
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
     </nav>
   </aside>
 

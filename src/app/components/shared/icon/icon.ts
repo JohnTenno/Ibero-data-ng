@@ -1,49 +1,59 @@
 import { Component, Input } from '@angular/core';
-import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 
-const PATHS: Record<string, string> = {
-  compass:
-    '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
-  layers:
-    '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
-  users:
-    '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
-  'bar-chart': '<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
-  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-  'log-out':
-    '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
-  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
-  database:
-    '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
-  trash:
-    '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+/** Alias internos → clases Sisdai (`pictograma-*`). */
+const PICTOGRAMAS: Record<string, string> = {
+  compass: 'pictograma-explorar',
+  layers: 'pictograma-capas',
+  users: 'pictograma-grupo',
+  user: 'pictograma-persona',
+  search: 'pictograma-buscar',
+  x: 'pictograma-cerrar',
+  'chevron-left': 'pictograma-angulo-izquierdo',
+  'chevron-right': 'pictograma-angulo-derecho',
+  'log-out': 'pictograma-cerrar-sesion',
+  plus: 'pictograma-agregar',
+  trash: 'pictograma-eliminar',
+  accessibility: 'pictograma-accesibilidad',
+  type: 'pictograma-cambio-tipografia',
+  link: 'pictograma-enlace-subrayado',
+  'align-left': 'pictograma-vista-simplificada',
+  moon: 'pictograma-contraste',
+  database: 'pictograma-documento',
+  'bar-chart': 'pictograma-nivel',
 };
 
 @Component({
   selector: 'app-icon',
   standalone: true,
-  template: `
-    <svg
-      [attr.width]="size"
-      [attr.height]="size"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      [innerHTML]="path"
-    ></svg>
+  template: `<span [class]="clase" aria-hidden="true"></span>`,
+  host: {
+    '[style.font-size.px]': 'size',
+  },
+  styles: `
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      vertical-align: middle;
+      color: inherit;
+    }
+
+    :host > span {
+      padding: 0;
+      font-size: 1em;
+      line-height: 1;
+    }
   `,
 })
 export class Icon {
   @Input() name = 'compass';
   @Input() size = 20;
 
-  constructor(private readonly sanitizer: DomSanitizer) {}
-
-  get path(): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(PATHS[this.name] ?? '');
+  get clase(): string {
+    if (this.name.startsWith('pictograma-')) {
+      return this.name;
+    }
+    return PICTOGRAMAS[this.name] ?? 'pictograma-ayuda';
   }
 }

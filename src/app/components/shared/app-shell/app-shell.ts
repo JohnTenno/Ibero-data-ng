@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Icon } from '../icon/icon';
+import { CampoBusqueda } from '../campo-busqueda/campo-busqueda';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface NavItem {
@@ -14,31 +13,24 @@ interface NavItem {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, FormsModule, Icon],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, Icon, CampoBusqueda],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
 })
 export class AppShell {
   readonly navItems: NavItem[] = [
-    { label: 'Inicio', icon: 'compass', path: '/dashboard' },
-    { label: 'Conjuntos de datos', icon: 'layers', path: '/datasets' },
-    { label: 'Organizaciones', icon: 'users', path: '/organizations' },
-    { label: 'Configuración de perfil', icon: 'user', path: '/profile' },
+    { label: 'Inicio', icon: 'pictograma-explorar', path: '/dashboard' },
+    { label: 'Conjuntos de datos', icon: 'pictograma-capas', path: '/datasets' },
+    { label: 'Organizaciones', icon: 'pictograma-grupo', path: '/organizations' },
+    { label: 'Configuración de perfil', icon: 'pictograma-persona', path: '/profile' },
   ];
 
-  searchText = '';
+  filtrados: NavItem[] = [...this.navItems];
 
-  constructor(
-    readonly authService: AuthService,
-    private readonly router: Router,
-  ) {}
+  constructor(readonly authService: AuthService) {}
 
-  search(): void {
-    const q = this.searchText.trim();
-    if (!q) {
-      return;
-    }
-    void this.router.navigate(['/datasets'], { queryParams: { q } });
+  alFiltrarMenu(items: object[]): void {
+    this.filtrados = items as NavItem[];
   }
 
   logout(): void {

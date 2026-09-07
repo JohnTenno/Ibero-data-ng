@@ -1,0 +1,37 @@
+<form class="campo-busqueda" (ngSubmit)="buscar()">
+  <label class="a11y-solo-lectura" [attr.for]="idCampo">Campo de búsqueda</label>
+
+  <input
+    #entrada
+    [id]="idCampo"
+    type="search"
+    class="campo-busqueda-entrada"
+    [placeholder]="etiqueta"
+    [ngModel]="texto"
+    (ngModelChange)="alCambiar($event)"
+    name="campo-busqueda"
+    autocomplete="off"
+    [disabled]="deshabilitado"
+  />
+
+  @if (mostrarBorrar) {
+    <button
+      type="button"
+      class="boton boton-pictograma boton-sin-contenedor-secundario campo-busqueda-borrar"
+      aria-label="Borrar"
+      [disabled]="deshabilitado"
+      (click)="limpiar()"
+    >
+      <app-icon name="x" [size]="18" />
+    </button>
+  }
+
+  <button
+    type="submit"
+    class="boton boton-primario boton-pictograma campo-busqueda-buscar"
+    aria-label="Buscar"
+    [disabled]="deshabilitado"
+  >
+    <app-icon name="search" [size]="18" />
+  </button>
+</form>

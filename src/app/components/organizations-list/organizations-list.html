@@ -1,71 +1,95 @@
 <div class="pagina">
-  <div class="encabezado">
-    <div>
-      <p class="migaja">Inicio / Organizaciones</p>
-      <h1>Organizaciones</h1>
-      <p class="subtitulo">Organizaciones que publican y administran datasets en la plataforma.</p>
-    </div>
+  <app-page-header
+    titulo="Organizaciones"
+    intro="Organizaciones que publican y administran datasets en la plataforma."
+    [migas]="migas"
+    [conAccion]="true"
+  >
     <button type="button" class="boton" (click)="showCreateForm.set(!showCreateForm())">
       <app-icon name="plus" [size]="16" />
       Agregar organización
     </button>
-  </div>
+  </app-page-header>
 
-  @if (showCreateForm()) {
-    <form class="formulario-crear" (ngSubmit)="createOrganization()" novalidate>
-      <input type="text" placeholder="Nombre" [(ngModel)]="newName" name="name" />
-      <input type="text" placeholder="slug-en-minusculas" [(ngModel)]="newSlug" name="slug" />
-      <button type="submit" class="boton" [disabled]="creating()">
-        {{ creating() ? 'Creando…' : 'Crear' }}
-      </button>
-    </form>
-  }
+  <div class="pagina__cuerpo">
+    @if (showCreateForm()) {
+      <form class="formulario-crear" (ngSubmit)="createOrganization()" novalidate>
+        <input type="text" placeholder="Nombre" [(ngModel)]="newName" name="name" />
+        <input type="text" placeholder="slug-en-minusculas" [(ngModel)]="newSlug" name="slug" />
+        <button type="submit" class="boton" [disabled]="creating()">
+          {{ creating() ? 'Creando…' : 'Crear' }}
+        </button>
+      </form>
+    }
 
-  @if (error()) {
-    <p class="ayuda-error">{{ error() }}</p>
-  }
+    @if (error()) {
+      <p class="ayuda-error">{{ error() }}</p>
+    }
 
-  <div class="busqueda-fila">
-    <div class="busqueda">
-      <app-icon name="search" [size]="16" />
-      <input type="text" placeholder="Busca por nombre, por ejemplo &quot;Ibero&quot;..." [(ngModel)]="query" name="query" />
-    </div>
-    <select [(ngModel)]="orden" name="orden">
-      <option value="reciente">Más recientes</option>
-      <option value="nombre">Nombre (A-Z)</option>
-    </select>
-  </div>
+    <div class="seccion-tarjetas__herramientas">
+      <div class="seccion-tarjetas__busqueda">
+        <app-campo-busqueda
+          [catalogo]="organizations()"
+          propiedadBusqueda="name"
+          etiqueta='Busca por nombre, por ejemplo "Ibero"…'
+          idCampo="busqueda-organizaciones"
+          (alFiltrar)="alFiltrar($event)"
+        />
+      </div>
 
-  @if (loading()) {
-    <p>Cargando…</p>
-  } @else if (filtered().length === 0) {
-    <p>No hay organizaciones que coincidan con tu búsqueda.</p>
-  } @else {
-    <div class="tarjetas">
-      @for (org of filtered(); track org.id) {
-        <a class="tarjeta-org" [routerLink]="['/organizations', org.id]">
-          <button
-            type="button"
-            class="boton-pictograma boton-borrar-tarjeta"
-            aria-label="Borrar organización"
-            [disabled]="removingId() === org.id"
-            (click)="removeOrganization(org, $event)"
+      <div class="seccion-tarjetas__barra">
+        <div class="seccion-tarjetas__orden">
+          <label for="orden-organizaciones">Ordenar por</label>
+          <select
+            id="orden-organizaciones"
+            name="orden"
+            [ngModel]="orden()"
+            (ngModelChange)="alCambiarOrden($event)"
           >
-            <app-icon name="trash" [size]="14" />
-          </button>
-          <div class="tarjeta-org-portada">{{ org.name.charAt(0) }}</div>
-          <div class="tarjeta-org-cuerpo">
-            <p class="titulo">{{ org.name }}</p>
-            @if (org.description) {
-              <p class="descripcion">{{ org.description }}</p>
-            }
-            <p class="stats">
-              <span><app-icon name="layers" [size]="14" /> {{ org._count?.datasets ?? 0 }} conjuntos</span>
-              <span><app-icon name="users" [size]="14" /> {{ org._count?.members ?? 0 }} miembros</span>
-            </p>
-          </div>
-        </a>
-      }
+            <option value="reciente">Más recientes</option>
+            <option value="nombre">Nombre (A–Z)</option>
+          </select>
+        </div>
+      </div>
     </div>
-  }
+
+    @if (loading()) {
+      <p>Cargando…</p>
+    } @else if (filtered().length === 0) {
+      <p>No hay organizaciones que coincidan con tu búsqueda.</p>
+    } @else {
+      <div class="tarjetas">
+        @for (org of filtered(); track org.id) {
+          <a class="tarjeta-org" [routerLink]="['/organizations', org.id]">
+            <button
+              type="button"
+              class="boton-pictograma boton-borrar-tarjeta"
+              aria-label="Borrar organización"
+              [disabled]="removingId() === org.id"
+              (click)="removeOrganization(org, $event)"
+            >
+              <app-icon name="trash" [size]="14" />
+            </button>
+            <div class="tarjeta-org-portada">{{ org.name.charAt(0) }}</div>
+            <div class="tarjeta-org-cuerpo">
+              <p class="titulo">{{ org.name }}</p>
+              @if (org.description) {
+                <p class="descripcion">{{ org.description }}</p>
+              }
+              <p class="stats">
+                <span>
+                  <app-icon name="layers" [size]="14" />
+                  {{ org._count?.datasets ?? 0 }} conjuntos
+                </span>
+                <span>
+                  <app-icon name="users" [size]="14" />
+                  {{ org._count?.members ?? 0 }} miembros
+                </span>
+              </p>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
 </div>

@@ -1,0 +1,51 @@
+<div
+  class="menu-a11y"
+  [class.menu-a11y--abierto]="abierto"
+>
+  <button
+    type="button"
+    class="menu-a11y__boton"
+    [attr.aria-expanded]="abierto"
+    aria-controls="menu-a11y-panel"
+    aria-labelledby="menu-a11y-titulo"
+    (click)="alternarPanel()"
+  >
+    <app-icon class="menu-a11y__icono-cerrado" name="pictograma-accesibilidad" [size]="24" />
+    <app-icon class="menu-a11y__icono-abierto" name="pictograma-cerrar" [size]="22" />
+  </button>
+
+  <div
+    class="menu-a11y__panel"
+    id="menu-a11y-panel"
+    [attr.aria-hidden]="!abierto"
+  >
+    <p class="menu-a11y__titulo" id="menu-a11y-titulo">Herramientas de accesibilidad</p>
+
+    @for (opcion of opciones; track opcion.id) {
+      <div class="menu-a11y__fila">
+        <input
+          class="menu-a11y__check"
+          type="checkbox"
+          [id]="opcion.id"
+          [checked]="estaActivo(opcion.id)"
+          [tabIndex]="abierto ? 0 : -1"
+          (change)="alternarOpcion(opcion.id)"
+        />
+        <label class="menu-a11y__opcion" [attr.for]="opcion.id">
+          <app-icon [name]="opcion.icono" [size]="24" />
+          <span>{{ opcion.titulo }}</span>
+        </label>
+      </div>
+    }
+
+    <button
+      type="button"
+      class="boton boton-secundario boton-chico menu-a11y__restablecer"
+      [disabled]="!puedeRestablecer"
+      [tabIndex]="abierto ? 0 : -1"
+      (click)="restablecer()"
+    >
+      Restablecer
+    </button>
+  </div>
+</div>
