@@ -82,8 +82,16 @@
       <p class="ayuda-error">{{ error() }}</p>
     }
 
-    <button type="submit" class="boton" [disabled]="saving()">
-      {{ saving() ? 'Creando…' : 'Crear dataset' }}
-    </button>
+    <div class="form-acciones">
+      <a
+        class="boton boton-secundario"
+        [routerLink]="['/organizations', organizationId]"
+      >
+        Cancelar
+      </a>
+      <button type="submit" class="boton boton-primario" [disabled]="saving()">
+        {{ saving() ? 'Creando…' : 'Crear dataset' }}
+      </button>
+    </div>
   </form>
 </div>
