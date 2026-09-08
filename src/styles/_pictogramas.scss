@@ -32,10 +32,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-app-icon[class^='pictograma-'],
-app-icon[class*=' pictograma-'],
-app-icon [class^='pictograma-'],
-app-icon [class*=' pictograma-'] {
+.app-icon[class^='pictograma-'],
+.app-icon[class*=' pictograma-'],
+.app-icon [class^='pictograma-'],
+.app-icon [class*=' pictograma-'] {
   padding: 0;
   flex-shrink: 0;
 }

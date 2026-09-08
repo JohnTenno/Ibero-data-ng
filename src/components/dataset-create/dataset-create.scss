@@ -1,0 +1,205 @@
+.c-dataset-create {
+  .pagina {
+    --campo-etiqueta-color: var(--color-secundario-8, #444);
+    --campo-fondo: var(--fondo, #fff);
+    --campo-borde: var(--borde, #e4e4e7);
+    --campo-color: var(--tinta, #18181b);
+    --campo-cursor-fondo: var(--color-secundario-2, #f5f5f5);
+    --campo-cursor-borde: var(--color-secundario-8, #444);
+    --campo-enfoque-fondo: var(--fondo, #fff);
+    --campo-enfoque-borde: var(--estado-enfoque, #005dff);
+    --campo-enfoque-sombra: var(--estado-enfoque, #005dff);
+    --campo-ejemplo-color: var(--color-neutro-4, #767677);
+
+    max-width: 40rem; 
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem; 
+    padding-bottom: 2.5rem; 
+  }
+
+  .volver {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--texto-secundario, var(--texto-tenue));
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .volver:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .pagina > h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--color-secundario-12, #111);
+  }
+
+  @media (min-width: 768px) {
+    .pagina > h1 {
+      font-size: 2rem;
+    }
+  }
+
+  .nota-revision {
+    margin: 0;
+    padding: 1rem 1.5rem; 
+    background: var(--fondo-acento, var(--fondo-sidebar));
+    border-radius: 8px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    color: var(--texto-secundario, var(--tinta-suave));
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  fieldset {
+    border: none;
+    margin: 0 0 1.5rem; 
+    padding: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  fieldset:last-of-type {
+    margin-bottom: 1.5rem;
+  }
+
+  legend {
+    display: block;
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 1rem; 
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--color-secundario-12, #111);
+  }
+
+  fieldset::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  label {
+    display: inline-flex;
+    align-items: baseline;
+    margin: 1rem 0 0; 
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--campo-etiqueta-color);
+  }
+
+  fieldset > label:first-of-type {
+    margin-top: 0;
+  }
+
+  .pagina input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
+  .pagina select,
+  .pagina textarea {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    font-family: var(--tipografia-familia, sans-serif);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--campo-color);
+    background-color: var(--campo-fondo);
+    border: 1px solid var(--campo-borde);
+    border-radius: 8px;
+    transition:
+      background-color 0.27s ease-in-out,
+      border-color 0.27s ease-in-out,
+      box-shadow 0.27s ease-in-out;
+  }
+
+  .pagina input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
+  .pagina select {
+    height: 40px;
+    padding: 7px 16px; 
+  }
+
+  .pagina textarea {
+    min-height: 5.5rem;
+    padding: 0.75rem 1rem;
+    resize: vertical;
+  }
+
+  .pagina input:not(:disabled):hover,
+  .pagina select:not(:disabled):hover,
+  .pagina textarea:not(:disabled):hover {
+    background-color: var(--campo-cursor-fondo);
+    border-color: var(--campo-cursor-borde);
+  }
+
+  .pagina input:not(:disabled):focus,
+  .pagina select:not(:disabled):focus,
+  .pagina textarea:not(:disabled):focus {
+    outline: none;
+    background-color: var(--campo-enfoque-fondo);
+    border-color: var(--campo-enfoque-borde);
+    box-shadow: 0 0 8px var(--campo-enfoque-sombra);
+  }
+
+  .pagina ::placeholder {
+    font-style: italic;
+    color: var(--campo-ejemplo-color);
+    opacity: 1;
+  }
+
+  .ayuda-error {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    color: var(--error);
+  }
+
+  .form-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .form-acciones .boton {
+    width: auto;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 40rem) {
+    .form-acciones {
+      justify-content: stretch;
+    }
+
+    .form-acciones .boton {
+      flex: 1 1 auto;
+    }
+  }
+
+}

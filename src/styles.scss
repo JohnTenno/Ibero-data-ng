@@ -315,12 +315,12 @@ html.modo-enlaces-subrayados a:focus-visible {
   text-decoration-thickness: 2px;
 }
 
-html.modo-solo-texto app-icon,
+html.modo-solo-texto .app-icon,
 html.modo-solo-texto img:not(.login-logo__img) {
   display: none !important;
 }
 
-html.modo-solo-texto .menu-a11y app-icon {
+html.modo-solo-texto .menu-a11y .app-icon {
   display: inline-flex !important;
 }
 
@@ -433,7 +433,7 @@ html.modo-oscuro .tarjeta-acceso {
   --tarjeta-cursor-fondo: #444444;
 }
 
-html.modo-oscuro .tarjeta-acceso app-icon {
+html.modo-oscuro .tarjeta-acceso .app-icon {
   color: var(--color-neutro-1);
 }
 

@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://api.iberodata.mx',
+  production: import.meta.env.PROD,
+  apiUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
 };
