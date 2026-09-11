@@ -17,7 +17,7 @@ export function clearToken(): void {
 export class ApiError extends Error {
   constructor(
     readonly status: number,
-    readonly body: { message?: string } | null,
+    readonly body: { message?: string; code?: string | null } | null,
   ) {
     super(body?.message ?? `Error ${status}`);
     this.name = 'ApiError';
