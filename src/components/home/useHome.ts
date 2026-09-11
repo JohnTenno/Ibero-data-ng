@@ -11,7 +11,7 @@ export function useHome() {
   const [totalOrganizations, setTotalOrganizations] = useState(0);
 
   useEffect(() => {
-    let vigente = true;
+    let active = true;
     (async () => {
       try {
         const [allOrgs, datasets, orgs] = await Promise.all([
@@ -19,17 +19,17 @@ export function useHome() {
           datasetsService.listAll(4),
           organizationsService.recent(),
         ]);
-        if (!vigente) return;
+        if (!active) return;
         setTotalOrganizations(allOrgs.length);
         setTotalDatasets(allOrgs.reduce((sum, org) => sum + (org._count?.datasets ?? 0), 0));
         setRecentDatasets(datasets);
         setRecentOrganizations(orgs.slice(0, 2));
       } finally {
-        if (vigente) setLoading(false);
+        if (active) setLoading(false);
       }
     })();
     return () => {
-      vigente = false;
+      active = false;
     };
   }, []);
 

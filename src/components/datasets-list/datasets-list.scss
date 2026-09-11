@@ -5,43 +5,43 @@
     margin: -2rem;
   }
 
-  .seccion-tarjetas__cuerpo {
+  .cards-section__body {
     max-width: 72rem;
     margin: 0 auto;
     padding: 1.5rem 1.5rem 2.5rem;
   }
 
   @media (min-width: 768px) {
-    .seccion-tarjetas__cuerpo {
+    .cards-section__body {
       padding-block: 2.5rem;
     }
 
-    .seccion-tarjetas__lista {
+    .cards-section__list {
       gap: 1.5rem;
     }
   }
 
-  .seccion-tarjetas__subtitulo {
+  .cards-section__subtitle {
     margin: 0 0 1.5rem;
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.25;
-    color: var(--color-secundario-12);
+    color: var(--color-secondary-12);
   }
 
-  .seccion-tarjetas__herramientas {
+  .cards-section__tools {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
 
-  .seccion-tarjetas__busqueda {
+  .cards-section__search {
     width: 100%;
     min-width: 0;
   }
 
-  .seccion-tarjetas__barra {
+  .cards-section__bar {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -49,7 +49,7 @@
     gap: 0.5rem 1rem;
   }
 
-  .seccion-tarjetas__orden {
+  .cards-section__sort {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -58,23 +58,23 @@
     min-width: 11rem;
   }
 
-  .seccion-tarjetas__orden label {
+  .cards-section__sort label {
     margin: 0;
     font-size: 0.9375rem;
     font-weight: 500;
   }
 
-  .seccion-tarjetas__orden select {
+  .cards-section__sort select {
     width: 100%;
     margin: 0;
   }
 
-  .seccion-tarjetas__vacio {
+  .cards-section__empty {
     margin: 0;
-    color: var(--texto-secundario);
+    color: var(--text-secondary);
   }
 
-  .seccion-tarjetas__lista {
+  .cards-section__list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -83,24 +83,24 @@
     gap: 1rem;
   }
 
-  .seccion-tarjetas__lista > li {
+  .cards-section__list > li {
     margin: 0;
   }
 
-  .fila {
+  .row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid var(--borde);
-    border-radius: var(--radio);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1rem;
   }
 
-  .fila:hover {
+  .row:hover {
     box-shadow: 0 4px 16px -10px rgba(0, 0, 0, 0.25);
   }
 
-  .titulo {
+  .title {
     margin: 0;
     font-weight: 700;
   }
@@ -108,10 +108,10 @@
   .meta {
     margin: 0.25rem 0 0;
     font-size: 0.85rem;
-    color: var(--texto-tenue);
+    color: var(--text-faint);
   }
 
-  .paginador {
+  .paginator {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -120,7 +120,7 @@
     margin-top: 1.75rem;
   }
 
-  .paginador__lista {
+  .paginator__list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -130,12 +130,12 @@
     padding: 0;
   }
 
-  .paginador__lista > li {
+  .paginator__list > li {
     margin: 0;
   }
 
-  .paginador__pagina,
-  .paginador__control {
+  .paginator__page,
+  .paginator__control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -149,39 +149,39 @@
     font-weight: 400;
     line-height: 1.25;
     cursor: pointer;
-    color: var(--texto-secundario);
+    color: var(--text-secondary);
   }
 
-  .paginador__pagina:hover,
-  .paginador__pagina:focus-visible,
-  .paginador__control:hover,
-  .paginador__control:focus-visible {
+  .paginator__page:hover,
+  .paginator__page:focus-visible,
+  .paginator__control:hover,
+  .paginator__control:focus-visible {
     background: transparent;
     outline: none;
     text-decoration: underline;
-    color: var(--color-secundario-12);
+    color: var(--color-secondary-12);
   }
 
-  .paginador__pagina--actual {
+  .paginator__page--current {
     font-weight: 700;
-    color: var(--color-secundario-12);
+    color: var(--color-secondary-12);
     cursor: default;
     text-decoration: none;
   }
 
-  .paginador__pagina--actual:hover,
-  .paginador__pagina--actual:focus-visible {
+  .paginator__page--current:hover,
+  .paginator__page--current:focus-visible {
     text-decoration: none;
   }
 
-  .paginador__control:disabled {
+  .paginator__control:disabled {
     opacity: 0.35;
     cursor: default;
     pointer-events: none;
   }
 
   @media (max-width: 40rem) {
-    .seccion-tarjetas__orden {
+    .cards-section__sort {
       flex: 1 1 100%;
     }
   }

@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type MouseEvent } from 'react';
 import { organizationsService } from '../../core/services/organizations.service';
 import type { Organization } from '../../core/models/dataset.model';
-import type { Miga } from '../shared/page-header/PageHeader';
+import type { Crumb } from '../shared/page-header/PageHeader';
 
-export type Orden = 'nombre' | 'reciente';
+export type SortOrder = 'nombre' | 'reciente';
 
-export const MIGAS: Miga[] = [
-  { etiqueta: 'Inicio', href: '/dashboard' },
-  { etiqueta: 'Organizaciones' },
+export const CRUMBS: Crumb[] = [
+  { label: 'Inicio', href: '/dashboard' },
+  { label: 'Organizaciones' },
 ];
 
 export function useOrganizationsList() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [filtradosBusqueda, setFiltradosBusqueda] = useState<Organization[]>([]);
+  const [searchFiltered, setSearchFiltered] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
-  const [orden, setOrden] = useState<Orden>('reciente');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('reciente');
 
   const [newName, setNewName] = useState('');
   const [newSlug, setNewSlug] = useState('');
@@ -27,9 +27,9 @@ export function useOrganizationsList() {
     setLoading(true);
     setError(null);
     try {
-      const lista = await organizationsService.list();
-      setOrganizations(lista);
-      setFiltradosBusqueda(lista);
+      const list = await organizationsService.list();
+      setOrganizations(list);
+      setSearchFiltered(list);
     } catch {
       setError('No se pudieron cargar las organizaciones.');
     } finally {
@@ -42,14 +42,14 @@ export function useOrganizationsList() {
   }, [reload]);
 
   const filtered = useMemo(() => {
-    const list = [...filtradosBusqueda];
-    if (orden === 'nombre') {
+    const list = [...searchFiltered];
+    if (sortOrder === 'nombre') {
       list.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
     } else {
       list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
     return list;
-  }, [filtradosBusqueda, orden]);
+  }, [searchFiltered, sortOrder]);
 
   const createOrganization = async (event: FormEvent) => {
     event.preventDefault();
@@ -100,13 +100,13 @@ export function useOrganizationsList() {
     showCreateForm,
     setShowCreateForm,
     removingId,
-    orden,
-    setOrden,
+    sortOrder,
+    setSortOrder,
     newName,
     setNewName,
     newSlug,
     setNewSlug,
-    setFiltradosBusqueda,
+    setSearchFiltered,
     createOrganization,
     removeOrganization,
   };

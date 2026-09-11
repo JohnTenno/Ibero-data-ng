@@ -32,7 +32,7 @@ const Profile = lazy(() =>
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<p className="cargando-ruta">Cargando…</p>}>
+    <Suspense fallback={<p className="loading-route">Cargando…</p>}>
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />

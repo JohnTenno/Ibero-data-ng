@@ -1,41 +1,41 @@
-// Encapsulado equivalente al de Angular: todo cuelga de la clase raíz.
+// Angular-style encapsulation: everything hangs off the root class.
 .c-organizations-list {
   & {
     display: block;
     margin: -2rem;
   }
 
-  .pagina__cuerpo {
+  .page__body {
     max-width: 72rem;
     margin: 0 auto;
     padding: 1.5rem 1.5rem 2.5rem;
   }
 
   @media (min-width: 768px) {
-    .pagina__cuerpo {
+    .page__body {
       padding-block: 2.5rem;
     }
   }
 
-  .formulario-crear {
+  .create-form {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
   }
 
-  .seccion-tarjetas__herramientas {
+  .cards-section__tools {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
 
-  .seccion-tarjetas__busqueda {
+  .cards-section__search {
     width: 100%;
     min-width: 0;
   }
 
-  .seccion-tarjetas__barra {
+  .cards-section__bar {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -43,7 +43,7 @@
     gap: 0.5rem 1rem;
   }
 
-  .seccion-tarjetas__orden {
+  .cards-section__sort {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -52,42 +52,42 @@
     min-width: 11rem;
   }
 
-  .seccion-tarjetas__orden label {
+  .cards-section__sort label {
     margin: 0;
     font-size: 0.9375rem;
     font-weight: 500;
   }
 
-  .seccion-tarjetas__orden select {
+  .cards-section__sort select {
     width: 100%;
     margin: 0;
   }
 
   @media (max-width: 40rem) {
-    .seccion-tarjetas__orden {
+    .cards-section__sort {
       flex: 1 1 100%;
     }
   }
 
-  .tarjetas {
+  .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
   }
 
-  .tarjeta-org {
+  .org-card {
     position: relative;
-    border: 1px solid var(--borde);
-    border-radius: var(--radio);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
     transition: box-shadow 0.15s ease;
   }
 
-  .tarjeta-org:hover {
+  .org-card:hover {
     box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.25);
   }
 
-  .boton-borrar-tarjeta {
+  .button-delete-card {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -103,18 +103,18 @@
     color: #fff;
   }
 
-  .boton-borrar-tarjeta:hover {
+  .button-delete-card:hover {
     background: var(--error, #b91c1c);
   }
 
-  .boton-borrar-tarjeta:disabled {
+  .button-delete-card:disabled {
     opacity: 0.5;
   }
 
-  .tarjeta-org-portada {
+  .org-card-cover {
     height: 130px;
-    background: var(--tinta);
-    color: var(--fondo);
+    background: var(--ink);
+    color: var(--bg);
     font-size: 2.5rem;
     font-weight: 700;
     display: flex;
@@ -122,26 +122,26 @@
     justify-content: center;
   }
 
-  .tarjeta-org-cuerpo {
+  .org-card-body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
 
-    .titulo {
+    .title {
       font-weight: 700;
     }
 
-    .descripcion {
+    .description {
       font-size: 0.85rem;
-      color: var(--texto-tenue);
+      color: var(--text-faint);
     }
 
     .stats {
       display: flex;
       gap: 1rem;
       font-size: 0.8rem;
-      color: var(--texto-tenue);
+      color: var(--text-faint);
       margin-top: 0.25rem;
 
       span {

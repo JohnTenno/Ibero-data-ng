@@ -16,7 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
 
 export function useAppShell() {
   const { currentUser, logout } = useAuth();
-  const [filtrados, setFiltrados] = useState<NavItem[]>(NAV_ITEMS);
+  const [filteredItems, setFilteredItems] = useState<NavItem[]>(NAV_ITEMS);
 
-  return { currentUser, logout, navItems: NAV_ITEMS, filtrados, setFiltrados };
+  return { currentUser, logout, navItems: NAV_ITEMS, filteredItems, setFilteredItems };
 }

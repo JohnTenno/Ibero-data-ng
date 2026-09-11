@@ -9,7 +9,7 @@ interface AuthResponse {
 export interface AuthContextValue {
   currentUser: User | null;
   isAuthenticated: boolean;
-  cargando: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => void;
@@ -19,7 +19,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [cargando, setCargando] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const loadCurrentUser = useCallback(async () => {
     if (!getToken()) {
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    void loadCurrentUser().finally(() => setCargando(false));
+    void loadCurrentUser().finally(() => setLoading(false));
   }, [loadCurrentUser]);
 
   const login = useCallback(
@@ -65,12 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       currentUser,
       isAuthenticated: currentUser !== null,
-      cargando,
+      loading,
       login,
       register,
       logout,
     }),
-    [currentUser, cargando, login, register, logout],
+    [currentUser, loading, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

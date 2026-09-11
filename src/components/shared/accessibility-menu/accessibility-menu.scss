@@ -1,12 +1,12 @@
 .menu-a11y {
-  --menu-a11y-boton-fondo: #005dff;
-  --menu-a11y-boton-color: #ffffff;
-  --menu-a11y-boton-borde: #ffffff;
-  --menu-a11y-boton-cursor-fondo: #0047cc;
-  --menu-a11y-panel-fondo: #f5f5f5;
+  --menu-a11y-button-bg: #005dff;
+  --menu-a11y-button-color: #ffffff;
+  --menu-a11y-button-border: #ffffff;
+  --menu-a11y-button-hover-bg: #0047cc;
+  --menu-a11y-panel-bg: #f5f5f5;
   --menu-a11y-panel-color: #5c5c5c;
-  --menu-a11y-panel-borde: #333333;
-  --menu-a11y-panel-sombra: rgba(0, 0, 0, 0.35);
+  --menu-a11y-panel-border: #333333;
+  --menu-a11y-panel-shadow: rgba(0, 0, 0, 0.35);
 
   position: fixed;
   z-index: 9999;
@@ -16,11 +16,11 @@
   transition: right 0.27s ease-in-out;
 }
 
-.menu-a11y--abierto {
+.menu-a11y--open {
   right: 40px;
 }
 
-.menu-a11y__boton {
+.menu-a11y__button {
   position: relative;
   z-index: 2;
   display: flex;
@@ -32,50 +32,50 @@
   padding: 8px;
   border: none;
   border-radius: 50%;
-  background-color: var(--menu-a11y-boton-fondo);
-  color: var(--menu-a11y-boton-color);
+  background-color: var(--menu-a11y-button-bg);
+  color: var(--menu-a11y-button-color);
   cursor: pointer;
   box-shadow:
-    inset 0 0 0 1px var(--menu-a11y-boton-borde),
+    inset 0 0 0 1px var(--menu-a11y-button-border),
     0 0 8px transparent;
   transition: all 0.27s ease-in-out;
 }
 
-.menu-a11y__boton:hover {
-  background-color: var(--menu-a11y-boton-cursor-fondo);
+.menu-a11y__button:hover {
+  background-color: var(--menu-a11y-button-hover-bg);
   box-shadow:
-    inset 0 0 0 1px var(--menu-a11y-boton-borde),
+    inset 0 0 0 1px var(--menu-a11y-button-border),
     3px 3px 4px transparent;
 }
 
-.menu-a11y__boton:focus-visible {
+.menu-a11y__button:focus-visible {
   outline: none;
   box-shadow:
-    inset 0 0 0 1px var(--menu-a11y-boton-borde),
-    0 0 0 1px var(--estado-enfoque, #005dff),
-    0 0 8px var(--estado-enfoque, #005dff);
+    inset 0 0 0 1px var(--menu-a11y-button-border),
+    0 0 0 1px var(--state-focus, #005dff),
+    0 0 8px var(--state-focus, #005dff);
 }
 
-.menu-a11y__icono-cerrado,
-.menu-a11y__icono-abierto {
+.menu-a11y__icon-closed,
+.menu-a11y__icon-open {
   position: absolute;
   display: inline-flex;
   transition: opacity 0.27s ease-in-out;
 }
 
-.menu-a11y__icono-cerrado {
+.menu-a11y__icon-closed {
   opacity: 1;
 }
 
-.menu-a11y__icono-abierto {
+.menu-a11y__icon-open {
   opacity: 0;
 }
 
-.menu-a11y--abierto .menu-a11y__icono-cerrado {
+.menu-a11y--open .menu-a11y__icon-closed {
   opacity: 0;
 }
 
-.menu-a11y--abierto .menu-a11y__icono-abierto {
+.menu-a11y--open .menu-a11y__icon-open {
   opacity: 1;
 }
 
@@ -89,32 +89,32 @@
   padding: 0;
   overflow: hidden;
   opacity: 0;
-  background-color: var(--menu-a11y-panel-fondo);
+  background-color: var(--menu-a11y-panel-bg);
   color: var(--menu-a11y-panel-color);
   box-shadow: 0 0 0 0 transparent;
   transition: all 0.27s ease-in-out;
 }
 
-.menu-a11y--abierto .menu-a11y__panel {
+.menu-a11y--open .menu-a11y__panel {
   max-height: 500px;
   padding: 24px;
   opacity: 1;
   box-shadow:
-    inset 0 0 0 0.1px var(--menu-a11y-panel-sombra),
-    0 8px 16px -4px var(--menu-a11y-panel-sombra);
+    inset 0 0 0 0.1px var(--menu-a11y-panel-shadow),
+    0 8px 16px -4px var(--menu-a11y-panel-shadow);
 }
 
-.menu-a11y__titulo {
+.menu-a11y__title {
   margin: 0 0 8px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--menu-a11y-panel-borde);
+  border-bottom: 1px solid var(--menu-a11y-panel-border);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.25em;
-  color: var(--color-secundario-12, #111);
+  color: var(--color-secondary-12, #111);
 }
 
-.menu-a11y__fila {
+.menu-a11y__row {
   display: flex;
   align-items: center;
   gap: 0;
@@ -127,10 +127,10 @@
   width: 1.125rem;
   height: 1.125rem;
   margin: 0 8px 0 0;
-  accent-color: var(--color-secundario-9, #333);
+  accent-color: var(--color-secondary-9, #333);
 }
 
-.menu-a11y__opcion {
+.menu-a11y__option {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -147,36 +147,36 @@
   cursor: pointer;
 }
 
-.menu-a11y__opcion .app-icon {
+.menu-a11y__option .app-icon {
   display: inline-flex;
   flex: 0 0 auto;
   margin-right: 4px;
   color: inherit;
 }
 
-.menu-a11y__restablecer {
+.menu-a11y__reset {
   width: 100%;
   margin-top: 16px;
   justify-content: center;
 }
 
-html.modo-oscuro .menu-a11y {
-  --menu-a11y-panel-fondo: #242424;
+html.mode-dark .menu-a11y {
+  --menu-a11y-panel-bg: #242424;
   --menu-a11y-panel-color: #d0d0d0;
-  --menu-a11y-panel-borde: #767677;
-  --menu-a11y-panel-sombra: rgba(0, 0, 0, 0.55);
+  --menu-a11y-panel-border: #767677;
+  --menu-a11y-panel-shadow: rgba(0, 0, 0, 0.55);
 }
 
-html.modo-oscuro .menu-a11y__titulo {
+html.mode-dark .menu-a11y__title {
   color: #f5f5f5;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .menu-a11y,
-  .menu-a11y__boton,
+  .menu-a11y__button,
   .menu-a11y__panel,
-  .menu-a11y__icono-cerrado,
-  .menu-a11y__icono-abierto {
+  .menu-a11y__icon-closed,
+  .menu-a11y__icon-open {
     transition: none;
   }
 }

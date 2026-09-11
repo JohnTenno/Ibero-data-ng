@@ -1,108 +1,108 @@
 .c-profile {
-  .pagina {
+  .page {
     max-width: 40rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 1.5rem; 
+    gap: 1.5rem;
     padding-bottom: 2.5rem;
   }
 
-  .migaja {
+  .crumb {
     margin: 0;
-    font-size: 0.875rem; 
+    font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.4;
-  
-    color: var(--texto-secundario, var(--color-secundario-8, #444));
+
+    color: var(--text-secondary, var(--color-secondary-8, #444));
   }
 
-  .pagina > h1 {
+  .page>h1 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 500;
     line-height: 1.25;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
   }
 
   @media (min-width: 768px) {
-    .pagina > h1 {
+    .page>h1 {
       font-size: 2rem;
     }
   }
 
-  .tarjeta {
-    border: 1px solid var(--borde);
+  .card {
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--fondo);
+    background: var(--bg);
     overflow: hidden;
   }
 
-  .fila {
+  .row {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
     gap: 0.5rem 1.5rem;
-    padding: 1rem 1.5rem; 
-    border-bottom: 1px solid var(--borde);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
   }
 
-  .fila:last-child {
+  .row:last-child {
     border-bottom: none;
   }
 
-  .fila .etiqueta {
+  .row .label {
     flex: 0 1 auto;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.5;
-    color: var(--color-secundario-8, #444);
+    color: var(--color-secondary-8, #444);
   }
 
-  .fila > span:not(.etiqueta) {
+  .row>span:not(.label) {
     flex: 1 1 12rem;
     text-align: right;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
     overflow-wrap: anywhere;
   }
 
-  .nota {
+  .note {
     margin: 0;
     padding: 1rem 1.5rem;
     border-radius: 8px;
-    background: var(--fondo-acento, var(--fondo-sidebar));
+    background: var(--bg-accent, var(--bg-sidebar));
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.3;
-    color: var(--color-secundario-8, #444);
+    color: var(--color-secondary-8, #444);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pagina * {
+    .page * {
       transition: none !important;
       animation: none !important;
     }
   }
 
   @media (prefers-contrast: more) {
-    .tarjeta {
+    .card {
       border-width: 2px;
-      border-color: var(--color-secundario-8, #444);
+      border-color: var(--color-secondary-8, #444);
     }
 
-    .fila .etiqueta,
-    .nota,
-    .migaja {
-      color: var(--color-secundario-12, #111);
+    .row .label,
+    .note,
+    .crumb {
+      color: var(--color-secondary-12, #111);
     }
 
-    .fila {
-      border-bottom-color: var(--color-secundario-8, #444);
+    .row {
+      border-bottom-color: var(--color-secondary-8, #444);
     }
   }
 

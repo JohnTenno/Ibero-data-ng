@@ -24,48 +24,48 @@ export class ApiError extends Error {
   }
 }
 
-export function mensajeDeError(err: unknown, respaldo: string): string {
-  return err instanceof ApiError && err.body?.message ? err.body.message : respaldo;
+export function errorMessage(err: unknown, fallback: string): string {
+  return err instanceof ApiError && err.body?.message ? err.body.message : fallback;
 }
 
-interface Opciones {
+interface RequestOptions {
   method?: string;
   body?: unknown;
   signal?: AbortSignal;
 }
 
-async function request<T>(ruta: string, { method = 'GET', body, signal }: Opciones = {}): Promise<T> {
+async function request<T>(path: string, { method = 'GET', body, signal }: RequestOptions = {}): Promise<T> {
   const headers: Record<string, string> = {};
   const token = getToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const esFormData = body instanceof FormData;
-  if (body !== undefined && !esFormData) headers['Content-Type'] = 'application/json';
+  const isFormData = body instanceof FormData;
+  if (body !== undefined && !isFormData) headers['Content-Type'] = 'application/json';
 
-  const res = await fetch(`${environment.apiUrl}${ruta}`, {
+  const res = await fetch(`${environment.apiUrl}${path}`, {
     method,
     headers,
     signal,
-    body: body === undefined ? undefined : esFormData ? body : JSON.stringify(body),
+    body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
   });
 
   if (!res.ok) {
-    let cuerpo: { message?: string } | null = null;
+    let responseBody: { message?: string } | null = null;
     try {
-      cuerpo = (await res.json()) as { message?: string };
+      responseBody = (await res.json()) as { message?: string };
     } catch {
     }
-    throw new ApiError(res.status, cuerpo);
+    throw new ApiError(res.status, responseBody);
   }
 
   if (res.status === 204) return undefined as T;
-  const texto = await res.text();
-  return (texto ? JSON.parse(texto) : undefined) as T;
+  const text = await res.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }
 
 export const http = {
-  get: <T>(ruta: string, signal?: AbortSignal) => request<T>(ruta, { signal }),
-  post: <T>(ruta: string, body?: unknown) => request<T>(ruta, { method: 'POST', body }),
-  patch: <T>(ruta: string, body?: unknown) => request<T>(ruta, { method: 'PATCH', body }),
-  delete: <T>(ruta: string) => request<T>(ruta, { method: 'DELETE' }),
+  get: <T>(path: string, signal?: AbortSignal) => request<T>(path, { signal }),
+  post: <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body }),
+  patch: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };

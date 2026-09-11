@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { datasetsService } from '../../core/services/datasets.service';
-import { mensajeDeError } from '../../core/api/http';
+import { errorMessage } from '../../core/api/http';
 import type {
   Dataset,
   DatasetVisibility,
@@ -34,15 +34,15 @@ export function useDatasetCreate() {
   useEffect(() => {
     const revisionOfId = searchParams.get('revisionOf');
     if (!revisionOfId) return;
-    let vigente = true;
+    let active = true;
     (async () => {
       const original = await datasetsService.get(organizationId, revisionOfId);
-      if (!vigente) return;
+      if (!active) return;
       setRevisionOf(original);
       setTitle(`${original.title} (revisión)`);
     })();
     return () => {
-      vigente = false;
+      active = false;
     };
   }, [organizationId, searchParams]);
 
@@ -74,7 +74,7 @@ export function useDatasetCreate() {
       });
       navigate(`/organizations/${organizationId}/datasets/${dataset.id}`);
     } catch (err) {
-      setError(mensajeDeError(err, 'No se pudo crear el dataset (¿el slug ya existe?).'));
+      setError(errorMessage(err, 'No se pudo crear el dataset (¿el slug ya existe?).'));
     } finally {
       setSaving(false);
     }
@@ -85,7 +85,7 @@ export function useDatasetCreate() {
     saving,
     error,
     revisionOf,
-    campos: {
+    fields: {
       title,
       setTitle,
       slug,

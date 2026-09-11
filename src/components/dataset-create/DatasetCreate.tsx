@@ -10,18 +10,18 @@ import { useDatasetCreate } from './useDatasetCreate';
 import './dataset-create.scss';
 
 export function DatasetCreate() {
-  const { organizationId, saving, error, revisionOf, campos, submit } = useDatasetCreate();
+  const { organizationId, saving, error, revisionOf, fields, submit } = useDatasetCreate();
 
   return (
     <div className="c-dataset-create">
-      <div className="pagina">
-        <Link to={`/organizations/${organizationId}`} className="volver">
+      <div className="page">
+        <Link to={`/organizations/${organizationId}`} className="back">
           &larr; Organización
         </Link>
 
         <h1>Nuevo dataset</h1>
         {revisionOf && (
-          <p className="nota-revision">
+          <p className="revision-note">
             Esta es una <strong>revisión</strong> de <strong>{revisionOf.title}</strong> (v
             {revisionOf.revision}).
           </p>
@@ -35,8 +35,8 @@ export function DatasetCreate() {
             <input
               id="title"
               type="text"
-              value={campos.title}
-              onChange={(e) => campos.setTitle(e.target.value)}
+              value={fields.title}
+              onChange={(e) => fields.setTitle(e.target.value)}
               name="title"
               placeholder="Ej: ENIGH 2024 — Encuesta Nacional de Ingresos y Gastos"
             />
@@ -45,8 +45,8 @@ export function DatasetCreate() {
             <input
               id="slug"
               type="text"
-              value={campos.slug}
-              onChange={(e) => campos.setSlug(e.target.value)}
+              value={fields.slug}
+              onChange={(e) => fields.setSlug(e.target.value)}
               name="slug"
               placeholder="ej. enigh_2024_v1"
             />
@@ -55,8 +55,8 @@ export function DatasetCreate() {
             <textarea
               id="description"
               rows={3}
-              value={campos.description}
-              onChange={(e) => campos.setDescription(e.target.value)}
+              value={fields.description}
+              onChange={(e) => fields.setDescription(e.target.value)}
               name="description"
               placeholder="Qué contiene el dataset, metodología, fuente y notas relevantes."
             />
@@ -68,8 +68,8 @@ export function DatasetCreate() {
             <label htmlFor="survey">Programa / Encuesta</label>
             <select
               id="survey"
-              value={campos.survey}
-              onChange={(e) => campos.setSurvey(e.target.value as Survey | '')}
+              value={fields.survey}
+              onChange={(e) => fields.setSurvey(e.target.value as Survey | '')}
               name="survey"
             >
               <option value="">— Selecciona —</option>
@@ -86,8 +86,8 @@ export function DatasetCreate() {
               type="number"
               min="1990"
               max="2099"
-              value={campos.year}
-              onChange={(e) => campos.setYear(e.target.value)}
+              value={fields.year}
+              onChange={(e) => fields.setYear(e.target.value)}
               name="year"
               placeholder="2024"
             />
@@ -95,8 +95,8 @@ export function DatasetCreate() {
             <label htmlFor="periodType">Tipo de periodo</label>
             <select
               id="periodType"
-              value={campos.periodType}
-              onChange={(e) => campos.setPeriodType(e.target.value as PeriodType | '')}
+              value={fields.periodType}
+              onChange={(e) => fields.setPeriodType(e.target.value as PeriodType | '')}
               name="periodType"
             >
               <option value="">— Selecciona —</option>
@@ -115,8 +115,8 @@ export function DatasetCreate() {
             <input
               id="sourceOrg"
               type="text"
-              value={campos.sourceOrg}
-              onChange={(e) => campos.setSourceOrg(e.target.value)}
+              value={fields.sourceOrg}
+              onChange={(e) => fields.setSourceOrg(e.target.value)}
               name="sourceOrg"
               placeholder="Ej: INEGI, CONEVAL, SEP. Vacío si es interno."
             />
@@ -125,8 +125,8 @@ export function DatasetCreate() {
             <input
               id="sourceUrl"
               type="url"
-              value={campos.sourceUrl}
-              onChange={(e) => campos.setSourceUrl(e.target.value)}
+              value={fields.sourceUrl}
+              onChange={(e) => fields.setSourceUrl(e.target.value)}
               name="sourceUrl"
               placeholder="https://www.inegi.org.mx/programas/enigh/2024/"
             />
@@ -135,8 +135,8 @@ export function DatasetCreate() {
             <input
               id="tags"
               type="text"
-              value={campos.tagsText}
-              onChange={(e) => campos.setTagsText(e.target.value)}
+              value={fields.tagsText}
+              onChange={(e) => fields.setTagsText(e.target.value)}
               name="tags"
               placeholder="encuesta, hogares, ingreso"
             />
@@ -145,8 +145,8 @@ export function DatasetCreate() {
             <input
               id="licenseId"
               type="text"
-              value={campos.licenseId}
-              onChange={(e) => campos.setLicenseId(e.target.value)}
+              value={fields.licenseId}
+              onChange={(e) => fields.setLicenseId(e.target.value)}
               name="licenseId"
               placeholder="Ej: cc-by, cc0"
             />
@@ -159,8 +159,8 @@ export function DatasetCreate() {
               <textarea
                 id="changelog"
                 rows={2}
-                value={campos.changelog}
-                onChange={(e) => campos.setChangelog(e.target.value)}
+                value={fields.changelog}
+                onChange={(e) => fields.setChangelog(e.target.value)}
                 name="changelog"
                 placeholder="Ej: Corrección en columna ingreso_mensual."
               />
@@ -172,8 +172,8 @@ export function DatasetCreate() {
             <label htmlFor="visibility">Visibilidad</label>
             <select
               id="visibility"
-              value={campos.visibility}
-              onChange={(e) => campos.setVisibility(e.target.value as DatasetVisibility)}
+              value={fields.visibility}
+              onChange={(e) => fields.setVisibility(e.target.value as DatasetVisibility)}
               name="visibility"
             >
               <option value="PRIVATE">Privado</option>
@@ -181,13 +181,13 @@ export function DatasetCreate() {
             </select>
           </fieldset>
 
-          {error && <p className="ayuda-error">{error}</p>}
+          {error && <p className="error-hint">{error}</p>}
 
-          <div className="form-acciones">
-            <Link className="boton boton-secundario" to={`/organizations/${organizationId}`}>
+          <div className="form-actions">
+            <Link className="button button-secondary" to={`/organizations/${organizationId}`}>
               Cancelar
             </Link>
-            <button type="submit" className="boton boton-primario" disabled={saving}>
+            <button type="submit" className="button button-primary" disabled={saving}>
               {saving ? 'Creando…' : 'Crear dataset'}
             </button>
           </div>

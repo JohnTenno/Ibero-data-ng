@@ -9,16 +9,16 @@ export function Home() {
 
   return (
     <div className="c-home">
-      <div className="inicio">
-        <p className="migaja"></p>
+      <div className="home">
+        <p className="crumb"></p>
         <h1>Inicio</h1>
-        <p className="subtitulo">
+        <p className="subtitle">
           Banco de bases de datos de Social Data Ibero. Datasets abiertos y privados, con acceso
           programático vía DuckDB.
         </p>
 
-        <section className="seccion seccion-como" aria-labelledby="inicio-como-funciona">
-          <div className="banda-contenido">
+        <section className="section section-how" aria-labelledby="inicio-como-funciona">
+          <div className="content-band">
             <h2 id="inicio-como-funciona">Cómo funciona</h2>
             <ul>
               <li>
@@ -32,47 +32,47 @@ export function Home() {
           </div>
         </section>
 
-        <section className="seccion seccion-accesos" aria-labelledby="inicio-accesos">
-          <h2 id="inicio-accesos" className="seccion-subtitulo">
+        <section className="section section-shortcuts" aria-labelledby="inicio-accesos">
+          <h2 id="inicio-accesos" className="section-subtitle">
             Accesos rápidos
           </h2>
-          <div className="tarjetas-acceso">
-            <Link to="/datasets" className="tarjeta-acceso">
+          <div className="access-cards">
+            <Link to="/datasets" className="access-card">
               <Icon name="layers" size={24} />
-              <p className="titulo">Conjuntos de datos</p>
-              <p className="descripcion">Explora, filtra y agrega datasets del catálogo.</p>
-              <p className="dato">{totalDatasets} conjuntos</p>
+              <p className="title">Conjuntos de datos</p>
+              <p className="description">Explora, filtra y agrega datasets del catálogo.</p>
+              <p className="datum">{totalDatasets} conjuntos</p>
             </Link>
-            <Link to="/organizations" className="tarjeta-acceso">
+            <Link to="/organizations" className="access-card">
               <Icon name="users" size={24} />
-              <p className="titulo">Organizaciones</p>
-              <p className="descripcion">Consulta organizaciones, conjuntos y miembros.</p>
-              <p className="dato">{totalOrganizations} organizaciones</p>
+              <p className="title">Organizaciones</p>
+              <p className="description">Consulta organizaciones, conjuntos y miembros.</p>
+              <p className="datum">{totalOrganizations} organizaciones</p>
             </Link>
-            <Link to="/profile" className="tarjeta-acceso">
+            <Link to="/profile" className="access-card">
               <Icon name="user" size={24} />
-              <p className="titulo">Configuración de perfil</p>
-              <p className="descripcion">Actualiza tus datos, imagen y contraseña.</p>
-              <p className="dato">Datos de tu cuenta</p>
+              <p className="title">Configuración de perfil</p>
+              <p className="description">Actualiza tus datos, imagen y contraseña.</p>
+              <p className="datum">Datos de tu cuenta</p>
             </Link>
           </div>
         </section>
 
         {!loading && (
-          <section className="seccion recientes" aria-label="Contenido reciente">
-            <div className="columna">
-              <div className="columna-header">
+          <section className="section recent" aria-label="Contenido reciente">
+            <div className="column">
+              <div className="column-header">
                 <h2>Conjuntos de datos recientes</h2>
                 <Link to="/datasets">Ver todos</Link>
               </div>
-              {recentDatasets.length === 0 && <p className="vacio">Todavía no hay datasets.</p>}
+              {recentDatasets.length === 0 && <p className="empty">Todavía no hay datasets.</p>}
               {recentDatasets.map((dataset) => (
                 <Link
                   key={dataset.id}
-                  className="tarjeta-dataset"
+                  className="dataset-card"
                   to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
                 >
-                  <p className="titulo">{dataset.title}</p>
+                  <p className="title">{dataset.title}</p>
                   <span className="chip">{dataset.visibility}</span>
                   {dataset.organization && (
                     <p className="meta">
@@ -83,20 +83,20 @@ export function Home() {
               ))}
             </div>
 
-            <div className="divisor"></div>
+            <div className="divider"></div>
 
-            <div className="columna">
-              <div className="columna-header">
+            <div className="column">
+              <div className="column-header">
                 <h2>Organizaciones recientes</h2>
                 <Link to="/organizations">Ver todas</Link>
               </div>
               {recentOrganizations.length === 0 && (
-                <p className="vacio">Todavía no hay organizaciones.</p>
+                <p className="empty">Todavía no hay organizaciones.</p>
               )}
               {recentOrganizations.map((org) => (
-                <Link key={org.id} className="tarjeta-org" to={`/organizations/${org.id}`}>
-                  <div className="tarjeta-org-cuerpo">
-                    <p className="titulo">{org.name}</p>
+                <Link key={org.id} className="org-card" to={`/organizations/${org.id}`}>
+                  <div className="org-card-body">
+                    <p className="title">{org.name}</p>
                     {org.description && <p className="meta">{org.description}</p>}
                     <p className="stats">
                       <span>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { resourcesService } from '../../core/services/resources.service';
 import { datasetsService } from '../../core/services/datasets.service';
 import { intermediarioService } from '../../core/services/intermediario.service';
-import { mensajeDeError } from '../../core/api/http';
+import { errorMessage } from '../../core/api/http';
 import type { Resource } from '../../core/models/resource.model';
 import type { Dataset } from '../../core/models/dataset.model';
 import type { Analysis } from '../../core/models/analysis.model';
@@ -51,9 +51,9 @@ export function useDatasetDetail() {
   const reloadResources = useCallback(async () => {
     setLoadingResources(true);
     try {
-      const lista = await resourcesService.list(organizationId, datasetId);
-      setResources(lista);
-      setSelectedResourceId((actual) => actual || (lista.length > 0 ? lista[0].id : ''));
+      const list = await resourcesService.list(organizationId, datasetId);
+      setResources(list);
+      setSelectedResourceId((current) => current || (list.length > 0 ? list[0].id : ''));
     } finally {
       setLoadingResources(false);
     }
@@ -95,7 +95,7 @@ export function useDatasetDetail() {
       setIntermediarioSurveys(await intermediarioService.catalog(organizationId, datasetId));
     } catch (err) {
       setIntermediarioError(
-        mensajeDeError(
+        errorMessage(
           err,
           'No se pudo conectar con el intermediario (sectei-intermediario). ¿Está corriendo?',
         ),
@@ -116,7 +116,7 @@ export function useDatasetDetail() {
       });
       await reloadResources();
     } catch (err) {
-      setIntermediarioError(mensajeDeError(err, 'No se pudo importar la encuesta.'));
+      setIntermediarioError(errorMessage(err, 'No se pudo importar la encuesta.'));
     } finally {
       setImportingKey(null);
     }
@@ -136,7 +136,7 @@ export function useDatasetDetail() {
       });
       await reloadResources();
     } catch (err) {
-      setIntermediarioError(mensajeDeError(err, 'No se pudo importar ese año.'));
+      setIntermediarioError(errorMessage(err, 'No se pudo importar ese año.'));
     } finally {
       setImportingKey(null);
     }
@@ -154,7 +154,7 @@ export function useDatasetDetail() {
       );
       window.location.href = url;
     } catch (err) {
-      setVizCanvasError(mensajeDeError(err, 'No se pudo abrir en VizCanvas.'));
+      setVizCanvasError(errorMessage(err, 'No se pudo abrir en VizCanvas.'));
       setOpeningVizCanvas(false);
     }
   };

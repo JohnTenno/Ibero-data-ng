@@ -1,15 +1,15 @@
 .c-dataset-create {
-  .pagina {
-    --campo-etiqueta-color: var(--color-secundario-8, #444);
-    --campo-fondo: var(--fondo, #fff);
-    --campo-borde: var(--borde, #e4e4e7);
-    --campo-color: var(--tinta, #18181b);
-    --campo-cursor-fondo: var(--color-secundario-2, #f5f5f5);
-    --campo-cursor-borde: var(--color-secundario-8, #444);
-    --campo-enfoque-fondo: var(--fondo, #fff);
-    --campo-enfoque-borde: var(--estado-enfoque, #005dff);
-    --campo-enfoque-sombra: var(--estado-enfoque, #005dff);
-    --campo-ejemplo-color: var(--color-neutro-4, #767677);
+  .page {
+    --field-label-color: var(--color-secondary-8, #444);
+    --field-bg: var(--bg, #fff);
+    --field-border: var(--border, #e4e4e7);
+    --field-color: var(--ink, #18181b);
+    --field-hover-bg: var(--color-secondary-2, #f5f5f5);
+    --field-hover-border: var(--color-secondary-8, #444);
+    --field-focus-bg: var(--bg, #fff);
+    --field-focus-border: var(--state-focus, #005dff);
+    --field-focus-shadow: var(--state-focus, #005dff);
+    --field-placeholder-color: var(--color-neutral-4, #767677);
 
     max-width: 40rem; 
     margin: 0 auto;
@@ -20,7 +20,7 @@
     padding-bottom: 2.5rem; 
   }
 
-  .volver {
+  .back {
     display: inline-flex;
     align-items: center;
     align-self: flex-start;
@@ -28,37 +28,37 @@
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.3;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
 
-  .volver:hover {
+  .back:hover {
     text-decoration-thickness: 2px;
   }
 
-  .pagina > h1 {
+  .page > h1 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 500;
     line-height: 1.25;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
   }
 
   @media (min-width: 768px) {
-    .pagina > h1 {
+    .page > h1 {
       font-size: 2rem;
     }
   }
 
-  .nota-revision {
+  .revision-note {
     margin: 0;
     padding: 1rem 1.5rem; 
-    background: var(--fondo-acento, var(--fondo-sidebar));
+    background: var(--bg-accent, var(--bg-sidebar));
     border-radius: 8px;
     font-size: 0.875rem;
     line-height: 1.35;
-    color: var(--texto-secundario, var(--tinta-suave));
+    color: var(--text-secondary, var(--ink-soft));
   }
 
   form {
@@ -92,7 +92,7 @@
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.25;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
   }
 
   fieldset::after {
@@ -109,26 +109,26 @@
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.5;
-    color: var(--campo-etiqueta-color);
+    color: var(--field-label-color);
   }
 
   fieldset > label:first-of-type {
     margin-top: 0;
   }
 
-  .pagina input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
-  .pagina select,
-  .pagina textarea {
+  .page input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
+  .page select,
+  .page textarea {
     box-sizing: border-box;
     width: 100%;
     margin: 0;
-    font-family: var(--tipografia-familia, sans-serif);
+    font-family: var(--font-family, sans-serif);
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: var(--campo-color);
-    background-color: var(--campo-fondo);
-    border: 1px solid var(--campo-borde);
+    color: var(--field-color);
+    background-color: var(--field-bg);
+    border: 1px solid var(--field-border);
     border-radius: 8px;
     transition:
       background-color 0.27s ease-in-out,
@@ -136,48 +136,48 @@
       box-shadow 0.27s ease-in-out;
   }
 
-  .pagina input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
-  .pagina select {
+  .page input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit'], [type='reset']),
+  .page select {
     height: 40px;
     padding: 7px 16px; 
   }
 
-  .pagina textarea {
+  .page textarea {
     min-height: 5.5rem;
     padding: 0.75rem 1rem;
     resize: vertical;
   }
 
-  .pagina input:not(:disabled):hover,
-  .pagina select:not(:disabled):hover,
-  .pagina textarea:not(:disabled):hover {
-    background-color: var(--campo-cursor-fondo);
-    border-color: var(--campo-cursor-borde);
+  .page input:not(:disabled):hover,
+  .page select:not(:disabled):hover,
+  .page textarea:not(:disabled):hover {
+    background-color: var(--field-hover-bg);
+    border-color: var(--field-hover-border);
   }
 
-  .pagina input:not(:disabled):focus,
-  .pagina select:not(:disabled):focus,
-  .pagina textarea:not(:disabled):focus {
+  .page input:not(:disabled):focus,
+  .page select:not(:disabled):focus,
+  .page textarea:not(:disabled):focus {
     outline: none;
-    background-color: var(--campo-enfoque-fondo);
-    border-color: var(--campo-enfoque-borde);
-    box-shadow: 0 0 8px var(--campo-enfoque-sombra);
+    background-color: var(--field-focus-bg);
+    border-color: var(--field-focus-border);
+    box-shadow: 0 0 8px var(--field-focus-shadow);
   }
 
-  .pagina ::placeholder {
+  .page ::placeholder {
     font-style: italic;
-    color: var(--campo-ejemplo-color);
+    color: var(--field-placeholder-color);
     opacity: 1;
   }
 
-  .ayuda-error {
+  .error-hint {
     margin: 0 0 1rem;
     font-size: 0.875rem;
     line-height: 1.3;
     color: var(--error);
   }
 
-  .form-acciones {
+  .form-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -186,18 +186,18 @@
     margin-top: 0.5rem;
   }
 
-  .form-acciones .boton {
+  .form-actions .button {
     width: auto;
     margin: 0;
     flex: 0 0 auto;
   }
 
   @media (max-width: 40rem) {
-    .form-acciones {
+    .form-actions {
       justify-content: stretch;
     }
 
-    .form-acciones .boton {
+    .form-actions .button {
       flex: 1 1 auto;
     }
   }

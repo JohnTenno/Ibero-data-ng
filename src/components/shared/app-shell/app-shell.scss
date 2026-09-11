@@ -1,19 +1,19 @@
 .c-app-shell {
-  .cabecera {
+  .header-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid var(--borde);
-    background: var(--fondo);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
   }
 
-  .cabecera-logo {
+  .header-bar-logo {
     font-weight: 700;
     font-size: 1rem;
   }
 
-  .cabecera-usuario {
+  .header-bar-user {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -23,8 +23,8 @@
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    background: var(--tinta);
-    color: var(--fondo);
+    background: var(--ink);
+    color: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,23 +32,23 @@
     font-weight: 600;
   }
 
-  .cabecera-nombre {
+  .header-bar-name {
     font-size: 0.9rem;
-    color: var(--tinta-suave);
+    color: var(--ink-soft);
   }
 
-  .boton-icono {
+  .button-icon {
     border: none;
     background: transparent;
-    color: var(--tinta-suave);
+    color: var(--ink-soft);
     display: flex;
     align-items: center;
     padding: 0.3rem;
     border-radius: 6px;
   }
 
-  .boton-icono:hover {
-    background: var(--fondo-sidebar);
+  .button-icon:hover {
+    background: var(--bg-sidebar);
   }
 
   .shell {
@@ -57,24 +57,24 @@
     min-height: calc(100vh - 57px);
   }
 
-  .barra-lateral {
+  .sidebar {
     --nav-sec-color: #111111;
-    --nav-sec-fondo: #e6e6e6;
-    --nav-sec-cursor-color: #111111;
-    --nav-sec-cursor-fondo: #d0d0d0;
-    --nav-sec-cursor-borde: #444444;
-    --nav-sec-activo-color: #333333;
-    --nav-sec-activo-fondo: #ffffff;
-    --nav-sec-activo-borde: #333333;
-    --nav-sec-enfoque-color: #111111;
-    --nav-sec-enfoque-fondo: #d0d0d0;
-    --nav-sec-enfoque-borde: #005dff;
-    --nav-sec-enfoque-sombra: #005dff;
+    --nav-sec-bg: #e6e6e6;
+    --nav-sec-hover-color: #111111;
+    --nav-sec-hover-bg: #d0d0d0;
+    --nav-sec-hover-border: #444444;
+    --nav-sec-active-color: #333333;
+    --nav-sec-active-bg: #ffffff;
+    --nav-sec-active-border: #333333;
+    --nav-sec-focus-color: #111111;
+    --nav-sec-focus-bg: #d0d0d0;
+    --nav-sec-focus-border: #005dff;
+    --nav-sec-focus-shadow: #005dff;
 
     flex: 0 0 25%;
     max-width: 25%;
     min-width: 220px;
-    background: var(--nav-sec-fondo);
+    background: var(--nav-sec-bg);
     color: var(--nav-sec-color);
     padding: 1rem 0 2.5rem;
     display: flex;
@@ -82,17 +82,17 @@
     min-height: 100%;
   }
 
-  .menu-lateral-busqueda {
+  .sidebar-menu-search {
     padding: 1rem 1rem 0.75rem;
   }
 
-  .menu-lateral-vacio {
+  .sidebar-menu-empty {
     padding: 0.75rem 1.5rem 0.75rem 48px;
-    color: var(--texto-secundario, #5c5c5c);
+    color: var(--text-secondary, #5c5c5c);
     font-size: 0.9375rem;
   }
 
-  .nav-lateral ul {
+  .nav-sidebar ul {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -117,38 +117,38 @@
   }
 
   .nav-item:hover {
-    background: var(--nav-sec-cursor-fondo);
-    box-shadow: inset 0 0 0 1px var(--nav-sec-cursor-borde);
-    color: var(--nav-sec-cursor-color);
+    background: var(--nav-sec-hover-bg);
+    box-shadow: inset 0 0 0 1px var(--nav-sec-hover-border);
+    color: var(--nav-sec-hover-color);
   }
 
-  .nav-item.activo,
+  .nav-item.active,
   .nav-item:focus,
   .nav-item:active {
-    background: var(--nav-sec-activo-fondo);
-    box-shadow: inset 8px 0 0 var(--nav-sec-activo-borde);
-    color: var(--nav-sec-activo-color);
+    background: var(--nav-sec-active-bg);
+    box-shadow: inset 8px 0 0 var(--nav-sec-active-border);
+    color: var(--nav-sec-active-color);
     font-weight: 400;
     outline: none;
   }
 
   .nav-item:focus-visible {
-    background: var(--nav-sec-enfoque-fondo);
+    background: var(--nav-sec-focus-bg);
     box-shadow:
-      inset 0 0 0 1px var(--nav-sec-enfoque-borde),
-      0 0 8px var(--nav-sec-enfoque-sombra);
-    color: var(--nav-sec-enfoque-color);
+      inset 0 0 0 1px var(--nav-sec-focus-border),
+      0 0 8px var(--nav-sec-focus-shadow);
+    color: var(--nav-sec-focus-color);
     outline: none;
   }
 
-  .contenido {
+  .content {
     flex: 1;
     min-width: 0;
     padding: 2rem;
   }
 
   @media (max-width: 768px) {
-    .barra-lateral {
+    .sidebar {
       flex-basis: 220px;
       max-width: 220px;
       min-width: 0;
@@ -158,7 +158,7 @@
       padding-left: 24px;
     }
 
-    .cabecera-nombre {
+    .header-bar-name {
       display: none;
     }
   }

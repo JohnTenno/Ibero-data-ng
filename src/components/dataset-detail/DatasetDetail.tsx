@@ -33,14 +33,14 @@ export function DatasetDetail() {
 
   return (
     <div className="c-dataset-detail">
-      <div className="pagina">
-        <Link to={`/organizations/${organizationId}`} className="volver">
+      <div className="page">
+        <Link to={`/organizations/${organizationId}`} className="back">
           &larr; Datasets
         </Link>
 
         {dataset && (
           <section className="metadata">
-            <div className="metadata-etiquetas">
+            <div className="metadata-tags">
               <span className="chip">{dataset.visibility}</span>
               {dataset.survey && <span className="chip">{dataset.survey}</span>}
               {dataset.year && <span className="chip">{dataset.year}</span>}
@@ -48,9 +48,9 @@ export function DatasetDetail() {
               <span className="chip">v{dataset.revision}</span>
             </div>
             <h1>{dataset.title}</h1>
-            {dataset.description && <p className="descripcion">{dataset.description}</p>}
+            {dataset.description && <p className="description">{dataset.description}</p>}
 
-            <div className="metadata-detalle">
+            <div className="metadata-detail">
               {dataset.sourceOrg && (
                 <span>
                   <strong>Fuente:</strong> {dataset.sourceOrg}
@@ -69,7 +69,7 @@ export function DatasetDetail() {
             </div>
 
             {dataset.revisionOf && (
-              <p className="nota-version">
+              <p className="version-note">
                 Revisión de{' '}
                 <Link to={`/organizations/${organizationId}/datasets/${dataset.revisionOf.id}`}>
                   {dataset.revisionOf.title}
@@ -79,7 +79,7 @@ export function DatasetDetail() {
               </p>
             )}
             {dataset.supersededBy && (
-              <p className="nota-version alerta">
+              <p className="version-note alert">
                 ⚠ Hay una revisión más reciente:{' '}
                 <Link to={`/organizations/${organizationId}/datasets/${dataset.supersededBy.id}`}>
                   {dataset.supersededBy.title}
@@ -89,7 +89,7 @@ export function DatasetDetail() {
             )}
             {!dataset.supersededBy && (
               <Link
-                className="boton boton-secundario"
+                className="button button-secondary"
                 to={`/organizations/${organizationId}/datasets/new?revisionOf=${dataset.id}`}
               >
                 Crear revisión de este dataset
@@ -101,8 +101,8 @@ export function DatasetDetail() {
         <section>
           <h2>Subir archivo Parquet</h2>
           <input type="file" accept=".parquet" onChange={onFileSelected} disabled={uploading} />
-          {uploading && <p className="nota">Subiendo…</p>}
-          {uploadError && <p className="ayuda-error">{uploadError}</p>}
+          {uploading && <p className="note">Subiendo…</p>}
+          {uploadError && <p className="error-hint">{uploadError}</p>}
         </section>
 
         <section>
@@ -126,20 +126,20 @@ export function DatasetDetail() {
               </select>
               <button
                 type="button"
-                className="boton boton-secundario"
+                className="button button-secondary"
                 onClick={openInVizCanvas}
                 disabled={openingVizCanvas || !selectedResourceId}
               >
                 {openingVizCanvas ? 'Abriendo…' : 'Abrir en VizCanvas'}
               </button>
-              {vizCanvasError && <p className="ayuda-error">{vizCanvasError}</p>}
+              {vizCanvasError && <p className="error-hint">{vizCanvasError}</p>}
             </>
           )}
         </section>
 
         <section>
           <h2>Importar desde el intermediario</h2>
-          <p className="nota">
+          <p className="note">
             Trae la vista armonizada del armonizador de encuestas (<code>sectei-intermediario</code>)
             como un recurso nuevo de este dataset.
           </p>
@@ -147,7 +147,7 @@ export function DatasetDetail() {
           {intermediarioSurveys === null && (
             <button
               type="button"
-              className="boton boton-secundario"
+              className="button button-secondary"
               onClick={loadIntermediarioCatalog}
               disabled={loadingIntermediario}
             >
@@ -155,21 +155,21 @@ export function DatasetDetail() {
             </button>
           )}
 
-          {intermediarioError && <p className="ayuda-error">{intermediarioError}</p>}
+          {intermediarioError && <p className="error-hint">{intermediarioError}</p>}
 
           {intermediarioSurveys !== null &&
             (intermediarioSurveys.length === 0 ? (
-              <p className="nota">Todavía no hay encuestas cargadas en el intermediario.</p>
+              <p className="note">Todavía no hay encuestas cargadas en el intermediario.</p>
             ) : (
-              <ul className="lista-intermediario">
+              <ul className="intermediary-list">
                 {intermediarioSurveys.map((survey) => (
                   <li key={survey.id}>
-                    <div className="fila-intermediario">
+                    <div className="intermediary-row">
                       <strong>{survey.name}</strong>
-                      {survey.description && <span className="nota">— {survey.description}</span>}
+                      {survey.description && <span className="note">— {survey.description}</span>}
                       <button
                         type="button"
-                        className="boton boton-secundario boton-chico"
+                        className="button button-secondary button-small"
                         onClick={() => void importSurvey(survey)}
                         disabled={
                           importingKey === `survey-${survey.id}` || survey.datasets.length === 0
@@ -181,7 +181,7 @@ export function DatasetDetail() {
                       </button>
                     </div>
                     {survey.datasets.length > 0 && (
-                      <ul className="lista-anios">
+                      <ul className="year-list">
                         {survey.datasets.map((ds) => (
                           <li key={ds.id}>
                             <span>
@@ -190,7 +190,7 @@ export function DatasetDetail() {
                             </span>
                             <button
                               type="button"
-                              className="boton boton-secundario boton-chico"
+                              className="button button-secondary button-small"
                               onClick={() => void importDataset(survey, ds)}
                               disabled={importingKey === `dataset-${ds.id}`}
                             >

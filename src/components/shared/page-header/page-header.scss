@@ -1,41 +1,41 @@
 .c-page-header {
   .page-header {
     width: 100%;
-    background-color: var(--fondo-acento);
+    background-color: var(--bg-accent);
     box-sizing: border-box;
   }
 
-  .page-header__marco {
+  .page-header__frame {
     width: 100%;
     max-width: 72rem;
     margin: 0 auto;
     padding: 1.5rem 1.5rem;
   }
 
-  .page-header__migas {
+  .page-header__crumbs {
     margin: 0 0 1.5rem;
     font-size: 0.875rem;
     line-height: 1.4;
-    color: var(--texto-secundario);
+    color: var(--text-secondary);
   }
 
-  .page-header__migas a {
-    color: var(--color-secundario-9);
+  .page-header__crumbs a {
+    color: var(--color-secondary-9);
     text-decoration: none;
   }
 
-  .page-header__migas a:hover,
-  .page-header__migas a:focus-visible {
-    color: var(--color-secundario-12);
+  .page-header__crumbs a:hover,
+  .page-header__crumbs a:focus-visible {
+    color: var(--color-secondary-12);
     text-decoration: underline;
   }
 
-  .page-header__migas strong {
-    color: var(--color-secundario-12);
+  .page-header__crumbs strong {
+    color: var(--color-secondary-12);
     font-weight: 500;
   }
 
-  .page-header__fila {
+  .page-header__row {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
@@ -44,21 +44,21 @@
     text-align: left;
   }
 
-  .page-header__texto {
+  .page-header__text {
     flex: 1 1 16rem;
     min-width: 0;
     max-width: 40rem;
   }
 
-  .page-header__titulo {
+  .page-header__title {
     margin: 0 0 1.5rem;
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--color-secundario-12);
+    color: var(--color-secondary-12);
   }
 
-  .page-header__texto .page-header__titulo:last-child {
+  .page-header__text .page-header__title:last-child {
     margin-bottom: 0;
   }
 
@@ -66,10 +66,10 @@
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
-    color: var(--color-secundario-12);
+    color: var(--color-secondary-12);
   }
 
-  .page-header__accion {
+  .page-header__action {
     flex: 0 0 auto;
     display: flex;
     align-items: flex-start;
@@ -77,19 +77,19 @@
   }
 
   @media (max-width: 40rem) {
-    .page-header__migas {
+    .page-header__crumbs {
       display: none;
     }
 
-    .page-header__fila {
+    .page-header__row {
       align-items: stretch;
     }
 
-    .page-header__accion {
+    .page-header__action {
       width: 100%;
     }
 
-    .page-header__accion :is(a, button) {
+    .page-header__action :is(a, button) {
       width: 100%;
       justify-content: center;
     }

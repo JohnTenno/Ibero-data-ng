@@ -8,7 +8,7 @@ import {
   type MouseEvent,
 } from 'react';
 import { analysesService } from '../../core/services/analyses.service';
-import { mensajeDeError } from '../../core/api/http';
+import { errorMessage } from '../../core/api/http';
 import type {
   Analysis,
   OpCatalog,
@@ -34,7 +34,7 @@ export const AGG_FUNCS = ['SUM', 'AVG', 'COUNT', 'MIN', 'MAX', 'MEDIAN'];
 export const OPERATORS = ['=', '!=', '<', '<=', '>', '>='];
 export const JOIN_TYPES = ['inner', 'left'];
 
-const PARAMS_POR_DEFECTO: Record<OpName, Record<string, unknown>> = {
+const DEFAULT_PARAMS: Record<OpName, Record<string, unknown>> = {
   join: { resourceId: '', alias: '', type: 'inner', onLeft: '', onRight: '' },
   group_by: { columns: [] },
   aggregate: { func: 'SUM', column: '', as: '', distinct: false },
@@ -45,7 +45,7 @@ const PARAMS_POR_DEFECTO: Record<OpName, Record<string, unknown>> = {
   limit: { n: 100 },
 };
 
-export interface OpcionesAnalysisBuilder {
+export interface AnalysisBuilderOptions {
   organizationId: string;
   datasetId: string;
   resourceId: string;
@@ -63,7 +63,7 @@ export function useAnalysisBuilder({
   datasetResources = [],
   editingAnalysis = null,
   onEditingConsumed,
-}: OpcionesAnalysisBuilder) {
+}: AnalysisBuilderOptions) {
   const [opCatalog, setOpCatalog] = useState<OpCatalog | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [newOp, setNewOp] = useState<OpName>('group_by');
@@ -108,10 +108,10 @@ export function useAnalysisBuilder({
     void reloadAnalyses();
   }, [organizationId, datasetId, reloadAnalyses]);
 
-  const primerRender = useRef(true);
+  const firstRender = useRef(true);
   useEffect(() => {
-    if (primerRender.current) {
-      primerRender.current = false;
+    if (firstRender.current) {
+      firstRender.current = false;
       return;
     }
     setSteps([]);
@@ -172,33 +172,33 @@ export function useAnalysisBuilder({
     [steps],
   );
 
-  const setParam = useCallback((index: number, clave: string, valor: unknown) => {
-    setSteps((previos) =>
-      previos.map((step, i) =>
-        i === index ? { ...step, params: { ...step.params, [clave]: valor } } : step,
+  const setParam = useCallback((index: number, key: string, value: unknown) => {
+    setSteps((previous) =>
+      previous.map((step, i) =>
+        i === index ? { ...step, params: { ...step.params, [key]: value } } : step,
       ),
     );
   }, []);
 
-  const onJoinResourceChange = (index: number, step: Step, nuevoResourceId: string) => {
-    const recurso = datasetResources.find((r) => r.id === nuevoResourceId);
+  const onJoinResourceChange = (index: number, step: Step, newResourceId: string) => {
+    const resource = datasetResources.find((r) => r.id === newResourceId);
     const alias =
       step.params['alias'] ||
-      (recurso ? recurso.filename.replace(/\.[^./]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_') : '');
-    setSteps((previos) =>
-      previos.map((s, i) =>
-        i === index ? { ...s, params: { ...s.params, resourceId: nuevoResourceId, alias } } : s,
+      (resource ? resource.filename.replace(/\.[^./]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_') : '');
+    setSteps((previous) =>
+      previous.map((s, i) =>
+        i === index ? { ...s, params: { ...s.params, resourceId: newResourceId, alias } } : s,
       ),
     );
   };
 
   const addStep = () => {
-    setSteps((previos) => [...previos, { op: newOp, params: { ...PARAMS_POR_DEFECTO[newOp] } }]);
+    setSteps((previous) => [...previous, { op: newOp, params: { ...DEFAULT_PARAMS[newOp] } }]);
     setPreviewResult(null);
   };
 
   const removeStep = (index: number) => {
-    setSteps((previos) => previos.filter((_, i) => i !== index));
+    setSteps((previous) => previous.filter((_, i) => i !== index));
     setPreviewResult(null);
   };
 
@@ -229,7 +229,7 @@ export function useAnalysisBuilder({
         ),
       );
     } catch (err) {
-      setPreviewError(mensajeDeError(err, 'El preview falló.'));
+      setPreviewError(errorMessage(err, 'El preview falló.'));
     } finally {
       setPreviewing(false);
     }
@@ -277,7 +277,7 @@ export function useAnalysisBuilder({
       await reloadAnalyses();
     } catch (err) {
       setSaveError(
-        mensajeDeError(
+        errorMessage(
           err,
           editingAnalysisId
             ? 'No se pudo actualizar el análisis.'
@@ -314,7 +314,7 @@ export function useAnalysisBuilder({
       );
       window.location.href = url;
     } catch (err) {
-      setVizCanvasError(mensajeDeError(err, 'No se pudo abrir en VizCanvas.'));
+      setVizCanvasError(errorMessage(err, 'No se pudo abrir en VizCanvas.'));
       setOpeningVizCanvasId(null);
     }
   };
@@ -334,7 +334,7 @@ export function useAnalysisBuilder({
       }
       await reloadAnalyses();
     } catch (err) {
-      setVizCanvasError(mensajeDeError(err, 'No se pudo borrar el análisis.'));
+      setVizCanvasError(errorMessage(err, 'No se pudo borrar el análisis.'));
     } finally {
       setRemovingId(null);
     }
@@ -370,7 +370,7 @@ export function useAnalysisBuilder({
     editingAnalysisId,
     cancelEdit,
     save,
-    formulario: {
+    form: {
       title,
       setTitle,
       slug,

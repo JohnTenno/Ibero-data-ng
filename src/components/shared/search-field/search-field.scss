@@ -1,0 +1,169 @@
+.c-search-field {
+  & {
+    --field-bg: var(--bg, #fff);
+    --field-color: var(--ink, #141414);
+    --field-border: var(--color-secondary-8, #444444);
+    --field-hover-bg: var(--color-secondary-2, #f5f5f5);
+    --field-hover-border: var(--color-secondary-8, #444444);
+    --field-focus-bg: var(--color-secondary-2, #f5f5f5);
+    --field-focus-border: var(--state-focus, #005dff);
+    --field-focus-shadow: var(--state-focus, #005dff);
+    --field-disabled-bg: var(--color-neutral-2, #ddd);
+    --field-disabled-border: var(--color-neutral-3, #aaa);
+    --field-disabled-color: var(--color-neutral-4, #767677);
+    --button-bare-secondary-color: var(--color-secondary-8, #444444);
+    --button-bare-secondary-hover-bg: var(--color-secondary-4, #d0d0d0);
+    --button-bare-secondary-hover-border: var(--color-secondary-4, #d0d0d0);
+    --button-bare-secondary-hover-color: var(--color-secondary-8, #444444);
+    --button-bare-secondary-focus-bg: var(--color-secondary-4, #d0d0d0);
+    --button-bare-secondary-focus-border: var(--state-focus, #005dff);
+    --button-bare-secondary-focus-color: var(--color-secondary-8, #444444);
+    --button-bare-secondary-focus-shadow: var(--state-focus, #005dff);
+
+    display: block;
+  }
+
+  .a11y-sr-only {
+    clip: rect(0 0 0 0);
+    clip-path: inset(100%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .search-field {
+    display: flex;
+    position: relative;
+  }
+
+  .search-field-input {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    height: auto;
+    margin: 0;
+    border: 1px solid var(--field-border);
+    border-radius: 8px 0 0 8px;
+    padding: 7px 48px 7px 16px;
+    background-color: var(--field-bg);
+    color: var(--field-color);
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.25;
+    transition: all 0.27s ease-in-out;
+  }
+
+  .search-field-input::-webkit-search-decoration,
+  .search-field-input::-webkit-search-cancel-button,
+  .search-field-input::-webkit-search-results-button,
+  .search-field-input::-webkit-search-results-decoration {
+    display: none;
+  }
+
+  .search-field-input:not(:disabled):hover {
+    background-color: var(--field-hover-bg);
+    border-color: var(--field-hover-border);
+  }
+
+  .search-field-input:not(:disabled):focus {
+    background-color: var(--field-focus-bg);
+    border-color: var(--field-focus-border);
+    box-shadow: 0 0 8px var(--field-focus-shadow);
+    outline: none;
+  }
+
+  .search-field-input:disabled {
+    background-color: var(--field-disabled-bg);
+    border-color: var(--field-disabled-border);
+    color: var(--field-disabled-color);
+  }
+
+  .button {
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25em;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.27s ease-in-out;
+  }
+
+  .button:disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .button-pictogram {
+    padding: 4px;
+  }
+
+  .button-primary {
+    background-color: var(--button-primary-bg);
+    box-shadow: inset 0 0 0 1px var(--button-primary-border);
+    color: var(--button-primary-color);
+  }
+
+  .button-primary:hover {
+    background-color: var(--button-primary-hover-bg);
+    box-shadow: inset 0 0 0 1px var(--button-primary-hover-border);
+  }
+
+  .button-primary:focus-visible {
+    background-color: var(--button-primary-focus-bg);
+    box-shadow:
+      inset 0 0 0 1px var(--button-primary-focus-border),
+      0 0 0 2px var(--button-primary-focus-outline),
+      0 0 8px var(--button-primary-focus-shadow);
+    outline: none;
+  }
+
+  .button-bare-secondary {
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--button-bare-secondary-color);
+  }
+
+  .button-bare-secondary:hover {
+    background-color: var(--button-bare-secondary-hover-bg);
+    box-shadow: inset 0 0 0 1px var(--button-bare-secondary-hover-border);
+    color: var(--button-bare-secondary-hover-color);
+  }
+
+  .button-bare-secondary:focus-visible {
+    background-color: var(--button-bare-secondary-focus-bg);
+    box-shadow:
+      inset 0 0 0 1px var(--button-bare-secondary-focus-border),
+      0 0 8px var(--button-bare-secondary-focus-shadow);
+    color: var(--button-bare-secondary-focus-color);
+    outline: none;
+  }
+
+  .search-field-clear {
+    position: absolute;
+    top: 4px;
+    right: 56px;
+    margin: 8px;
+  }
+
+  .search-field-submit {
+    flex-shrink: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 16px;
+  }
+
+}

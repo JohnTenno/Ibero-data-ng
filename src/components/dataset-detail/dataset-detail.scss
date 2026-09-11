@@ -1,5 +1,5 @@
 .c-dataset-detail {
-  .pagina {
+  .page {
     max-width: 45rem;
     margin: 0 auto;
     display: flex;
@@ -8,7 +8,7 @@
     padding-bottom: 2rem;
   }
 
-  .pagina > section {
+  .page > section {
     margin: 0;
     width: 100%;
     display: flex;
@@ -17,39 +17,39 @@
     gap: 0.75rem;
   }
 
-  .pagina > section > h2 {
+  .page > section > h2 {
     margin: 0 0 0.25rem;
     font-size: 1.25rem;
     font-weight: 600;
     line-height: 1.3;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
   }
 
-  .pagina > section > .boton,
-  .pagina > section > p,
-  .pagina > section > select,
-  .pagina > section > input[type='file'] {
+  .page > section > .button,
+  .page > section > p,
+  .page > section > select,
+  .page > section > input[type='file'] {
     margin: 0;
   }
 
-  .pagina > section > p {
+  .page > section > p {
     font-size: 0.9375rem;
     line-height: 1.45;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
   }
 
-  .pagina > section > .ayuda-error {
+  .page > section > .error-hint {
     color: var(--error);
   }
 
-  .pagina select {
+  .page select {
     display: block;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
 
-  .pagina input[type='file'] {
+  .page input[type='file'] {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -57,11 +57,11 @@
     padding: 0.5rem 0.75rem;
   }
 
-  .pagina > section > .boton {
+  .page > section > .button {
     align-self: flex-start;
   }
 
-  .volver {
+  .back {
     display: inline-flex;
     align-items: center;
     align-self: flex-start;
@@ -69,38 +69,38 @@
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.3;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
 
-  .volver:hover {
-    color: var(--color-secundario-12, #111);
+  .back:hover {
+    color: var(--color-secondary-12, #111);
     text-decoration-thickness: 2px;
   }
 
-  .nota {
+  .note {
     margin: 0;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
     font-size: 0.875rem;
     line-height: 1.4;
   }
 
-  .nota code,
-  .pagina code {
-    font-family: var(--tipografia-codigo, ui-monospace, monospace);
+  .note code,
+  .page code {
+    font-family: var(--font-mono, ui-monospace, monospace);
     font-size: 0.875em;
     padding: 0.1em 0.3em;
     border-radius: 4px;
-    background: var(--fondo-acento, var(--fondo-sidebar));
+    background: var(--bg-accent, var(--bg-sidebar));
   }
 
   .metadata {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--borde);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--fondo);
+    background: var(--bg);
     padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
@@ -113,7 +113,7 @@
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.25;
-    color: var(--color-secundario-12, #111);
+    color: var(--color-secondary-12, #111);
   }
 
   @media (min-width: 768px) {
@@ -122,14 +122,14 @@
     }
   }
 
-  .metadata .descripcion {
+  .metadata .description {
     margin: 0;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
     font-size: 1rem;
     line-height: 1.5;
   }
 
-  .metadata-etiquetas {
+  .metadata-tags {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
@@ -139,41 +139,41 @@
     margin: 0;
   }
 
-  .metadata-detalle {
+  .metadata-detail {
     display: flex;
     gap: 0.5rem 1.25rem;
     flex-wrap: wrap;
     width: 100%;
     font-size: 0.875rem;
     line-height: 1.4;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
     margin: 0;
   }
 
-  .metadata-detalle strong {
+  .metadata-detail strong {
     font-weight: 600;
-    color: var(--tinta-suave, #3f3f46);
+    color: var(--ink-soft, #3f3f46);
   }
 
-  .nota-version {
+  .version-note {
     margin: 0;
     font-size: 0.875rem;
     line-height: 1.4;
-    color: var(--texto-secundario, var(--texto-tenue));
+    color: var(--text-secondary, var(--text-faint));
   }
 
-  .nota-version a {
+  .version-note a {
     color: inherit;
     text-decoration: underline;
     text-underline-offset: 0.15em;
     font-weight: 500;
   }
 
-  .nota-version a:hover {
-    color: var(--color-secundario-12, #111);
+  .version-note a:hover {
+    color: var(--color-secondary-12, #111);
   }
 
-  .nota-version.alerta {
+  .version-note.alert {
     color: #92400e;
     background: #fffbeb;
     border: 1px solid #fde68a;
@@ -183,11 +183,11 @@
     box-sizing: border-box;
   }
 
-  .metadata > .boton {
+  .metadata > .button {
     margin-top: 0.25rem;
   }
 
-  .lista-intermediario {
+  .intermediary-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -197,28 +197,28 @@
     gap: 0.75rem;
   }
 
-  .lista-intermediario > li {
-    border: 1px solid var(--borde);
+  .intermediary-list > li {
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1rem 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: var(--fondo);
+    background: var(--bg);
   }
 
-  .fila-intermediario {
+  .intermediary-row {
     display: flex;
     align-items: center;
     gap: 0.5rem 0.75rem;
     flex-wrap: wrap;
   }
 
-  .fila-intermediario strong {
+  .intermediary-row strong {
     font-weight: 600;
   }
 
-  .lista-anios {
+  .year-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -227,7 +227,7 @@
     gap: 0.5rem;
   }
 
-  .lista-anios > li {
+  .year-list > li {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -236,7 +236,7 @@
     font-size: 0.875rem;
     line-height: 1.4;
     padding: 0.35rem 0 0.35rem 0.75rem;
-    border-left: 2px solid var(--borde);
+    border-left: 2px solid var(--border);
   }
 
 }

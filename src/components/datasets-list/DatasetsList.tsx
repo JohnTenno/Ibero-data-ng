@@ -1,61 +1,61 @@
 import { Link } from 'react-router-dom';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
-import { CampoBusqueda } from '../shared/campo-busqueda/CampoBusqueda';
-import { MIGAS, OPCIONES_ORDEN, useDatasetsList, type Orden } from './useDatasetsList';
+import { SearchField } from '../shared/search-field/SearchField';
+import { CRUMBS, SORT_OPTIONS, useDatasetsList, type SortOrder } from './useDatasetsList';
 import './datasets-list.scss';
 
 export function DatasetsList() {
   const {
     datasets,
     loading,
-    orden,
-    pagina,
-    totalPaginas,
-    paginaItems,
-    numerosPagina,
-    irA,
-    alFiltrar,
-    alCambiarOrden,
+    sortOrder,
+    page,
+    totalPages,
+    pageItems,
+    pageNumbers,
+    goTo,
+    onFilterChange,
+    onSortChange,
   } = useDatasetsList();
 
   return (
     <div className="c-datasets-list">
-      <div className="seccion-tarjetas">
+      <div className="cards-section">
         <PageHeader
-          titulo="Conjuntos de datos"
+          title="Conjuntos de datos"
           intro="Catálogo de datasets abiertos y privados. Explora, filtra y abre fichas para consultar recursos."
-          migas={MIGAS}
+          crumbs={CRUMBS}
         />
 
-        <section className="seccion-tarjetas__cuerpo" aria-labelledby="datasets-subtitulo">
-          <h2 id="datasets-subtitulo" className="seccion-tarjetas__subtitulo">
+        <section className="cards-section__body" aria-labelledby="datasets-subtitle">
+          <h2 id="datasets-subtitle" className="cards-section__subtitle">
             Conjuntos de datos recientes
           </h2>
 
-          <div className="seccion-tarjetas__herramientas">
-            <div className="seccion-tarjetas__busqueda">
-              <CampoBusqueda
-                catalogo={datasets}
-                propiedadBusqueda="title"
-                etiqueta='Busca por título, por ejemplo "ENADIS"…'
-                idCampo="busqueda-conjuntos"
-                onFiltrar={alFiltrar}
+          <div className="cards-section__tools">
+            <div className="cards-section__search">
+              <SearchField
+                catalog={datasets}
+                searchProperty="title"
+                placeholder='Busca por título, por ejemplo "ENADIS"…'
+                fieldId="search-datasets"
+                onFilter={onFilterChange}
               />
             </div>
 
-            <div className="seccion-tarjetas__barra">
-              <div className="seccion-tarjetas__orden">
-                <label htmlFor="orden-conjuntos">Ordenar por</label>
+            <div className="cards-section__bar">
+              <div className="cards-section__sort">
+                <label htmlFor="sort-datasets">Ordenar por</label>
                 <select
-                  id="orden-conjuntos"
-                  name="orden"
-                  value={orden}
-                  onChange={(e) => alCambiarOrden(e.target.value as Orden)}
+                  id="sort-datasets"
+                  name="sort"
+                  value={sortOrder}
+                  onChange={(e) => onSortChange(e.target.value as SortOrder)}
                 >
-                  {OPCIONES_ORDEN.map((opcion) => (
-                    <option key={opcion.valor} value={opcion.valor}>
-                      {opcion.etiqueta}
+                  {SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -64,20 +64,20 @@ export function DatasetsList() {
           </div>
 
           {loading ? (
-            <p className="seccion-tarjetas__vacio">Cargando…</p>
-          ) : paginaItems.length === 0 ? (
-            <p className="seccion-tarjetas__vacio">No hay elementos para mostrar.</p>
+            <p className="cards-section__empty">Cargando…</p>
+          ) : pageItems.length === 0 ? (
+            <p className="cards-section__empty">No hay elementos para mostrar.</p>
           ) : (
             <>
-              <ul className="seccion-tarjetas__lista">
-                {paginaItems.map((dataset) => (
+              <ul className="cards-section__list">
+                {pageItems.map((dataset) => (
                   <li key={dataset.id}>
                     <Link
-                      className="fila"
+                      className="row"
                       to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
                     >
                       <div>
-                        <p className="titulo">{dataset.title}</p>
+                        <p className="title">{dataset.title}</p>
                         {dataset.organization && (
                           <p className="meta">{dataset.organization.name}</p>
                         )}
@@ -88,31 +88,31 @@ export function DatasetsList() {
                 ))}
               </ul>
 
-              {totalPaginas > 1 && (
-                <nav className="paginador" aria-label="Paginación">
+              {totalPages > 1 && (
+                <nav className="paginator" aria-label="Paginación">
                   <button
                     type="button"
-                    className="paginador__control"
+                    className="paginator__control"
                     aria-label="Página anterior"
-                    disabled={pagina <= 1}
-                    onClick={() => irA(pagina - 1)}
+                    disabled={page <= 1}
+                    onClick={() => goTo(page - 1)}
                   >
                     <Icon name="chevron-left" size={16} />
                   </button>
 
-                  <ul className="paginador__lista">
-                    {numerosPagina.map((numero) => (
-                      <li key={numero}>
+                  <ul className="paginator__list">
+                    {pageNumbers.map((number) => (
+                      <li key={number}>
                         <button
                           type="button"
-                          className={`paginador__pagina${
-                            numero === pagina ? ' paginador__pagina--actual' : ''
+                          className={`paginator__page${
+                            number === page ? ' paginator__page--current' : ''
                           }`}
-                          aria-label={`Página ${numero}`}
-                          aria-current={numero === pagina ? 'page' : undefined}
-                          onClick={() => irA(numero)}
+                          aria-label={`Página ${number}`}
+                          aria-current={number === page ? 'page' : undefined}
+                          onClick={() => goTo(number)}
                         >
-                          {numero}
+                          {number}
                         </button>
                       </li>
                     ))}
@@ -120,10 +120,10 @@ export function DatasetsList() {
 
                   <button
                     type="button"
-                    className="paginador__control"
+                    className="paginator__control"
                     aria-label="Página siguiente"
-                    disabled={pagina >= totalPaginas}
-                    onClick={() => irA(pagina + 1)}
+                    disabled={page >= totalPages}
+                    onClick={() => goTo(page + 1)}
                   >
                     <Icon name="chevron-right" size={16} />
                   </button>
