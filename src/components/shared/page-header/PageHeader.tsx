@@ -1,71 +1,84 @@
-import type { ReactNode } from 'react';
+import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import './page-header.scss';
+import './page-header.css';
 
 export interface Crumb {
   label: string;
   href?: string;
 }
 
-interface Props {
+export interface PageHeaderProps extends HTMLAttributes<HTMLElement> {
   title?: string;
-  intro?: string;
+  intro?: ReactNode;
   crumbs?: Crumb[];
-  withAction?: boolean;
-  children?: ReactNode;
+  action?: ReactNode;
 }
 
+/**
+ * Sisdai informational header (from prototipo-intermediario).
+ * Accent strip `--bg-accent`. With `action`, text left / action right.
+ */
 export function PageHeader({
   title = '',
   intro = '',
   crumbs = [],
-  withAction = false,
-  children,
-}: Props) {
+  action = null,
+  className = '',
+  ...rest
+}: PageHeaderProps) {
+  const autoId = useId();
+  const titleId = `page-header-title-${autoId}`;
+  const classes = ['page-header', action ? 'page-header--with-action' : '', className]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className="c-page-header">
-      <header
-        className={`page-header${withAction ? ' page-header--with-action' : ''}`}
-        aria-labelledby={title ? 'page-header-title' : undefined}
-      >
-        <div className="page-header__frame">
-          {crumbs.length > 0 && (
-            <nav className="page-header__crumbs" aria-label="Ruta de navegación">
-              {crumbs.map((crumb, i) => (
-                <span key={crumb.label}>
-                  {i > 0 && <span aria-hidden="true"> / </span>}
-                  {crumb.href ? (
-                    <Link to={crumb.href}>{crumb.label}</Link>
-                  ) : (
-                    <strong aria-current={i === crumbs.length - 1 ? 'page' : undefined}>
-                      {crumb.label}
-                    </strong>
-                  )}
+    <header className={classes} aria-labelledby={title ? titleId : undefined} {...rest}>
+      <div className="container width-fixed page-header__frame p-y-3">
+        {crumbs.length > 0 ? (
+          <nav
+            className="header__crumbs text-size-2 m-b-3 hidden-mobile"
+            aria-label="Ruta de navegación"
+          >
+            {crumbs.map((crumb, index) => {
+              const isLast = index === crumbs.length - 1;
+              const content = crumb.href ? (
+                <Link to={crumb.href}>{crumb.label}</Link>
+              ) : (
+                <strong aria-current={isLast ? 'page' : undefined}>{crumb.label}</strong>
+              );
+
+              return (
+                <span key={`${crumb.label}-${index}`}>
+                  {index > 0 ? ' / ' : null}
+                  {content}
                 </span>
-              ))}
-            </nav>
-          )}
+              );
+            })}
+          </nav>
+        ) : null}
 
-          {(title || intro || withAction) && (
-            <div className="page-header__row">
-              {(title || intro) && (
-                <div className="page-header__text">
-                  {title && (
-                    <h1 id="page-header-title" className="page-header__title">
-                      {title}
-                    </h1>
-                  )}
-                  {intro && <p className="page-header__intro">{intro}</p>}
-                </div>
-              )}
-
-              <div className="page-header__action" hidden={!withAction}>
-                {children}
+        {title || intro || action ? (
+          <div
+            className={
+              action ? 'page-header__row' : 'width-read align-centered text-centered'
+            }
+          >
+            {title || intro ? (
+              <div className={action ? 'page-header__text' : undefined}>
+                {title ? (
+                  <h1 id={titleId} className="m-t-0 m-b-3">
+                    {title}
+                  </h1>
+                ) : null}
+                {intro ? (typeof intro === 'string' ? <p className="m-0">{intro}</p> : intro) : null}
               </div>
-            </div>
-          )}
-        </div>
-      </header>
-    </div>
+            ) : null}
+
+            {action ? <div className="page-header__action">{action}</div> : null}
+          </div>
+        ) : null}
+      </div>
+    </header>
   );
 }

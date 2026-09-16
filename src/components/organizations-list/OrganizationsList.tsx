@@ -1,3 +1,4 @@
+import { Button } from 'sectei-library';
 import { Link } from 'react-router-dom';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
@@ -33,13 +34,17 @@ export function OrganizationsList() {
           title="Organizaciones"
           intro="Organizaciones que publican y administran datasets en la plataforma."
           crumbs={CRUMBS}
-          withAction
-        >
-          <button type="button" className="button" onClick={() => setShowCreateForm(!showCreateForm)}>
-            <Icon name="plus" size={16} />
-            Agregar organización
-          </button>
-        </PageHeader>
+          action={
+            <Button
+              type="button"
+              variant="primary"
+              icon="pictogram-add"
+              onClick={() => setShowCreateForm(!showCreateForm)}
+            >
+              Agregar organización
+            </Button>
+          }
+        />
 
         <div className="page__body">
           {showCreateForm && (

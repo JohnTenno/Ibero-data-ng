@@ -1,0 +1,106 @@
+/**
+ * Header — breadcrumb colors (from prototipo-intermediario).
+ */
+
+.header__crumbs {
+  color: var(--color-neutral-5);
+}
+
+.header__crumbs a {
+  color: var(--color-secondary-10);
+  text-decoration: none;
+}
+
+.header__crumbs a:hover,
+.header__crumbs a:focus-visible {
+  color: var(--color-secondary-12);
+  text-decoration: underline;
+}
+
+.header__crumbs [aria-current='page'] {
+  color: var(--color-secondary-12);
+  font-weight: 500;
+}
+
+html.mode-dark .header__crumbs,
+body[data-theme='dark'] .header__crumbs {
+  color: var(--color-secondary-5);
+}
+
+html.mode-dark .header__crumbs a,
+body[data-theme='dark'] .header__crumbs a {
+  color: var(--color-secondary-4);
+}
+
+html.mode-dark .header__crumbs a:hover,
+html.mode-dark .header__crumbs a:focus-visible,
+body[data-theme='dark'] .header__crumbs a:hover,
+body[data-theme='dark'] .header__crumbs a:focus-visible {
+  color: var(--color-neutral-0);
+}
+
+html.mode-dark .header__crumbs [aria-current='page'],
+body[data-theme='dark'] .header__crumbs [aria-current='page'] {
+  color: var(--color-neutral-0);
+}
+
+/**
+ * Sisdai rectangular strip: full-width accent background;
+ * content uses `container width-fixed` + `width-read`.
+ */
+.page-header {
+  width: 100%;
+  background-color: var(--bg-accent);
+  box-sizing: border-box;
+}
+
+.page-header__frame {
+  width: 100%;
+}
+
+.page-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  text-align: left;
+}
+
+.page-header__text {
+  flex: 1 1 16rem;
+  min-width: 0;
+  max-width: 40rem;
+}
+
+.page-header__text .m-b-3:last-child {
+  margin-bottom: 0;
+}
+
+.page-header__action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.15rem;
+}
+
+html.mode-dark .page-header,
+body[data-theme='dark'] .page-header {
+  --bg-accent: var(--color-secondary-10);
+}
+
+@media (max-width: 40rem) {
+  .page-header__row {
+    align-items: stretch;
+  }
+
+  .page-header__action {
+    width: 100%;
+  }
+
+  .page-header__action .boton,
+  .page-header__action .button {
+    width: 100%;
+    justify-content: center;
+  }
+}

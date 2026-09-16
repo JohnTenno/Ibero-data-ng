@@ -1,6 +1,7 @@
 @use './styles/pictogramas';
 
-:root {
+:root,
+body[data-profile] {
   --ink: #18181b;
   --ink-soft: #3f3f46;
   --text-faint: #71717a;
@@ -14,6 +15,18 @@
   --accent-text: #ffffff;
   --chip-bg: #f4f4f5;
   --error: #dc2626;
+  /* Marca B/N (como prototipo intermediario) — pisa el morado Sisdai */
+  --color-primary-4: #1a1a1a;
+  --color-primary-3: #333333;
+  --color-primary-2: #c4c4c4;
+  --color-primary-1: #d4d4d4;
+  --color-secondary-11: #1a1a1a;
+  --color-secondary-11-rgb: 26, 26, 26;
+  --color-secondary-6: #8a8a8a;
+  --color-secondary-1: #ffffff;
+  --typography-code: 'IBM Plex Mono', monospace;
+  --card-bg: var(--bg-accent);
+  --card-color: var(--text-secondary);
   --color-secondary-12: #111111;
   --color-secondary-10: #242424;
   --color-secondary-9: #333333;
@@ -31,45 +44,14 @@
   --state-focus: #005dff;
   --hyperlink: #0b57d0;
 
-  --button-primary-bg: #333333;
-  --button-primary-border: #333333;
-  --button-primary-color: #ffffff;
-  --button-primary-disabled-bg: #dddddd;
-  --button-primary-disabled-border: #dddddd;
-  --button-primary-disabled-color: #767677;
-  --button-primary-disabled-shadow: transparent;
-  --button-primary-hover-bg: #1a1a1a;
-  --button-primary-hover-border: #1a1a1a;
-  --button-primary-hover-color: #ffffff;
-  --button-primary-hover-shadow: transparent;
-  --button-primary-focus-bg: #1a1a1a;
-  --button-primary-focus-border: #ffffff;
-  --button-primary-focus-color: #ffffff;
-  --button-primary-focus-outline: var(--state-focus);
-  --button-primary-focus-shadow: var(--state-focus);
 
-  
-  --button-secondary-bg: transparent;
-  --button-secondary-border: #444444;
-  --button-secondary-color: #444444;
-  --button-secondary-disabled-bg: transparent;
-  --button-secondary-disabled-border: #dddddd;
-  --button-secondary-disabled-color: #aaaaaa;
-  --button-secondary-disabled-shadow: transparent;
-  --button-secondary-hover-bg: #d0d0d0;
-  --button-secondary-hover-border: #444444;
-  --button-secondary-hover-color: #444444;
-  --button-secondary-hover-shadow: transparent;
-  --button-secondary-focus-bg: #d0d0d0;
-  --button-secondary-focus-border: var(--state-focus);
-  --button-secondary-focus-color: #444444;
-  --button-secondary-focus-shadow: var(--state-focus);
-
-  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-family: 'Montserrat', sans-serif;
+  --color-neutral-5: #434344;
   --font-size: 16px;
   --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
   --font: var(--font-family);
   --radius: 10px;
+  --admin-nav-height: 3.5rem;
 }
 
 * {
@@ -150,120 +132,6 @@ th {
   background: var(--bg-sidebar);
 }
 
-.button {
-  border: none;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-family: var(--font-family, sans-serif);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.25em;
-  padding: 16px 24px;
-  text-decoration: none;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.27s ease-in-out;
-}
-
-.button:disabled,
-.button.disabled {
-  pointer-events: none;
-  cursor: default;
-}
-
-.button:hover,
-.button:focus {
-  text-decoration: none;
-  outline: none;
-}
-
-.button:not(.button-secondary),
-.button-primary,
-.button-filled-primary {
-  background-color: var(--button-primary-bg);
-  box-shadow: inset 0 0 0 1px var(--button-primary-border);
-  color: var(--button-primary-color);
-}
-
-.button:not(.button-secondary):disabled,
-.button:not(.button-secondary).disabled,
-.button-primary:disabled,
-.button-primary.disabled {
-  background-color: var(--button-primary-disabled-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-primary-disabled-border),
-    3px 3px 4px var(--button-primary-disabled-shadow);
-  color: var(--button-primary-disabled-color);
-}
-
-.button:not(.button-secondary):hover,
-.button-primary:hover {
-  background-color: var(--button-primary-hover-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-primary-hover-border),
-    3px 3px 4px var(--button-primary-hover-shadow);
-  color: var(--button-primary-hover-color);
-}
-
-.button:not(.button-secondary):focus-visible,
-.button-primary:focus-visible {
-  background-color: var(--button-primary-focus-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-primary-focus-border),
-    0 0 0 1px var(--button-primary-focus-outline),
-    0 0 8px var(--button-primary-focus-shadow);
-  color: var(--button-primary-focus-color);
-}
-
-.button.button-secondary,
-.button-secondary,
-.button-filled-secondary {
-  background-color: var(--button-secondary-bg);
-  box-shadow: inset 0 0 0 1px var(--button-secondary-border);
-  color: var(--button-secondary-color);
-}
-
-.button.button-secondary:disabled,
-.button-secondary:disabled,
-.button-secondary.disabled {
-  background-color: var(--button-secondary-disabled-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-secondary-disabled-border),
-    3px 3px 4px var(--button-secondary-disabled-shadow);
-  color: var(--button-secondary-disabled-color);
-}
-
-.button.button-secondary:hover,
-.button-secondary:hover {
-  background-color: var(--button-secondary-hover-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-secondary-hover-border),
-    0 0 8px var(--button-secondary-hover-shadow);
-  color: var(--button-secondary-hover-color);
-}
-
-.button.button-secondary:focus-visible,
-.button-secondary:focus-visible {
-  background-color: var(--button-secondary-focus-bg);
-  box-shadow:
-    inset 0 0 0 1px var(--button-secondary-focus-border),
-    0 0 8px var(--button-secondary-focus-shadow);
-  color: var(--button-secondary-focus-color);
-}
-
-.button-small {
-  font-size: 0.875rem;
-  padding: 8px;
-}
-
-.button-large {
-  font-size: 1rem;
-  padding: 24px;
-}
 
 .chip {
   display: inline-flex;
@@ -353,28 +221,11 @@ html.mode-dark {
   --color-neutral-3: #aaaaaa;
   --color-neutral-4: #767677;
 
-  --button-primary-bg: #d4d4d4;
-  --button-primary-border: #d4d4d4;
-  --button-primary-color: #111111;
-  --button-primary-hover-bg: #ffffff;
-  --button-primary-hover-border: #ffffff;
-  --button-primary-hover-color: #111111;
-  --button-primary-focus-bg: #ffffff;
-  --button-primary-focus-border: #111111;
-  --button-primary-focus-color: #111111;
-  --button-primary-disabled-bg: #444444;
-  --button-primary-disabled-border: #444444;
-  --button-primary-disabled-color: #8a8a8a;
+  --color-primary-4: #ffffff;
+  --color-primary-3: #d4d4d4;
+  --color-primary-2: #333333;
+  --color-primary-1: #1a1a1a;
 
-  --button-secondary-border: #b3b3b3;
-  --button-secondary-color: #b3b3b3;
-  --button-secondary-hover-bg: #333333;
-  --button-secondary-hover-border: #b3b3b3;
-  --button-secondary-hover-color: #b3b3b3;
-  --button-secondary-focus-bg: #333333;
-  --button-secondary-focus-color: #b3b3b3;
-  --button-secondary-disabled-border: #5c5c5c;
-  --button-secondary-disabled-color: #555555;
 
   --hyperlink: #6ea8fe;
   color-scheme: dark;

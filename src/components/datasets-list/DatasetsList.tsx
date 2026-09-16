@@ -1,11 +1,16 @@
-import { Link } from 'react-router-dom';
+import { useId } from 'react';
+import { Button, SearchField } from 'sectei-library';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
-import { SearchField } from '../shared/search-field/SearchField';
+import { Filters } from '../shared/filters/Filters';
+import { HorizontalCard } from '../shared/horizontal-card/HorizontalCard';
+import { DATASET_FILTERS } from '../../data/dataset-filters';
 import { CRUMBS, SORT_OPTIONS, useDatasetsList, type SortOrder } from './useDatasetsList';
+import '../shared/cards-section/cards-section.css';
 import './datasets-list.scss';
 
 export function DatasetsList() {
+  const sortId = useId();
   const {
     datasets,
     loading,
@@ -17,122 +22,153 @@ export function DatasetsList() {
     goTo,
     onFilterChange,
     onSortChange,
+    filtersOpen,
+    setFiltersOpen,
+    activeFilters,
+    setActiveFilters,
   } = useDatasetsList();
 
   return (
-    <div className="c-datasets-list">
-      <div className="cards-section">
-        <PageHeader
-          title="Conjuntos de datos"
-          intro="Catálogo de datasets abiertos y privados. Explora, filtra y abre fichas para consultar recursos."
-          crumbs={CRUMBS}
-        />
+    <div className="c-datasets-list cards-section">
+      <PageHeader
+        title="Conjuntos de datos"
+        intro="Catálogo de datasets abiertos y privados. Explora, filtra y abre fichas para consultar recursos."
+        crumbs={CRUMBS}
+        action={
+          <Button type="button" variant="primary" icon="pictogram-add" href="/organizations">
+            Agregar conjunto de datos
+          </Button>
+        }
+      />
 
-        <section className="cards-section__body" aria-labelledby="datasets-subtitle">
-          <h2 id="datasets-subtitle" className="cards-section__subtitle">
-            Conjuntos de datos recientes
-          </h2>
+      <section
+        className="container width-fixed cards-section__body"
+        aria-labelledby="datasets-subtitle"
+      >
+        <h2 id="datasets-subtitle" className="cards-section__subtitle m-t-0">
+          Conjuntos de datos recientes
+        </h2>
 
-          <div className="cards-section__tools">
-            <div className="cards-section__search">
-              <SearchField
-                catalog={datasets}
-                searchProperty="title"
-                placeholder='Busca por título, por ejemplo "ENADIS"…'
-                fieldId="search-datasets"
-                onFilter={onFilterChange}
-              />
-            </div>
-
-            <div className="cards-section__bar">
-              <div className="cards-section__sort">
-                <label htmlFor="sort-datasets">Ordenar por</label>
-                <select
-                  id="sort-datasets"
-                  name="sort"
-                  value={sortOrder}
-                  onChange={(e) => onSortChange(e.target.value as SortOrder)}
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+        <div className="cards-section__tools">
+          <div className="cards-section__search">
+            <SearchField
+              catalog={datasets}
+              searchProperty="title"
+              placeholder='Busca por título, por ejemplo "ENADIS"…'
+              id="search-datasets"
+              onFilter={onFilterChange}
+            />
           </div>
 
-          {loading ? (
-            <p className="cards-section__empty">Cargando…</p>
-          ) : pageItems.length === 0 ? (
-            <p className="cards-section__empty">No hay elementos para mostrar.</p>
-          ) : (
-            <>
-              <ul className="cards-section__list">
-                {pageItems.map((dataset) => (
-                  <li key={dataset.id}>
-                    <Link
-                      className="row"
-                      to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
-                    >
-                      <div>
-                        <p className="title">{dataset.title}</p>
-                        {dataset.organization && (
-                          <p className="meta">{dataset.organization.name}</p>
-                        )}
-                      </div>
-                      <span className="chip">{dataset.visibility}</span>
-                    </Link>
-                  </li>
+          <div className="cards-section__bar">
+            <div className="cards-section__actions">
+              <Button
+                type="button"
+                variant="secondary"
+                icon="pictogram-filter"
+                onClick={() => setFiltersOpen(true)}
+              >
+                Filtros
+                {activeFilters.length > 0 ? ` (${activeFilters.length})` : ''}
+              </Button>
+            </div>
+
+            <div className="cards-section__sort">
+              <label htmlFor={sortId}>Ordenar por</label>
+              <select
+                id={sortId}
+                name="sort"
+                value={sortOrder}
+                onChange={(e) => onSortChange(e.target.value as SortOrder)}
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </ul>
+              </select>
+            </div>
+          </div>
+        </div>
 
-              {totalPages > 1 && (
-                <nav className="paginator" aria-label="Paginación">
-                  <button
-                    type="button"
-                    className="paginator__control"
-                    aria-label="Página anterior"
-                    disabled={page <= 1}
-                    onClick={() => goTo(page - 1)}
+        {loading ? (
+          <p className="text-color-secondary m-0">Cargando…</p>
+        ) : pageItems.length === 0 ? (
+          <p className="text-color-secondary m-0">No hay elementos para mostrar.</p>
+        ) : (
+          <>
+            <ul className="cards-section__list">
+              {pageItems.map(({ id, ...card }) => (
+                <li key={id}>
+                  {/* API (inactivo): descomenta el Link y comenta el HorizontalCard de abajo.
+                      Importa Link, datasetToCardProps, y usa pageItems de tipo Dataset.
+                  <Link
+                    className="horizontal-card__wrap"
+                    to={"/organizations/" + dataset.organizationId + "/datasets/" + dataset.id}
                   >
-                    <Icon name="chevron-left" size={16} />
-                  </button>
+                    <HorizontalCard {...datasetToCardProps(dataset)} />
+                  </Link>
+                  */}
+                  <HorizontalCard {...card} />
+                </li>
+              ))}
+            </ul>
 
-                  <ul className="paginator__list">
-                    {pageNumbers.map((number) => (
-                      <li key={number}>
-                        <button
-                          type="button"
-                          className={`paginator__page${
-                            number === page ? ' paginator__page--current' : ''
-                          }`}
-                          aria-label={`Página ${number}`}
-                          aria-current={number === page ? 'page' : undefined}
-                          onClick={() => goTo(number)}
-                        >
-                          {number}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+            {totalPages > 1 && (
+              <nav className="paginator" aria-label="Paginación">
+                <button
+                  type="button"
+                  className="paginator__control"
+                  aria-label="Página anterior"
+                  disabled={page <= 1}
+                  onClick={() => goTo(page - 1)}
+                >
+                  <Icon name="chevron-left" size={16} />
+                </button>
 
-                  <button
-                    type="button"
-                    className="paginator__control"
-                    aria-label="Página siguiente"
-                    disabled={page >= totalPages}
-                    onClick={() => goTo(page + 1)}
-                  >
-                    <Icon name="chevron-right" size={16} />
-                  </button>
-                </nav>
-              )}
-            </>
-          )}
-        </section>
-      </div>
+                <ul className="paginator__list">
+                  {pageNumbers.map((number) => (
+                    <li key={number}>
+                      <button
+                        type="button"
+                        className={`paginator__page${
+                          number === page ? ' paginator__page--current' : ''
+                        }`}
+                        aria-label={`Página ${number}`}
+                        aria-current={number === page ? 'page' : undefined}
+                        onClick={() => goTo(number)}
+                      >
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  className="paginator__control"
+                  aria-label="Página siguiente"
+                  disabled={page >= totalPages}
+                  onClick={() => goTo(page + 1)}
+                >
+                  <Icon name="chevron-right" size={16} />
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </section>
+
+      <Filters
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title={DATASET_FILTERS.title}
+        sections={DATASET_FILTERS.sections}
+        values={activeFilters}
+        onChange={setActiveFilters}
+        onApply={setActiveFilters}
+        onClear={() => setActiveFilters([])}
+      />
     </div>
   );
 }

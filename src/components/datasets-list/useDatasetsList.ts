@@ -1,9 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { Crumb } from '../shared/page-header/PageHeader';
+import {
+  DATASET_FILTERS,
+  cardMatchesFilters,
+  mapFilterOptions,
+} from '../../data/dataset-filters';
+import { MOCK_DATASET_CARDS, type MockDatasetCard } from '../../data/mock-datasets';
+
+/* inicio api
 import { datasetsService } from '../../core/services/datasets.service';
 import type { Dataset } from '../../core/models/dataset.model';
-import type { Crumb } from '../shared/page-header/PageHeader';
+fin api */
 
-export type SortOrder = 'recientes' | 'titulo-asc' | 'titulo-desc' | 'anio-desc' | 'anio-asc';
+export type SortOrder = 'recent' | 'title-asc' | 'title-desc' | 'year-desc' | 'year-asc';
 
 export const CRUMBS: Crumb[] = [
   { label: 'Inicio', href: '/dashboard' },
@@ -11,41 +20,58 @@ export const CRUMBS: Crumb[] = [
 ];
 
 export const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
-  { value: 'recientes', label: 'Más recientes' },
-  { value: 'titulo-asc', label: 'Título (A–Z)' },
-  { value: 'titulo-desc', label: 'Título (Z–A)' },
-  { value: 'anio-desc', label: 'Año (más reciente)' },
-  { value: 'anio-asc', label: 'Año (más antiguo)' },
+  { value: 'recent', label: 'Más recientes' },
+  { value: 'title-asc', label: 'Título (A–Z)' },
+  { value: 'title-desc', label: 'Título (Z–A)' },
+  { value: 'year-desc', label: 'Año (más reciente)' },
+  { value: 'year-asc', label: 'Año (más antiguo)' },
 ];
 
 const PAGE_SIZE = 3;
 
-function sortList(list: Dataset[], criteria: SortOrder): Dataset[] {
+const OPTIONS_BY_ID = mapFilterOptions(DATASET_FILTERS.sections);
+
+function sortList(list: MockDatasetCard[], criteria: SortOrder): MockDatasetCard[] {
   const copy = [...list];
-  const byTitle = (a: Dataset, b: Dataset) =>
-    a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+  const byTitle = (a: MockDatasetCard, b: MockDatasetCard) =>
+    String(a.title ?? '').localeCompare(String(b.title ?? ''), 'en', { sensitivity: 'base' });
 
   switch (criteria) {
-    case 'titulo-asc':
+    case 'title-asc':
       return copy.sort(byTitle);
-    case 'titulo-desc':
-      return copy.sort((a, b) => b.title.localeCompare(a.title, 'es', { sensitivity: 'base' }));
-    case 'anio-asc':
-      return copy.sort((a, b) => (a.year ?? 0) - (b.year ?? 0) || byTitle(a, b));
-    case 'anio-desc':
-      return copy.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || byTitle(a, b));
-    case 'recientes':
+    case 'title-desc':
+      return copy.sort((a, b) =>
+        String(b.title ?? '').localeCompare(String(a.title ?? ''), 'en', { sensitivity: 'base' }),
+      );
+    case 'year-asc':
+      return copy.sort((a, b) => Number(a.year ?? 0) - Number(b.year ?? 0) || byTitle(a, b));
+    case 'year-desc':
+      return copy.sort((a, b) => Number(b.year ?? 0) - Number(a.year ?? 0) || byTitle(a, b));
+    case 'recent':
     default:
-      return copy.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      return copy;
   }
 }
 
+/**
+ * Ahora usa mock (`src/data/mock-datasets`) para alinear estilos del card con el prototipo.
+ * El API quedó comentado solo por eso; no se eliminó.
+ *
+ * Cómo pasar del mock al API:
+ * 1. Comenta el bloque mock (catalog / searchFiltered / loading).
+ * 2. Descomenta los dos bloques "inicio api" … "fin api" (imports + fetch).
+ * 3. En DatasetsList.tsx, vuelve a usar el Link a la ficha real.
+ */
 export function useDatasetsList() {
-  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  // Mock (activo)
+  const [catalog] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
+  const [searchFiltered, setSearchFiltered] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
+  const [loading] = useState(false);
+
+  /* inicio api
+  const [catalog, setCatalog] = useState<Dataset[]>([]);
   const [searchFiltered, setSearchFiltered] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState<SortOrder>('recientes');
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     let active = true;
@@ -53,7 +79,7 @@ export function useDatasetsList() {
       try {
         const list = await datasetsService.listAll();
         if (!active) return;
-        setDatasets(list);
+        setCatalog(list);
         setSearchFiltered(list);
       } finally {
         if (active) setLoading(false);
@@ -63,9 +89,29 @@ export function useDatasetsList() {
       active = false;
     };
   }, []);
+  fin api */
 
-  const visible = useMemo(() => sortList(searchFiltered, sortOrder), [searchFiltered, sortOrder]);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
+  const [page, setPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const visible = useMemo(() => {
+    const filtered = searchFiltered.filter((card) =>
+      cardMatchesFilters(card, activeFilters, OPTIONS_BY_ID),
+    );
+    return sortList(filtered, sortOrder);
+  }, [searchFiltered, activeFilters, sortOrder]);
+
   const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchFiltered, activeFilters, sortOrder]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const pageItems = useMemo(() => {
     const current = Math.min(page, totalPages);
@@ -77,18 +123,16 @@ export function useDatasetsList() {
 
   const goTo = (target: number) => setPage(Math.min(Math.max(1, target), totalPages));
 
-  const onFilterChange = (items: Dataset[]) => {
+  const onFilterChange = (items: MockDatasetCard[]) => {
     setSearchFiltered(items);
-    setPage(1);
   };
 
   const onSortChange = (value: SortOrder) => {
     setSortOrder(value);
-    setPage(1);
   };
 
   return {
-    datasets,
+    datasets: catalog,
     loading,
     sortOrder,
     page,
@@ -98,5 +142,9 @@ export function useDatasetsList() {
     goTo,
     onFilterChange,
     onSortChange,
+    filtersOpen,
+    setFiltersOpen,
+    activeFilters,
+    setActiveFilters,
   };
 }
