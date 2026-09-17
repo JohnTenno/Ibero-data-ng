@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, SearchField } from 'sectei-library';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
@@ -98,20 +99,24 @@ export function DatasetsList() {
         ) : (
           <>
             <ul className="cards-section__list">
-              {pageItems.map(({ id, ...card }) => (
-                <li key={id}>
-                  {/* API (inactivo): descomenta el Link y comenta el HorizontalCard de abajo.
-                      Importa Link, datasetToCardProps, y usa pageItems de tipo Dataset.
-                  <Link
-                    className="horizontal-card__wrap"
-                    to={"/organizations/" + dataset.organizationId + "/datasets/" + dataset.id}
-                  >
-                    <HorizontalCard {...datasetToCardProps(dataset)} />
-                  </Link>
-                  */}
-                  <HorizontalCard {...card} />
-                </li>
-              ))}
+              {pageItems.map(
+                ({
+                  id,
+                  organizationId,
+                  createdAt: _createdAt,
+                  updatedAt: _updatedAt,
+                  ...card
+                }) => (
+                  <li key={id}>
+                    <Link
+                      className="horizontal-card__wrap"
+                      to={`/organizations/${organizationId}/datasets/${id}`}
+                    >
+                      <HorizontalCard {...card} />
+                    </Link>
+                  </li>
+                ),
+              )}
             </ul>
 
             {totalPages > 1 && (

@@ -1,113 +1,177 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent, type MouseEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { Crumb } from '../shared/page-header/PageHeader';
 import { organizationsService } from '../../core/services/organizations.service';
 import type { Organization } from '../../core/models/dataset.model';
-import type { Crumb } from '../shared/page-header/PageHeader';
+import {
+  ORGANIZATION_FILTERS,
+  mapFilterOptions,
+  organizationMatchesFilters,
+} from '../../data/organization-filters';
+import type { OrganizationCardProps } from '../shared/organization-card/OrganizationCard';
 
-export type SortOrder = 'nombre' | 'reciente';
+/* inicio mock
+import {
+  MOCK_ORGANIZATION_CARDS,
+  type MockOrganizationCard,
+} from '../../data/mock-organizations';
+fin mock */
+
+export type SortOrder =
+  | 'recent'
+  | 'name-asc'
+  | 'name-desc'
+  | 'datasets-desc'
+  | 'members-desc';
+
+export type OrganizationListItem = OrganizationCardProps & {
+  id: string;
+  createdAt?: string;
+  type?: string;
+  scope?: string;
+};
 
 export const CRUMBS: Crumb[] = [
   { label: 'Inicio', href: '/dashboard' },
   { label: 'Organizaciones' },
 ];
 
+export const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
+  { value: 'recent', label: 'Más recientes' },
+  { value: 'name-asc', label: 'Nombre (A–Z)' },
+  { value: 'name-desc', label: 'Nombre (Z–A)' },
+  { value: 'datasets-desc', label: 'Más conjuntos' },
+  { value: 'members-desc', label: 'Más miembros' },
+];
+
+const PAGE_SIZE = 4;
+
+const OPTIONS_BY_ID = mapFilterOptions(ORGANIZATION_FILTERS.sections);
+
+export function organizationToCardProps(org: Organization): OrganizationListItem {
+  return {
+    id: org.id,
+    name: org.name,
+    description: org.description ?? undefined,
+    datasets: org._count?.datasets ?? 0,
+    members: org._count?.members ?? 0,
+    href: `/organizations/${org.id}`,
+    createdAt: org.createdAt,
+  };
+}
+
+function sortList(list: OrganizationListItem[], criteria: SortOrder): OrganizationListItem[] {
+  const copy = [...list];
+  const byName = (a: OrganizationListItem, b: OrganizationListItem) =>
+    String(a.name ?? '').localeCompare(String(b.name ?? ''), 'es', { sensitivity: 'base' });
+
+  switch (criteria) {
+    case 'name-asc':
+      return copy.sort(byName);
+    case 'name-desc':
+      return copy.sort((a, b) => byName(b, a));
+    case 'datasets-desc':
+      return copy.sort(
+        (a, b) => Number(b.datasets ?? 0) - Number(a.datasets ?? 0) || byName(a, b),
+      );
+    case 'members-desc':
+      return copy.sort(
+        (a, b) => Number(b.members ?? 0) - Number(a.members ?? 0) || byName(a, b),
+      );
+    case 'recent':
+      return copy.sort(
+        (a, b) =>
+          new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime() ||
+          byName(a, b),
+      );
+    default:
+      return copy;
+  }
+}
+
 export function useOrganizationsList() {
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [searchFiltered, setSearchFiltered] = useState<Organization[]>([]);
+  const [catalog, setCatalog] = useState<OrganizationListItem[]>([]);
+  const [searchFiltered, setSearchFiltered] = useState<OrganizationListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<SortOrder>('reciente');
-
-  const [newName, setNewName] = useState('');
-  const [newSlug, setNewSlug] = useState('');
-
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const list = await organizationsService.list();
-      setOrganizations(list);
-      setSearchFiltered(list);
-    } catch {
-      setError('No se pudieron cargar las organizaciones.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    void reload();
-  }, [reload]);
+    let active = true;
+    (async () => {
+      try {
+        const list = await organizationsService.list();
+        if (!active) return;
+        const cards = list.map(organizationToCardProps);
+        setCatalog(cards);
+        setSearchFiltered(cards);
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const filtered = useMemo(() => {
-    const list = [...searchFiltered];
-    if (sortOrder === 'nombre') {
-      list.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
-    } else {
-      list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-    return list;
-  }, [searchFiltered, sortOrder]);
+  /* inicio mock
+  const [catalog] = useState<MockOrganizationCard[]>(MOCK_ORGANIZATION_CARDS);
+  const [searchFiltered, setSearchFiltered] =
+    useState<MockOrganizationCard[]>(MOCK_ORGANIZATION_CARDS);
+  const [loading] = useState(false);
+  fin mock */
 
-  const createOrganization = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!newName || !newSlug) return;
-    setCreating(true);
-    setError(null);
-    try {
-      await organizationsService.create(newName, newSlug);
-      setNewName('');
-      setNewSlug('');
-      setShowCreateForm(false);
-      await reload();
-    } catch {
-      setError('No se pudo crear la organización (¿el slug ya existe?).');
-    } finally {
-      setCreating(false);
-    }
+  const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
+  const [page, setPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const visible = useMemo(() => {
+    const filtered = searchFiltered.filter((card) =>
+      organizationMatchesFilters(card, activeFilters, OPTIONS_BY_ID),
+    );
+    return sortList(filtered, sortOrder);
+  }, [searchFiltered, activeFilters, sortOrder]);
+
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchFiltered, activeFilters, sortOrder]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  const pageItems = useMemo(() => {
+    const current = Math.min(page, totalPages);
+    const start = (current - 1) * PAGE_SIZE;
+    return visible.slice(start, start + PAGE_SIZE);
+  }, [visible, page, totalPages]);
+
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  const goTo = (target: number) => setPage(Math.min(Math.max(1, target), totalPages));
+
+  const onFilterChange = (items: OrganizationListItem[]) => {
+    setSearchFiltered(items);
   };
 
-  const removeOrganization = async (org: Organization, event: MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (
-      !confirm(
-        `¿Borrar la organización "${org.name}"? Se borran TODOS sus datasets, resources y análisis. Esto no se puede deshacer.`,
-      )
-    ) {
-      return;
-    }
-    setRemovingId(org.id);
-    setError(null);
-    try {
-      await organizationsService.remove(org.id);
-      await reload();
-    } catch {
-      setError('No se pudo borrar la organización.');
-    } finally {
-      setRemovingId(null);
-    }
+  const onSortChange = (value: SortOrder) => {
+    setSortOrder(value);
   };
 
   return {
-    organizations,
-    filtered,
+    organizations: catalog,
     loading,
-    error,
-    creating,
-    showCreateForm,
-    setShowCreateForm,
-    removingId,
     sortOrder,
-    setSortOrder,
-    newName,
-    setNewName,
-    newSlug,
-    setNewSlug,
-    setSearchFiltered,
-    createOrganization,
-    removeOrganization,
+    page,
+    totalPages,
+    pageItems,
+    pageNumbers,
+    goTo,
+    onFilterChange,
+    onSortChange,
+    filtersOpen,
+    setFiltersOpen,
+    activeFilters,
+    setActiveFilters,
   };
 }

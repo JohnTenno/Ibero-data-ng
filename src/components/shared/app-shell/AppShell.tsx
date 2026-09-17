@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { AdminMainNav } from '../admin-main-nav/AdminMainNav';
+import { AdminMainNav } from '../admin-main-nav';
 import { SideMenu } from '../side-menu/SideMenu';
 import { useAppShell } from './useAppShell';
 import './app-shell.scss';
@@ -16,11 +16,7 @@ export function AppShell() {
 
       <AdminMainNav
         authenticated={Boolean(currentUser)}
-        user={
-          currentUser
-            ? { name: currentUser.fullName }
-            : null
-        }
+        user={currentUser ? { name: currentUser.fullName } : null}
         onLogout={logout}
       />
 

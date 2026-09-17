@@ -1,18 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Crumb } from '../shared/page-header/PageHeader';
+import { datasetsService } from '../../core/services/datasets.service';
+import type { Dataset } from '../../core/models/dataset.model';
 import {
   DATASET_FILTERS,
   cardMatchesFilters,
   mapFilterOptions,
 } from '../../data/dataset-filters';
-import { MOCK_DATASET_CARDS, type MockDatasetCard } from '../../data/mock-datasets';
+import type { HorizontalCardProps } from '../shared/horizontal-card/HorizontalCard';
 
-/* inicio api
-import { datasetsService } from '../../core/services/datasets.service';
-import type { Dataset } from '../../core/models/dataset.model';
-fin api */
+/* inicio mock
+import { MOCK_DATASET_CARDS, type MockDatasetCard } from '../../data/mock-datasets';
+fin mock */
 
 export type SortOrder = 'recent' | 'title-asc' | 'title-desc' | 'year-desc' | 'year-asc';
+
+export type DatasetListItem = HorizontalCardProps & {
+  id: string;
+  organizationId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
 
 export const CRUMBS: Crumb[] = [
   { label: 'Inicio', href: '/dashboard' },
@@ -31,46 +39,53 @@ const PAGE_SIZE = 3;
 
 const OPTIONS_BY_ID = mapFilterOptions(DATASET_FILTERS.sections);
 
-function sortList(list: MockDatasetCard[], criteria: SortOrder): MockDatasetCard[] {
+export function datasetToCardProps(dataset: Dataset): DatasetListItem {
+  const updated = dataset.updatedAt
+    ? new Date(dataset.updatedAt).toLocaleDateString('es-MX')
+    : undefined;
+
+  return {
+    id: dataset.id,
+    organizationId: dataset.organizationId,
+    title: dataset.title,
+    label: dataset.tags?.[0] ?? dataset.survey ?? undefined,
+    source: dataset.sourceOrg ?? undefined,
+    year: dataset.year ?? undefined,
+    institution: dataset.organization?.name ?? dataset.sourceOrg ?? undefined,
+    updated,
+    createdAt: dataset.createdAt,
+    updatedAt: dataset.updatedAt,
+  };
+}
+
+function sortList(list: DatasetListItem[], criteria: SortOrder): DatasetListItem[] {
   const copy = [...list];
-  const byTitle = (a: MockDatasetCard, b: MockDatasetCard) =>
-    String(a.title ?? '').localeCompare(String(b.title ?? ''), 'en', { sensitivity: 'base' });
+  const byTitle = (a: DatasetListItem, b: DatasetListItem) =>
+    String(a.title ?? '').localeCompare(String(b.title ?? ''), 'es', { sensitivity: 'base' });
 
   switch (criteria) {
     case 'title-asc':
       return copy.sort(byTitle);
     case 'title-desc':
-      return copy.sort((a, b) =>
-        String(b.title ?? '').localeCompare(String(a.title ?? ''), 'en', { sensitivity: 'base' }),
-      );
+      return copy.sort((a, b) => byTitle(b, a));
     case 'year-asc':
       return copy.sort((a, b) => Number(a.year ?? 0) - Number(b.year ?? 0) || byTitle(a, b));
     case 'year-desc':
       return copy.sort((a, b) => Number(b.year ?? 0) - Number(a.year ?? 0) || byTitle(a, b));
     case 'recent':
+      return copy.sort(
+        (a, b) =>
+          new Date(b.updatedAt ?? b.createdAt ?? 0).getTime() -
+            new Date(a.updatedAt ?? a.createdAt ?? 0).getTime() || byTitle(a, b),
+      );
     default:
       return copy;
   }
 }
 
-/**
- * Ahora usa mock (`src/data/mock-datasets`) para alinear estilos del card con el prototipo.
- * El API quedó comentado solo por eso; no se eliminó.
- *
- * Cómo pasar del mock al API:
- * 1. Comenta el bloque mock (catalog / searchFiltered / loading).
- * 2. Descomenta los dos bloques "inicio api" … "fin api" (imports + fetch).
- * 3. En DatasetsList.tsx, vuelve a usar el Link a la ficha real.
- */
 export function useDatasetsList() {
-  // Mock (activo)
-  const [catalog] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
-  const [searchFiltered, setSearchFiltered] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
-  const [loading] = useState(false);
-
-  /* inicio api
-  const [catalog, setCatalog] = useState<Dataset[]>([]);
-  const [searchFiltered, setSearchFiltered] = useState<Dataset[]>([]);
+  const [catalog, setCatalog] = useState<DatasetListItem[]>([]);
+  const [searchFiltered, setSearchFiltered] = useState<DatasetListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,8 +94,9 @@ export function useDatasetsList() {
       try {
         const list = await datasetsService.listAll();
         if (!active) return;
-        setCatalog(list);
-        setSearchFiltered(list);
+        const cards = list.map(datasetToCardProps);
+        setCatalog(cards);
+        setSearchFiltered(cards);
       } finally {
         if (active) setLoading(false);
       }
@@ -89,7 +105,12 @@ export function useDatasetsList() {
       active = false;
     };
   }, []);
-  fin api */
+
+  /* inicio mock
+  const [catalog] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
+  const [searchFiltered, setSearchFiltered] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
+  const [loading] = useState(false);
+  fin mock */
 
   const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
   const [page, setPage] = useState(1);
@@ -123,7 +144,7 @@ export function useDatasetsList() {
 
   const goTo = (target: number) => setPage(Math.min(Math.max(1, target), totalPages));
 
-  const onFilterChange = (items: MockDatasetCard[]) => {
+  const onFilterChange = (items: DatasetListItem[]) => {
     setSearchFiltered(items);
   };
 

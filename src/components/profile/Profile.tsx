@@ -1,35 +1,25 @@
-import { useProfile } from './useProfile';
-import './profile.scss';
+import { PageHeader } from '../shared/page-header/PageHeader';
+import { ProfileForm } from './ProfileForm';
+import { CRUMBS, useProfile } from './useProfile';
+import './profile.css';
 
 export function Profile() {
-  const { currentUser } = useProfile();
+  const { formValues } = useProfile();
 
   return (
     <div className="c-profile">
-      <div className="page">
-        <p className="crumb">Inicio / Configuración de perfil</p>
-        <h1>Configuración de perfil</h1>
+      <PageHeader
+        title="Configuración de perfil"
+        intro="Actualiza tus datos personales, imagen y contraseña de acceso a la plataforma."
+        crumbs={CRUMBS}
+      />
 
-        {currentUser && (
-          <>
-            <div className="card">
-              <div className="row">
-                <span className="label">Nombre</span>
-                <span>{currentUser.fullName}</span>
-              </div>
-              <div className="row">
-                <span className="label">Email</span>
-                <span>{currentUser.email}</span>
-              </div>
-              <div className="row">
-                <span className="label">Sysadmin</span>
-                <span>{currentUser.isSysadmin ? 'Sí' : 'No'}</span>
-              </div>
-            </div>
-            <p className="note">Editar nombre/contraseña todavía no está implementado.</p>
-          </>
-        )}
-      </div>
+      <section
+        className="container width-fixed c-profile__section"
+        aria-label="Formulario de perfil"
+      >
+        <ProfileForm initialValues={formValues} />
+      </section>
     </div>
   );
 }

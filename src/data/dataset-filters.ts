@@ -1,5 +1,4 @@
 import type { FilterOption, FilterSection } from '../components/shared/filters/Filters';
-import type { MockDatasetCard } from './mock-datasets';
 
 export const DATASET_FILTERS = {
   title: 'Filtros',
@@ -75,7 +74,15 @@ export function mapFilterOptions(sections: FilterSection[] = []): Map<string, Fi
   return map;
 }
 
-function optionMatchesCard(card: MockDatasetCard, option: FilterOptionMeta): boolean {
+type FilterableDataset = {
+  title?: string;
+  label?: string;
+  year?: string | number | null;
+  institution?: string;
+  source?: string;
+};
+
+function optionMatchesCard(card: FilterableDataset, option: FilterOptionMeta): boolean {
   const value = String(option.label).toLowerCase();
   return (
     String(card.label ?? '').toLowerCase() === value ||
@@ -87,7 +94,7 @@ function optionMatchesCard(card: MockDatasetCard, option: FilterOptionMeta): boo
 }
 
 export function cardMatchesFilters(
-  card: MockDatasetCard,
+  card: FilterableDataset,
   selectedIds: string[],
   optionsById: Map<string, FilterOptionMeta>,
 ): boolean {

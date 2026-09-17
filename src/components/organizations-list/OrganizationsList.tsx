@@ -1,141 +1,165 @@
-import { Button } from 'sectei-library';
-import { Link } from 'react-router-dom';
+import { useId } from 'react';
+import { Button, SearchField } from 'sectei-library';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
-import { SearchField } from '../shared/search-field/SearchField';
-import { CRUMBS, useOrganizationsList, type SortOrder } from './useOrganizationsList';
-import './organizations-list.scss';
+import { Filters } from '../shared/filters/Filters';
+import { OrganizationCard } from '../shared/organization-card/OrganizationCard';
+import { ORGANIZATION_FILTERS } from '../../data/organization-filters';
+import { CRUMBS, SORT_OPTIONS, useOrganizationsList, type SortOrder } from './useOrganizationsList';
+import '../shared/cards-section/cards-section.css';
+import './organizations-list.css';
 
 export function OrganizationsList() {
+  const sortId = useId();
   const {
     organizations,
-    filtered,
     loading,
-    error,
-    creating,
-    showCreateForm,
-    setShowCreateForm,
-    removingId,
     sortOrder,
-    setSortOrder,
-    newName,
-    setNewName,
-    newSlug,
-    setNewSlug,
-    setSearchFiltered,
-    createOrganization,
-    removeOrganization,
+    page,
+    totalPages,
+    pageItems,
+    pageNumbers,
+    goTo,
+    onFilterChange,
+    onSortChange,
+    filtersOpen,
+    setFiltersOpen,
+    activeFilters,
+    setActiveFilters,
   } = useOrganizationsList();
 
   return (
-    <div className="c-organizations-list">
-      <div className="page">
-        <PageHeader
-          title="Organizaciones"
-          intro="Organizaciones que publican y administran datasets en la plataforma."
-          crumbs={CRUMBS}
-          action={
-            <Button
-              type="button"
-              variant="primary"
-              icon="pictogram-add"
-              onClick={() => setShowCreateForm(!showCreateForm)}
-            >
-              Agregar organización
-            </Button>
-          }
-        />
+    <div className="c-organizations-list cards-section">
+      <PageHeader
+        title="Organizaciones"
+        intro="Organizaciones que publican y administran datasets en la plataforma."
+        crumbs={CRUMBS}
+        action={
+          <Button type="button" variant="primary" icon="pictogram-add">
+            Agregar organización
+          </Button>
+        }
+      />
 
-        <div className="page__body">
-          {showCreateForm && (
-            <form className="create-form" onSubmit={createOrganization} noValidate>
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                name="name"
-              />
-              <input
-                type="text"
-                placeholder="slug-en-minusculas"
-                value={newSlug}
-                onChange={(e) => setNewSlug(e.target.value)}
-                name="slug"
-              />
-              <button type="submit" className="button" disabled={creating}>
-                {creating ? 'Creando…' : 'Crear'}
-              </button>
-            </form>
-          )}
+      <section
+        className="container width-fixed cards-section__body"
+        aria-labelledby="organizations-subtitle"
+      >
+        <h2 id="organizations-subtitle" className="cards-section__subtitle m-t-0">
+          Organizaciones registradas
+        </h2>
 
-          {error && <p className="error-hint">{error}</p>}
-
-          <div className="cards-section__tools">
-            <div className="cards-section__search">
-              <SearchField
-                catalog={organizations}
-                searchProperty="name"
-                placeholder='Busca por nombre, por ejemplo "Ibero"…'
-                fieldId="search-organizations"
-                onFilter={setSearchFiltered}
-              />
-            </div>
-
-            <div className="cards-section__bar">
-              <div className="cards-section__sort">
-                <label htmlFor="sort-organizations">Ordenar por</label>
-                <select
-                  id="sort-organizations"
-                  name="sort"
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-                >
-                  <option value="reciente">Más recientes</option>
-                  <option value="nombre">Nombre (A–Z)</option>
-                </select>
-              </div>
-            </div>
+        <div className="cards-section__tools">
+          <div className="cards-section__search">
+            <SearchField
+              catalog={organizations}
+              searchProperty="name"
+              placeholder='Busca por nombre, por ejemplo "Ibero"…'
+              id="search-organizations"
+              onFilter={onFilterChange}
+            />
           </div>
 
-          {loading ? (
-            <p>Cargando…</p>
-          ) : filtered.length === 0 ? (
-            <p>No hay organizaciones que coincidan con tu búsqueda.</p>
-          ) : (
-            <div className="cards">
-              {filtered.map((org) => (
-                <Link key={org.id} className="org-card" to={`/organizations/${org.id}`}>
-                  <button
-                    type="button"
-                    className="button-pictogram button-delete-card"
-                    aria-label="Borrar organización"
-                    disabled={removingId === org.id}
-                    onClick={(e) => void removeOrganization(org, e)}
-                  >
-                    <Icon name="trash" size={14} />
-                  </button>
-                  <div className="org-card-cover">{org.name.charAt(0)}</div>
-                  <div className="org-card-body">
-                    <p className="title">{org.name}</p>
-                    {org.description && <p className="description">{org.description}</p>}
-                    <p className="stats">
-                      <span>
-                        <Icon name="layers" size={14} />
-                        {org._count?.datasets ?? 0} conjuntos
-                      </span>
-                      <span>
-                        <Icon name="users" size={14} />
-                        {org._count?.members ?? 0} miembros
-                      </span>
-                    </p>
-                  </div>
-                </Link>
-              ))}
+          <div className="cards-section__bar">
+            <div className="cards-section__actions">
+              <Button
+                type="button"
+                variant="secondary"
+                icon="pictogram-filter"
+                onClick={() => setFiltersOpen(true)}
+              >
+                Filtros
+                {activeFilters.length > 0 ? ` (${activeFilters.length})` : ''}
+              </Button>
             </div>
-          )}
+
+            <div className="cards-section__sort">
+              <label htmlFor={sortId}>Ordenar por</label>
+              <select
+                id={sortId}
+                name="sort"
+                value={sortOrder}
+                onChange={(e) => onSortChange(e.target.value as SortOrder)}
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
-      </div>
+
+        {loading ? (
+          <p className="text-color-secondary m-0">Cargando…</p>
+        ) : pageItems.length === 0 ? (
+          <p className="text-color-secondary m-0">No hay elementos para mostrar.</p>
+        ) : (
+          <>
+            <ul className="cards-section__grid">
+              {pageItems.map(({ id, createdAt: _createdAt, type: _type, scope: _scope, ...card }) => (
+                <li key={id}>
+                  <OrganizationCard {...card} />
+                </li>
+              ))}
+            </ul>
+
+            {totalPages > 1 && (
+              <nav className="paginator" aria-label="Paginación">
+                <button
+                  type="button"
+                  className="paginator__control"
+                  aria-label="Página anterior"
+                  disabled={page <= 1}
+                  onClick={() => goTo(page - 1)}
+                >
+                  <Icon name="chevron-left" size={16} />
+                </button>
+
+                <ul className="paginator__list">
+                  {pageNumbers.map((number) => (
+                    <li key={number}>
+                      <button
+                        type="button"
+                        className={`paginator__page${
+                          number === page ? ' paginator__page--current' : ''
+                        }`}
+                        aria-label={`Página ${number}`}
+                        aria-current={number === page ? 'page' : undefined}
+                        onClick={() => goTo(number)}
+                      >
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  className="paginator__control"
+                  aria-label="Página siguiente"
+                  disabled={page >= totalPages}
+                  onClick={() => goTo(page + 1)}
+                >
+                  <Icon name="chevron-right" size={16} />
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </section>
+
+      <Filters
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title={ORGANIZATION_FILTERS.title}
+        sections={ORGANIZATION_FILTERS.sections}
+        values={activeFilters}
+        onChange={setActiveFilters}
+        onApply={setActiveFilters}
+        onClear={() => setActiveFilters([])}
+      />
     </div>
   );
 }

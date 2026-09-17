@@ -1,0 +1,14 @@
+.c-profile {
+  display: block;
+  margin: 0;
+}
+
+.c-profile__section {
+  padding-block: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .c-profile__section {
+    padding-block: 2.5rem;
+  }
+}

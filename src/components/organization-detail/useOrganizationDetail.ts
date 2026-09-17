@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { datasetsService } from '../../core/services/datasets.service';
-import type { Dataset } from '../../core/models/dataset.model';
+import { organizationsService } from '../../core/services/organizations.service';
+import type { Dataset, Organization } from '../../core/models/dataset.model';
+import type { Crumb } from '../shared/page-header/PageHeader';
 
 export function useOrganizationDetail() {
   const { organizationId = '' } = useParams();
 
+  const [organization, setOrganization] = useState<Organization | null>(null);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +18,12 @@ export function useOrganizationDetail() {
     setLoading(true);
     setError(null);
     try {
-      setDatasets(await datasetsService.list(organizationId));
+      const [org, list] = await Promise.all([
+        organizationsService.get(organizationId),
+        datasetsService.list(organizationId),
+      ]);
+      setOrganization(org);
+      setDatasets(list);
     } catch {
       setError('No se pudieron cargar los datasets.');
     } finally {
@@ -26,6 +34,15 @@ export function useOrganizationDetail() {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  const crumbs: Crumb[] = useMemo(
+    () => [
+      { label: 'Inicio', href: '/dashboard' },
+      { label: 'Organizaciones', href: '/organizations' },
+      { label: organization?.name ?? 'Organización' },
+    ],
+    [organization?.name],
+  );
 
   const removeDataset = async (dataset: Dataset, event: MouseEvent) => {
     event.preventDefault();
@@ -49,5 +66,14 @@ export function useOrganizationDetail() {
     }
   };
 
-  return { organizationId, datasets, loading, error, removingId, removeDataset };
+  return {
+    organizationId,
+    organization,
+    datasets,
+    loading,
+    error,
+    removingId,
+    removeDataset,
+    crumbs,
+  };
 }
