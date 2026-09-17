@@ -33,10 +33,6 @@ export interface FiltersProps extends Omit<HTMLAttributes<HTMLElement>, 'onChang
   onClear?: () => void;
 }
 
-/**
- * Side filter panel: sections → subsections → checkboxes.
- * (from prototipo-intermediario)
- */
 export function Filters({
   open = false,
   onClose,

@@ -14,10 +14,6 @@ export interface PageHeaderProps extends HTMLAttributes<HTMLElement> {
   action?: ReactNode;
 }
 
-/**
- * Sisdai informational header (from prototipo-intermediario).
- * Accent strip `--bg-accent`. With `action`, text left / action right.
- */
 export function PageHeader({
   title = '',
   intro = '',

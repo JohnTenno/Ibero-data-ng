@@ -6,7 +6,6 @@ const VIZ_PICTOGRAMS: Record<string, string> = {
   bars: 'pictogram-level',
   lines: 'pictogram-layer-lines',
   dots: 'pictogram-layer-dots',
-  // Spanish keys kept for compatibility with prototype data
   barras: 'pictogram-level',
   lineas: 'pictogram-layer-lines',
   puntos: 'pictogram-layer-dots',
@@ -38,10 +37,6 @@ export interface HorizontalCardProps extends HTMLAttributes<HTMLElement> {
   children?: ReactNode;
 }
 
-/**
- * Horizontal catalog card (no cover).
- * (from prototipo-intermediario)
- */
 export function HorizontalCard({
   title = '',
   label = '',

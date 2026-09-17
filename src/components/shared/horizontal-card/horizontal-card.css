@@ -1,6 +1,3 @@
-/**
- * Catalog card without cover (from prototipo-intermediario).
- */
 .horizontal-card {
   --card-bg: var(--color-neutral-0, #fff);
   --card-color: var(--text-primary, var(--color-secondary-12));

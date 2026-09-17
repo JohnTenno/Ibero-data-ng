@@ -1,11 +1,12 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Icon } from '../icon/Icon';
-import { SearchField } from '../search-field/SearchField';
+import { Outlet, useLocation } from 'react-router-dom';
+import { AdminMainNav } from '../admin-main-nav/AdminMainNav';
+import { SideMenu } from '../side-menu/SideMenu';
 import { useAppShell } from './useAppShell';
 import './app-shell.scss';
 
 export function AppShell() {
-  const { currentUser, logout, navItems, filteredItems, setFilteredItems } = useAppShell();
+  const { pathname } = useLocation();
+  const { currentUser, logout, navItems } = useAppShell();
 
   return (
     <div className="c-app-shell">
@@ -13,58 +14,29 @@ export function AppShell() {
         Ir a contenido principal
       </a>
 
-      <header className="header-bar">
-        <div className="header-bar-brand">
-          <span className="header-bar-logo">Ibero Data MX</span>
+      <AdminMainNav
+        authenticated={Boolean(currentUser)}
+        user={
+          currentUser
+            ? { name: currentUser.fullName }
+            : null
+        }
+        onLogout={logout}
+      />
+
+      <div className="flex admin-home shell">
+        <div className="column-4-desktop column-1-mobile menu-side-bg">
+          <SideMenu
+            items={navItems}
+            pathname={pathname}
+            searchPlaceholder='Busca "conjuntos", "análisis"…'
+          />
         </div>
-        <div className="header-bar-user">
-          {currentUser && (
-            <>
-              <span className="avatar">{currentUser.fullName.charAt(0)}</span>
-              <span className="header-bar-name">{currentUser.fullName}</span>
-            </>
-          )}
-          <button type="button" className="button-icon" onClick={logout} aria-label="Cerrar sesión">
-            <Icon name="log-out" size={18} />
-          </button>
-        </div>
-      </header>
 
-      <div className="shell">
-        <aside className="sidebar">
-          <div className="sidebar-menu-search">
-            <SearchField
-              catalog={navItems}
-              searchProperty="label"
-              placeholder='Busca "conjuntos", "análisis"…'
-              fieldId="sidebar-search"
-              onFilter={setFilteredItems}
-            />
-          </div>
-
-          <nav className="nav-sidebar" aria-label="Menú secundario">
-            <ul>
-              {filteredItems.length === 0 && (
-                <li className="sidebar-menu-empty">
-                  <span>Sin resultados</span>
-                </li>
-              )}
-              {filteredItems.map((item) => (
-                <li key={item.path}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => (isActive ? 'nav-item active' : 'nav-item')}
-                  >
-                    <Icon name={item.icon} size={18} />
-                    <span>{item.label}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </aside>
-
-        <main className="content" id="contenido-principal">
+        <main
+          id="contenido-principal"
+          className="column-12-desktop column-7-mobile admin-home__contenido content"
+        >
           <Outlet />
         </main>
       </div>

@@ -1,22 +1,13 @@
-import { useState } from 'react';
 import { useAuth } from '../../../core/auth/useAuth';
+import { SIDE_MENU_ITEMS } from '../../../data/side-menu';
+import type { SideMenuItem } from '../side-menu/SideMenu';
 
-export interface NavItem {
-  label: string;
-  icon: string;
-  path: string;
-}
+export type NavItem = SideMenuItem;
 
-export const NAV_ITEMS: NavItem[] = [
-  { label: 'Inicio', icon: 'pictograma-explorar', path: '/dashboard' },
-  { label: 'Conjuntos de datos', icon: 'pictograma-capas', path: '/datasets' },
-  { label: 'Organizaciones', icon: 'pictograma-grupo', path: '/organizations' },
-  { label: 'Configuración de perfil', icon: 'pictograma-persona', path: '/profile' },
-];
+export const NAV_ITEMS: NavItem[] = SIDE_MENU_ITEMS;
 
 export function useAppShell() {
   const { currentUser, logout } = useAuth();
-  const [filteredItems, setFilteredItems] = useState<NavItem[]>(NAV_ITEMS);
 
-  return { currentUser, logout, navItems: NAV_ITEMS, filteredItems, setFilteredItems };
+  return { currentUser, logout, navItems: NAV_ITEMS };
 }

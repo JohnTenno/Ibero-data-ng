@@ -1,166 +1,37 @@
 .c-app-shell {
-  .header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
-  .header-bar-logo {
-    font-weight: 700;
-    font-size: 1rem;
-  }
-
-  .header-bar-user {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
-    background: var(--ink);
-    color: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .header-bar-name {
-    font-size: 0.9rem;
-    color: var(--ink-soft);
-  }
-
-  .button-icon {
-    border: none;
-    background: transparent;
-    color: var(--ink-soft);
-    display: flex;
-    align-items: center;
-    padding: 0.3rem;
-    border-radius: 6px;
-  }
-
-  .button-icon:hover {
-    background: var(--bg-sidebar);
-  }
-
-  .shell {
-    display: flex;
+  .shell.admin-home {
+    flex: 1 0 auto;
+    gap: 0;
     align-items: stretch;
-    min-height: calc(100vh - 57px);
+    min-height: 0;
   }
 
-  .sidebar {
-    --nav-sec-color: #111111;
-    --nav-sec-bg: #e6e6e6;
-    --nav-sec-hover-color: #111111;
-    --nav-sec-hover-bg: #d0d0d0;
-    --nav-sec-hover-border: #444444;
-    --nav-sec-active-color: #333333;
-    --nav-sec-active-bg: #ffffff;
-    --nav-sec-active-border: #333333;
-    --nav-sec-focus-color: #111111;
-    --nav-sec-focus-bg: #d0d0d0;
-    --nav-sec-focus-border: #005dff;
-    --nav-sec-focus-shadow: #005dff;
+  @media screen and (min-width: 768px) {
+    .shell.admin-home > .menu-side-bg {
+      flex: 0 0 25%;
+      max-width: 25%;
+      align-self: stretch;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-    flex: 0 0 25%;
-    max-width: 25%;
-    min-width: 220px;
-    background: var(--nav-sec-bg);
-    color: var(--nav-sec-color);
-    padding: 1rem 0 2.5rem;
+    .shell.admin-home > .admin-home__contenido {
+      flex: 1 1 75%;
+      max-width: none;
+      min-height: 100%;
+    }
+  }
+
+  .admin-home__contenido,
+  .content {
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    min-height: 100%;
-  }
-
-  .sidebar-menu-search {
-    padding: 1rem 1rem 0.75rem;
-  }
-
-  .sidebar-menu-empty {
-    padding: 0.75rem 1.5rem 0.75rem 48px;
-    color: var(--text-secondary, #5c5c5c);
-    font-size: 0.9375rem;
-  }
-
-  .nav-sidebar ul {
-    list-style: none;
-    margin: 0;
     padding: 0;
   }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 8px 24px 8px 48px;
-    border-radius: 0;
-    color: var(--nav-sec-color);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-  }
-
-  .nav-item .app-icon {
-    display: inline-flex;
-    flex-shrink: 0;
-    margin-right: 0.5rem;
-  }
-
-  .nav-item:hover {
-    background: var(--nav-sec-hover-bg);
-    box-shadow: inset 0 0 0 1px var(--nav-sec-hover-border);
-    color: var(--nav-sec-hover-color);
-  }
-
-  .nav-item.active,
-  .nav-item:focus,
-  .nav-item:active {
-    background: var(--nav-sec-active-bg);
-    box-shadow: inset 8px 0 0 var(--nav-sec-active-border);
-    color: var(--nav-sec-active-color);
-    font-weight: 400;
-    outline: none;
-  }
-
-  .nav-item:focus-visible {
-    background: var(--nav-sec-focus-bg);
-    box-shadow:
-      inset 0 0 0 1px var(--nav-sec-focus-border),
-      0 0 8px var(--nav-sec-focus-shadow);
-    color: var(--nav-sec-focus-color);
-    outline: none;
-  }
-
-  .content {
-    flex: 1;
-    min-width: 0;
-    padding: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    .sidebar {
-      flex-basis: 220px;
-      max-width: 220px;
-      min-width: 0;
-    }
-
-    .nav-item {
-      padding-left: 24px;
-    }
-
-    .header-bar-name {
-      display: none;
-    }
-  }
-
 }

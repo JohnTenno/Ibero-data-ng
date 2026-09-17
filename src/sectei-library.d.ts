@@ -6,12 +6,24 @@ declare module 'sectei-library' {
     variant?: string;
     size?: string;
     icon?: string;
+    iconOnly?: boolean;
     href?: string;
     disabled?: boolean;
     className?: string;
     tabIndex?: number;
+    'aria-label'?: string;
     onClick?: (event: unknown) => void;
     children?: ReactNode;
+    [key: string]: unknown;
+  }>;
+
+  export const MainNav: ComponentType<{
+    className?: string;
+    identity?: ReactNode;
+    complementary?: ReactNode;
+    navInfo?: string;
+    navWidth?: number;
+    children?: ReactNode | ((api: { closeMenuAndSubmenu: () => void }) => ReactNode);
     [key: string]: unknown;
   }>;
 
@@ -22,8 +34,9 @@ declare module 'sectei-library' {
     id?: string;
     disabled?: boolean;
     className?: string;
-    onFilter?: (filtered: unknown[]) => void;
-    onSearch?: (query: string, filtered: unknown[]) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onFilter?: (filtered: any[]) => void;
+    onSearch?: (query: string, filtered: any[]) => void;
     [key: string]: unknown;
   }>;
 

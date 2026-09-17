@@ -1,0 +1,50 @@
+.menu-side-container a [class^='pictogram-'],
+.menu-side-container a [class*=' pictogram-'] {
+  margin-right: 0.5rem;
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
+.menu-side-search {
+  padding: 1rem 1rem 0.75rem;
+}
+
+.menu-side-empty {
+  padding: 0.75rem 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .c-app-shell .admin-home > .menu-side-bg,
+  .admin-home > .menu-side-bg {
+    position: relative;
+    z-index: 1;
+  }
+
+  .c-app-shell .admin-home .menu-side,
+  .admin-home .menu-side {
+    position: sticky;
+    top: var(--admin-nav-height, 3.5rem);
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c-app-shell .admin-home .menu-side .menu-side-container,
+  .admin-home .menu-side .menu-side-container {
+    flex: 1 1 auto;
+    min-height: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--nav-secondary-bg);
+  }
+
+  .c-app-shell .admin-home .menu-side .menu-side-button,
+  .admin-home .menu-side .menu-side-button {
+    display: none !important;
+  }
+}

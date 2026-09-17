@@ -1,10 +1,5 @@
 import type { HorizontalCardProps } from '../components/shared/horizontal-card/HorizontalCard';
 
-/**
- * Prototype catalog mock (from prototipo-intermediario `tarjetaHorizontal.js`).
- * Front-end only — does not call the real API.
- * Code/keys in English; visible content in Spanish.
- */
 export type MockDatasetCard = HorizontalCardProps & { id: string };
 
 export const MOCK_DATASET_CARDS: MockDatasetCard[] = [

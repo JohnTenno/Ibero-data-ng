@@ -1,7 +1,3 @@
-/**
- * Header — breadcrumb colors (from prototipo-intermediario).
- */
-
 .header__crumbs {
   color: var(--color-neutral-5);
 }
@@ -44,10 +40,6 @@ body[data-theme='dark'] .header__crumbs [aria-current='page'] {
   color: var(--color-neutral-0);
 }
 
-/**
- * Sisdai rectangular strip: full-width accent background;
- * content uses `container width-fixed` + `width-read`.
- */
 .page-header {
   width: 100%;
   background-color: var(--bg-accent);

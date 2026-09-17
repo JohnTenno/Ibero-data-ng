@@ -1,10 +1,6 @@
 import type { FilterOption, FilterSection } from '../components/shared/filters/Filters';
 import type { MockDatasetCard } from './mock-datasets';
 
-/**
- * Filter tree aligned to the prototype mock catalog (client-side only).
- * Code/ids in English; visible labels in Spanish.
- */
 export const DATASET_FILTERS = {
   title: 'Filtros',
   sections: [
@@ -90,7 +86,6 @@ function optionMatchesCard(card: MockDatasetCard, option: FilterOptionMeta): boo
   );
 }
 
-/** Within a section: OR; across sections: AND (same as prototype). */
 export function cardMatchesFilters(
   card: MockDatasetCard,
   selectedIds: string[],

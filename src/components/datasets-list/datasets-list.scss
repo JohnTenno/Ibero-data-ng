@@ -1,7 +1,6 @@
 .c-datasets-list {
-  /* Compensa el padding del shell para franja full-bleed (PageHeader) */
   display: block;
-  margin: -2rem;
+  margin: 0;
 
   .paginator {
     display: flex;
