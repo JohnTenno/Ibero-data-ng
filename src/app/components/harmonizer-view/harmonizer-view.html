@@ -1,0 +1,114 @@
+<div class="pagina">
+  <a routerLink="/harmonizer" class="volver">&larr; Armonizador</a>
+
+  <h1>Vista armonizada</h1>
+  @if (!loading() && !loadError()) {
+    <p class="subtitulo">
+      @if (datasetView(); as view) {
+        Edición <strong>{{ title() }}</strong> · encuesta
+        <strong>{{ view.dataset.surveyName }}</strong> · {{ view.selectedCount }} variables ·
+        {{ view.rows.length }} filas
+      } @else if (surveyView(); as view) {
+        Encuesta <strong>{{ title() }}</strong> · {{ view.selectedCount }} variables ·
+        {{ view.rows.length }} filas
+      }
+    </p>
+  }
+
+  @if (loading()) {
+    <p class="nota">Cargando…</p>
+  } @else if (loadError()) {
+    <p class="ayuda-error">{{ loadError() }}</p>
+  } @else {
+    @if (surveyView(); as view) {
+      <section class="filtro">
+        <h2>Filtrar variables</h2>
+        @if (view.availableVariables.length === 0) {
+          <p class="nota">Ninguna edición de esta encuesta tiene columnas mapeadas todavía.</p>
+        } @else {
+          <div class="casillas">
+            @for (variable of view.availableVariables; track variable) {
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(variable)"
+                  (change)="toggleVariable(variable)"
+                />
+                {{ variable }}
+              </label>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <div class="acciones">
+      @if (datasetView()) {
+        <a
+          class="boton boton-secundario"
+          [routerLink]="['/harmonizer', 'datasets', datasetId, 'mapping']"
+        >
+          Editar mapeo
+        </a>
+      }
+      <button
+        type="button"
+        class="boton boton-secundario"
+        (click)="download('csv')"
+        [disabled]="downloading() !== null"
+      >
+        <app-icon name="download" [size]="16" />
+        {{ downloading() === 'csv' ? 'Descargando…' : 'CSV' }}
+      </button>
+      <button
+        type="button"
+        class="boton boton-secundario"
+        (click)="download('parquet')"
+        [disabled]="downloading() !== null || headers().length === 0"
+      >
+        <app-icon name="download" [size]="16" />
+        {{ downloading() === 'parquet' ? 'Descargando…' : 'Parquet' }}
+      </button>
+    </div>
+    @if (downloadError()) {
+      <p class="ayuda-error">{{ downloadError() }}</p>
+    }
+
+    @if (headers().length === 0) {
+      <p class="nota">
+        No hay columnas mapeadas.
+        @if (datasetId) {
+          <a [routerLink]="['/harmonizer', 'datasets', datasetId, 'mapping']">Mapea las columnas</a>
+          para verlas aquí.
+        }
+      </p>
+    } @else {
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              @for (header of headers(); track header) {
+                <th [class.origen]="header.startsWith('_')">{{ header }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of visibleRows(); track $index) {
+              <tr>
+                @for (header of headers(); track header) {
+                  <td [class.origen]="header.startsWith('_')">{{ row[header] ?? '' }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (rows().length > maxVisibleRows) {
+        <p class="nota">
+          Mostrando las primeras {{ maxVisibleRows }} de {{ rows().length }} filas. Descarga el
+          archivo para verlas todas.
+        </p>
+      }
+    }
+  }
+</div>

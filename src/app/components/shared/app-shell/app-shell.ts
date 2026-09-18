@@ -23,6 +23,7 @@ export class AppShell {
     { label: 'Inicio', icon: 'compass', path: '/dashboard' },
     { label: 'Conjuntos de datos', icon: 'layers', path: '/datasets' },
     { label: 'Organizaciones', icon: 'users', path: '/organizations' },
+    { label: 'Armonizador', icon: 'git-merge', path: '/harmonizer' },
     { label: 'Configuración de perfil', icon: 'user', path: '/profile' },
   ];
 

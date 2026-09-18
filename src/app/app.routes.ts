@@ -18,25 +18,54 @@ export const routes: Routes = [
       },
       {
         path: 'datasets',
-        loadComponent: () => import('./components/datasets-list/datasets-list').then((m) => m.DatasetsList),
+        loadComponent: () =>
+          import('./components/datasets-list/datasets-list').then((m) => m.DatasetsList),
       },
       {
         path: 'organizations',
         loadComponent: () =>
-          import('./components/organizations-list/organizations-list').then((m) => m.OrganizationsList),
+          import('./components/organizations-list/organizations-list').then(
+            (m) => m.OrganizationsList,
+          ),
       },
       {
         path: 'organizations/:organizationId',
         loadComponent: () =>
-          import('./components/organization-detail/organization-detail').then((m) => m.OrganizationDetail),
+          import('./components/organization-detail/organization-detail').then(
+            (m) => m.OrganizationDetail,
+          ),
       },
       {
         path: 'organizations/:organizationId/datasets/new',
-        loadComponent: () => import('./components/dataset-create/dataset-create').then((m) => m.DatasetCreate),
+        loadComponent: () =>
+          import('./components/dataset-create/dataset-create').then((m) => m.DatasetCreate),
       },
       {
         path: 'organizations/:organizationId/datasets/:datasetId',
-        loadComponent: () => import('./components/dataset-detail/dataset-detail').then((m) => m.DatasetDetail),
+        loadComponent: () =>
+          import('./components/dataset-detail/dataset-detail').then((m) => m.DatasetDetail),
+      },
+      {
+        path: 'harmonizer',
+        loadComponent: () =>
+          import('./components/harmonizer-home/harmonizer-home').then((m) => m.HarmonizerHome),
+      },
+      {
+        path: 'harmonizer/datasets/:datasetId/mapping',
+        loadComponent: () =>
+          import('./components/harmonizer-mapping/harmonizer-mapping').then(
+            (m) => m.HarmonizerMapping,
+          ),
+      },
+      {
+        path: 'harmonizer/datasets/:datasetId/harmonized',
+        loadComponent: () =>
+          import('./components/harmonizer-view/harmonizer-view').then((m) => m.HarmonizerView),
+      },
+      {
+        path: 'harmonizer/surveys/:surveyId/harmonized',
+        loadComponent: () =>
+          import('./components/harmonizer-view/harmonizer-view').then((m) => m.HarmonizerView),
       },
       {
         path: 'profile',

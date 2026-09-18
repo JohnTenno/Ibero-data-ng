@@ -1,0 +1,179 @@
+<div class="pagina">
+  <p class="migaja">Inicio / Armonizador</p>
+  <h1>Armonizador de encuestas</h1>
+  <p class="subtitulo">
+    Unifica variables que cambian de nombre entre ediciones (<code>age</code> en 2020,
+    <code>edad1</code> en 2021) bajo un nombre canónico común, para compararlas a lo largo del
+    tiempo.
+  </p>
+
+  <section>
+    <h2>Encuestas</h2>
+    @if (loading()) {
+      <p class="nota">Cargando…</p>
+    } @else if (loadError()) {
+      <p class="ayuda-error">{{ loadError() }}</p>
+    } @else if (surveys().length === 0) {
+      <p class="nota">Todavía no hay encuestas. Crea una o sube un CSV.</p>
+    } @else {
+      <div class="lista">
+        @for (survey of surveys(); track survey.id) {
+          <article class="encuesta">
+            <div class="encuesta-cabecera">
+              <div>
+                <p class="titulo">{{ survey.name }}</p>
+                @if (survey.description) {
+                  <p class="nota">{{ survey.description }}</p>
+                }
+              </div>
+              <a
+                class="boton boton-secundario boton-chico"
+                [routerLink]="['/harmonizer', 'surveys', survey.id, 'harmonized']"
+                [class.deshabilitado]="survey.datasets.length === 0"
+              >
+                Ver armonizado de la encuesta →
+              </a>
+            </div>
+
+            @if (survey.datasets.length === 0) {
+              <p class="nota">Sin ediciones todavía.</p>
+            } @else {
+              <div class="tabla-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Edición</th>
+                      <th>Año</th>
+                      <th>Filas</th>
+                      <th>Mapeadas / total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (ds of survey.datasets; track ds.id) {
+                      <tr>
+                        <td>{{ ds.name }}</td>
+                        <td>{{ ds.year }}</td>
+                        <td>{{ ds.rowCount }}</td>
+                        <td>
+                          <span
+                            class="chip"
+                            [class.chip-ok]="
+                              ds.mappedColumns === ds.totalColumns && ds.totalColumns > 0
+                            "
+                          >
+                            {{ ds.mappedColumns }} / {{ ds.totalColumns }}
+                          </span>
+                        </td>
+                        <td class="acciones">
+                          <a [routerLink]="['/harmonizer', 'datasets', ds.id, 'mapping']">Mapear</a>
+                          ·
+                          <a [routerLink]="['/harmonizer', 'datasets', ds.id, 'harmonized']">Ver</a>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <div class="formularios">
+    <form (ngSubmit)="createSurvey()" novalidate>
+      <fieldset>
+        <legend>Nueva encuesta</legend>
+
+        <label for="survey-name">Nombre *</label>
+        <input
+          id="survey-name"
+          type="text"
+          [(ngModel)]="surveyName"
+          name="surveyName"
+          placeholder="Ej: Socioeconómica"
+        />
+
+        <label for="survey-description">Descripción (opcional)</label>
+        <input
+          id="survey-description"
+          type="text"
+          [(ngModel)]="surveyDescription"
+          name="surveyDescription"
+        />
+
+        @if (createSurveyError()) {
+          <p class="ayuda-error">{{ createSurveyError() }}</p>
+        }
+
+        <button
+          type="submit"
+          class="boton boton-secundario"
+          [disabled]="creatingSurvey() || !surveyName.trim()"
+        >
+          <app-icon name="plus" [size]="16" />
+          {{ creatingSurvey() ? 'Creando…' : 'Crear encuesta' }}
+        </button>
+      </fieldset>
+    </form>
+
+    <form (ngSubmit)="upload()" novalidate>
+      <fieldset>
+        <legend>Subir CSV (una edición)</legend>
+
+        <label for="dataset-name">Nombre de la edición *</label>
+        <input
+          id="dataset-name"
+          type="text"
+          [(ngModel)]="datasetName"
+          name="datasetName"
+          placeholder="Ej: ENIGH 2024"
+        />
+
+        <label for="dataset-year">Año *</label>
+        <input
+          id="dataset-year"
+          type="number"
+          min="1900"
+          max="2100"
+          [(ngModel)]="datasetYear"
+          name="datasetYear"
+        />
+
+        <label for="dataset-survey">Encuesta *</label>
+        <select id="dataset-survey" [(ngModel)]="uploadSurveyId" name="uploadSurveyId">
+          <option [value]="newOption">➕ Nueva encuesta</option>
+          @for (survey of surveys(); track survey.id) {
+            <option [value]="survey.id">{{ survey.name }}</option>
+          }
+        </select>
+
+        @if (uploadSurveyId === newOption) {
+          <label for="new-survey">Nombre de la nueva encuesta *</label>
+          <input id="new-survey" type="text" [(ngModel)]="newSurveyName" name="newSurveyName" />
+        }
+
+        <label for="dataset-file">Archivo CSV *</label>
+        <input
+          id="dataset-file"
+          type="file"
+          accept=".csv,text/csv"
+          (change)="onFileSelected($event)"
+        />
+        <p class="nota">
+          Se guarda todo como texto, sin inferir tipos; las celdas vacías quedan como cadena vacía.
+        </p>
+
+        @if (uploadError()) {
+          <p class="ayuda-error">{{ uploadError() }}</p>
+        }
+
+        <button type="submit" class="boton" [disabled]="uploading() || !canUpload()">
+          {{ uploading() ? 'Subiendo…' : 'Subir y mapear' }}
+        </button>
+      </fieldset>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+.pagina {
+  max-width: 900px;
+  margin: 0 auto;
+
+  section {
+    margin: 1.5rem 0;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.migaja {
+  font-size: 0.8rem;
+  color: var(--texto-tenue);
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.subtitulo {
+  color: var(--texto-tenue);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.nota {
+  color: var(--texto-tenue);
+  font-size: 0.85rem;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.encuesta {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+}
+
+.encuesta-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.titulo {
+  font-weight: 700;
+}
+
+.boton-chico {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.deshabilitado {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  font-size: 0.85rem;
+}
+
+.acciones a {
+  font-weight: 600;
+}
+
+.chip-ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.formularios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+fieldset {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100%;
+}
+
+legend {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0 0.4rem;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+  margin-top: 0.5rem;
+}
+
+input,
+select {
+  width: 100%;
+}
+
+button[type='submit'] {
+  justify-content: center;
+  margin-top: 0.75rem;
+}

@@ -1,0 +1,96 @@
+<div class="pagina">
+  <a routerLink="/harmonizer" class="volver">&larr; Armonizador</a>
+
+  <h1>Mapeo de columnas</h1>
+  @if (dataset(); as ds) {
+    <p class="subtitulo">
+      <strong>{{ ds.name }}</strong> ({{ ds.year }}) · encuesta <strong>{{ ds.surveyName }}</strong>
+    </p>
+  }
+
+  @if (loading()) {
+    <p class="nota">Cargando…</p>
+  } @else if (loadError()) {
+    <p class="ayuda-error">{{ loadError() }}</p>
+  } @else {
+    <p class="nota">
+      Para cada columna del CSV elige la variable canónica a la que corresponde, crea una nueva, o
+      déjala sin mapear. Las sugerencias vienen del <em>histórico</em> (misma columna mapeada en
+      otra edición de esta encuesta) o del <em>nombre</em>. Nada se guarda hasta pulsar «Guardar
+      mapeo».
+    </p>
+
+    <div class="resumen">
+      <span class="chip">{{ mappedCount() }} / {{ rows().length }} columnas mapeadas</span>
+      <button type="button" class="boton boton-secundario boton-chico" (click)="clearAll()">
+        Desmapear todas
+      </button>
+    </div>
+
+    <form (ngSubmit)="save()" novalidate>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Columna del CSV</th>
+              <th>Variable canónica</th>
+              <th>Sugerencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.column.name) {
+              <tr>
+                <td class="columna">
+                  <code>{{ row.column.name }}</code>
+                </td>
+                <td>
+                  <select [(ngModel)]="row.choice" [name]="'choice-' + row.column.name">
+                    <option value="">— sin mapear —</option>
+                    @for (cv of canonicalVariables(); track cv.id) {
+                      <option [value]="canonicalPrefix + cv.id">{{ cv.name }}</option>
+                    }
+                    <option [value]="newOption">➕ crear nueva…</option>
+                  </select>
+                  @if (row.choice === newOption) {
+                    <input
+                      type="text"
+                      class="nueva"
+                      [(ngModel)]="row.newName"
+                      [name]="'new-' + row.column.name"
+                      placeholder="nombre canónico (ej. edad)"
+                    />
+                  }
+                </td>
+                <td>
+                  @if (row.column.suggestionSource; as source) {
+                    <span class="chip" [class.chip-historico]="source === 'history'">
+                      {{ suggestionLabel[source] }}: {{ row.column.suggested }}
+                    </span>
+                  } @else if (row.column.selectedCanonicalId) {
+                    <span class="nota">guardado</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (saveError()) {
+        <p class="ayuda-error">{{ saveError() }}</p>
+      }
+
+      <div class="acciones">
+        <button type="submit" class="boton" [disabled]="saving()">
+          {{ saving() ? 'Guardando…' : 'Guardar mapeo' }}
+        </button>
+        <a
+          class="boton boton-secundario"
+          [routerLink]="['/harmonizer', 'datasets', datasetId, 'harmonized']"
+        >
+          Ver armonizado →
+        </a>
+      </div>
+    </form>
+  }
+</div>
