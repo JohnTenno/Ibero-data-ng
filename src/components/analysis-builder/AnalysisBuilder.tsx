@@ -1,3 +1,5 @@
+import { Button } from 'sectei-library';
+import type { MouseEvent } from 'react';
 import type { Analysis, Step } from '../../core/models/analysis.model';
 import type { Resource, ResourceColumn } from '../../core/models/resource.model';
 import type { DatasetVisibility } from '../../core/models/dataset.model';
@@ -8,7 +10,7 @@ import {
   OP_LABELS,
   useAnalysisBuilder,
 } from './useAnalysisBuilder';
-import './analysis-builder.scss';
+import './analysis-builder.css';
 
 interface Props {
   organizationId: string;
@@ -47,10 +49,11 @@ export function AnalysisBuilder({
     switch (step.op) {
       case 'join':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <select
               value={(step.params['resourceId'] as string) ?? ''}
               onChange={(e) => b.onJoinResourceChange(index, step, e.target.value)}
+              aria-label="Recurso a cruzar"
             >
               <option value="">recurso a cruzar…</option>
               {b.otherResources.map((r) => (
@@ -62,6 +65,7 @@ export function AnalysisBuilder({
             <select
               value={(step.params['type'] as string) ?? 'inner'}
               onChange={(e) => b.setParam(index, 'type', e.target.value)}
+              aria-label="Tipo de cruce"
             >
               {JOIN_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -72,6 +76,7 @@ export function AnalysisBuilder({
             <select
               value={(step.params['onLeft'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'onLeft', e.target.value)}
+              aria-label="Columna de este recurso"
             >
               <option value="">columna de este recurso…</option>
               {(resourceColumns ?? []).map((col) => (
@@ -80,10 +85,11 @@ export function AnalysisBuilder({
                 </option>
               ))}
             </select>
-            <span>=</span>
+            <span aria-hidden="true">=</span>
             <select
               value={(step.params['onRight'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'onRight', e.target.value)}
+              aria-label="Columna del otro recurso"
             >
               <option value="">columna del otro recurso…</option>
               {b.columnsForResource(step.params['resourceId'] as string).map((col) => (
@@ -97,19 +103,23 @@ export function AnalysisBuilder({
               placeholder="alias (ej: expansion)"
               value={(step.params['alias'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'alias', e.target.value)}
+              aria-label="Alias"
             />
           </div>
         );
 
       case 'group_by':
         return (
-          <div className="chips-select">
+          <div className="c-analysis-builder__chips" role="group" aria-label="Columnas de agrupación">
             {b.availableColumns.map((col) => (
               <button
                 key={col}
                 type="button"
-                className={`chip-toggle${b.isGroupByColumnSelected(step, col) ? ' active' : ''}`}
+                className={`c-analysis-builder__chip${
+                  b.isGroupByColumnSelected(step, col) ? ' is-active' : ''
+                }`}
                 onClick={() => b.toggleGroupByColumn(index, step, col)}
+                aria-pressed={b.isGroupByColumnSelected(step, col)}
               >
                 {col}
               </button>
@@ -119,10 +129,11 @@ export function AnalysisBuilder({
 
       case 'aggregate':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <select
               value={(step.params['func'] as string) ?? 'SUM'}
               onChange={(e) => b.setParam(index, 'func', e.target.value)}
+              aria-label="Función de agregado"
             >
               {AGG_FUNCS.map((fn) => (
                 <option key={fn} value={fn}>
@@ -133,6 +144,7 @@ export function AnalysisBuilder({
             <select
               value={(step.params['column'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'column', e.target.value)}
+              aria-label="Columna a agregar"
             >
               <option value="">columna…</option>
               <option value="*">* (todas las filas)</option>
@@ -147,8 +159,9 @@ export function AnalysisBuilder({
               placeholder="nombre del resultado"
               value={(step.params['as'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'as', e.target.value)}
+              aria-label="Nombre del resultado"
             />
-            <label className="check">
+            <label className="c-analysis-builder__check">
               <input
                 type="checkbox"
                 checked={Boolean(step.params['distinct'])}
@@ -161,10 +174,11 @@ export function AnalysisBuilder({
 
       case 'compute':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <select
               value={(step.params['left'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'left', e.target.value)}
+              aria-label="Columna A"
             >
               <option value="">columna A…</option>
               {b.availableColumns.map((col) => (
@@ -173,10 +187,11 @@ export function AnalysisBuilder({
                 </option>
               ))}
             </select>
-            <span>×</span>
+            <span aria-hidden="true">×</span>
             <select
               value={(step.params['right'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'right', e.target.value)}
+              aria-label="Columna B"
             >
               <option value="">columna B (o número)…</option>
               {b.availableColumns.map((col) => (
@@ -190,23 +205,26 @@ export function AnalysisBuilder({
               placeholder="o escribe un número en 'columna B'"
               value={(step.params['right'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'right', e.target.value)}
+              aria-label="Número o columna B"
             />
             <input
               type="text"
               placeholder="nombre del resultado"
               value={(step.params['as'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'as', e.target.value)}
+              aria-label="Nombre del resultado"
             />
           </div>
         );
 
       case 'percentage':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <span>% de</span>
             <select
               value={(step.params['of'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'of', e.target.value)}
+              aria-label="Agregado base"
             >
               <option value="">agregado…</option>
               {b.aggregateAliases.map((alias) => (
@@ -220,16 +238,18 @@ export function AnalysisBuilder({
               placeholder="nombre del resultado"
               value={(step.params['as'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'as', e.target.value)}
+              aria-label="Nombre del resultado"
             />
           </div>
         );
 
       case 'filter':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <select
               value={(step.params['column'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'column', e.target.value)}
+              aria-label="Columna a filtrar"
             >
               <option value="">columna…</option>
               {b.availableColumns.map((col) => (
@@ -241,6 +261,7 @@ export function AnalysisBuilder({
             <select
               value={(step.params['operator'] as string) ?? '='}
               onChange={(e) => b.setParam(index, 'operator', e.target.value)}
+              aria-label="Operador"
             >
               {OPERATORS.map((op) => (
                 <option key={op} value={op}>
@@ -253,16 +274,18 @@ export function AnalysisBuilder({
               placeholder="valor"
               value={(step.params['value'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'value', e.target.value)}
+              aria-label="Valor"
             />
           </div>
         );
 
       case 'sort':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <select
               value={(step.params['column'] as string) ?? ''}
               onChange={(e) => b.setParam(index, 'column', e.target.value)}
+              aria-label="Columna a ordenar"
             >
               <option value="">columna…</option>
               {b.availableColumns.map((col) => (
@@ -279,6 +302,7 @@ export function AnalysisBuilder({
             <select
               value={(step.params['dir'] as string) ?? 'desc'}
               onChange={(e) => b.setParam(index, 'dir', e.target.value)}
+              aria-label="Dirección"
             >
               <option value="asc">ascendente</option>
               <option value="desc">descendente</option>
@@ -288,12 +312,13 @@ export function AnalysisBuilder({
 
       case 'limit':
         return (
-          <div className="step-fields">
+          <div className="c-analysis-builder__step-fields">
             <input
               type="number"
-              min="1"
+              min={1}
               value={(step.params['n'] as number) ?? 100}
               onChange={(e) => b.setParam(index, 'n', Number(e.target.value))}
+              aria-label="Número de filas"
             />
             <span>filas</span>
           </div>
@@ -306,32 +331,37 @@ export function AnalysisBuilder({
 
   return (
     <div className="c-analysis-builder">
-      <div className="builder">
-        {b.steps.length > 0 && (
-          <ol className="steps">
-            {b.steps.map((step, index) => (
-              // eslint-disable-next-line react/no-array-index-key -- steps are identified by position, as in the original
-              <li className="step" key={index}>
-                <div className="step-header">
-                  <span className="step-num">{index + 1}</span>
-                  <strong>{OP_LABELS[step.op]}</strong>
-                  <button
-                    type="button"
-                    className="remove"
-                    onClick={() => b.removeStep(index)}
-                    aria-label="Quitar paso"
-                  >
-                    ✕
-                  </button>
-                </div>
-                {renderFields(step, index)}
-              </li>
-            ))}
-          </ol>
-        )}
+      {b.steps.length > 0 ? (
+        <ol className="c-analysis-builder__steps">
+          {b.steps.map((step, index) => (
+            <li className="c-analysis-builder__step" key={`${step.op}-${index}`}>
+              <div className="c-analysis-builder__step-header">
+                <span className="c-analysis-builder__step-num">{index + 1}</span>
+                <strong>{OP_LABELS[step.op]}</strong>
+                <Button
+                  type="button"
+                  variant="bare-secondary"
+                  size="small"
+                  iconOnly
+                  icon="pictogram-close"
+                  className="c-analysis-builder__remove"
+                  onClick={() => b.removeStep(index)}
+                  aria-label="Quitar paso"
+                />
+              </div>
+              {renderFields(step, index)}
+            </li>
+          ))}
+        </ol>
+      ) : null}
 
-        <div className="add-step">
+      <div className="c-analysis-builder__add">
+        <label className="c-analysis-builder__add-label" htmlFor="analysis-new-op">
+          Tipo de paso
+        </label>
+        <div className="c-analysis-builder__add-row">
           <select
+            id="analysis-new-op"
             value={b.newOp}
             onChange={(e) => b.setNewOp(e.target.value as typeof b.newOp)}
             name="newOp"
@@ -342,49 +372,61 @@ export function AnalysisBuilder({
               </option>
             ))}
           </select>
-          <button type="button" className="button button-secondary" onClick={b.addStep}>
-            + Agregar paso
-          </button>
+          <Button type="button" variant="secondary" icon="pictogram-add" onClick={b.addStep}>
+            Agregar paso
+          </Button>
         </div>
-        {b.opCatalog && b.newOp && <p className="op-hint">{b.opCatalog[b.newOp].description}</p>}
+      </div>
+      {b.opCatalog && b.newOp ? (
+        <p className="c-analysis-builder__hint">{b.opCatalog[b.newOp].description}</p>
+      ) : null}
 
-        {b.editingAnalysisId && (
-          <p className="edit-note">
-            ✎ Editando análisis existente — al confirmar se sobrescribe (no se crea uno nuevo).
-          </p>
-        )}
+      {b.editingAnalysisId ? (
+        <p className="c-analysis-builder__note">
+          Editando análisis existente — al confirmar se sobrescribe (no se crea uno nuevo).
+        </p>
+      ) : null}
 
-        {b.steps.length > 0 && (
-          <>
-            <div className="preview-row">
-              <label className="rounding">
-                Redondear a
-                <input
-                  type="number"
-                  min="0"
-                  max="15"
-                  placeholder="sin redondeo"
-                  value={b.roundDecimals}
-                  onChange={(e) => b.setRoundDecimals(e.target.value)}
-                />
-                decimales
-              </label>
-              <button
-                type="button"
-                className="button"
-                onClick={b.runPreview}
-                disabled={b.previewing}
-              >
-                {b.previewing ? 'Probando…' : 'Probar (preview)'}
-              </button>
-            </div>
+      {b.steps.length > 0 ? (
+        <>
+          <div className="c-analysis-builder__preview-row">
+            <label className="c-analysis-builder__rounding" htmlFor="analysis-round">
+              Redondear a
+              <input
+                id="analysis-round"
+                type="number"
+                min={0}
+                max={15}
+                placeholder="sin redondeo"
+                value={b.roundDecimals}
+                onChange={(e) => b.setRoundDecimals(e.target.value)}
+              />
+              decimales
+            </label>
+            <Button
+              type="button"
+              variant="primary"
+              icon="pictogram-eye-view"
+              onClick={b.runPreview}
+              disabled={b.previewing}
+            >
+              {b.previewing ? 'Probando…' : 'Probar (preview)'}
+            </Button>
+          </div>
 
-            {b.previewError && <p className="error-hint">{b.previewError}</p>}
+          {b.previewError ? (
+            <p className="c-analysis-builder__error" role="alert">
+              {b.previewError}
+            </p>
+          ) : null}
 
-            {b.previewResult && (
-              <>
-                <div className="table-container">
-                  <p className="note">{b.previewResult.rowCount} filas (muestra)</p>
+          {b.previewResult ? (
+            <>
+              <div className="c-analysis-builder__table-wrap">
+                <p className="c-analysis-builder__meta">
+                  {b.previewResult.rowCount} filas (muestra)
+                </p>
+                <div className="c-analysis-builder__table-scroll">
                   <table>
                     <thead>
                       <tr>
@@ -395,8 +437,7 @@ export function AnalysisBuilder({
                     </thead>
                     <tbody>
                       {b.previewResult.rows.map((row, i) => (
-                        // eslint-disable-next-line react/no-array-index-key -- rows have no stable id
-                        <tr key={i}>
+                        <tr key={`preview-${i}`}>
                           {b.previewResult!.columns.map((col) => (
                             <td key={col}>{String(row[col] ?? '')}</td>
                           ))}
@@ -405,44 +446,69 @@ export function AnalysisBuilder({
                     </tbody>
                   </table>
                 </div>
+              </div>
 
-                <div className="save">
-                  {!b.showSaveForm ? (
-                    <button type="button" className="button" onClick={() => b.setShowSaveForm(true)}>
-                      {b.editingAnalysisId ? 'Actualizar este análisis' : 'Guardar este análisis'}
-                    </button>
-                  ) : (
-                    <>
-                      <form onSubmit={b.save} noValidate className="save-form">
+              <div className="c-analysis-builder__save">
+                {!b.showSaveForm ? (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    icon="pictogram-add"
+                    onClick={() => b.setShowSaveForm(true)}
+                  >
+                    {b.editingAnalysisId ? 'Actualizar este análisis' : 'Guardar este análisis'}
+                  </Button>
+                ) : (
+                  <>
+                    <form onSubmit={b.save} noValidate className="c-analysis-builder__save-form">
+                      <div className="c-analysis-builder__field">
+                        <label htmlFor="analysis-title">Título</label>
                         <input
+                          id="analysis-title"
                           type="text"
                           placeholder="Título"
                           value={f.title}
                           onChange={(e) => f.setTitle(e.target.value)}
                           name="title"
                         />
+                      </div>
+                      <div className="c-analysis-builder__field">
+                        <label htmlFor="analysis-slug">Slug</label>
                         <input
+                          id="analysis-slug"
                           type="text"
                           placeholder="slug-en-minusculas"
                           value={f.slug}
                           onChange={(e) => f.setSlug(e.target.value)}
                           name="slug"
                         />
+                      </div>
+                      <div className="c-analysis-builder__field">
+                        <label htmlFor="analysis-folder">Carpeta</label>
                         <input
+                          id="analysis-folder"
                           type="text"
                           placeholder="Carpeta (ej: enigh)"
                           value={f.folder}
                           onChange={(e) => f.setFolder(e.target.value)}
                           name="folder"
                         />
+                      </div>
+                      <div className="c-analysis-builder__field c-analysis-builder__field--full">
+                        <label htmlFor="analysis-description">Descripción</label>
                         <textarea
+                          id="analysis-description"
                           rows={2}
                           placeholder="Descripción (opcional)"
                           value={f.description}
                           onChange={(e) => f.setDescription(e.target.value)}
                           name="description"
                         />
+                      </div>
+                      <div className="c-analysis-builder__field">
+                        <label htmlFor="analysis-visibility">Visibilidad</label>
                         <select
+                          id="analysis-visibility"
                           value={f.visibility}
                           onChange={(e) => f.setVisibility(e.target.value as DatasetVisibility)}
                           name="visibility"
@@ -450,7 +516,9 @@ export function AnalysisBuilder({
                           <option value="PRIVATE">Privado</option>
                           <option value="PUBLIC">Público</option>
                         </select>
-                        <button type="submit" className="button" disabled={b.saving}>
+                      </div>
+                      <div className="c-analysis-builder__save-actions">
+                        <Button type="submit" variant="primary" disabled={b.saving}>
                           {b.saving
                             ? b.editingAnalysisId
                               ? 'Actualizando…'
@@ -458,91 +526,104 @@ export function AnalysisBuilder({
                             : b.editingAnalysisId
                               ? 'Actualizar'
                               : 'Confirmar'}
-                        </button>
-                        {b.editingAnalysisId && (
-                          <button
-                            type="button"
-                            className="button button-secondary"
-                            onClick={b.cancelEdit}
-                          >
+                        </Button>
+                        {b.editingAnalysisId ? (
+                          <Button type="button" variant="secondary" onClick={b.cancelEdit}>
                             Cancelar edición
-                          </button>
-                        )}
-                      </form>
-                      {b.saveError && <p className="error-hint">{b.saveError}</p>}
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+                          </Button>
+                        ) : null}
+                      </div>
+                    </form>
+                    {b.saveError ? (
+                      <p className="c-analysis-builder__error" role="alert">
+                        {b.saveError}
+                      </p>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            </>
+          ) : null}
 
-            {b.savedAnalysis && (
-              <p className="confirmation">
-                ✓ Análisis "{b.savedAnalysis.title}" guardado en la carpeta "
-                {b.savedAnalysis.folder}".
-              </p>
-            )}
-          </>
-        )}
+          {b.savedAnalysis ? (
+            <p className="c-analysis-builder__ok">
+              Análisis “{b.savedAnalysis.title}” guardado en la carpeta “{b.savedAnalysis.folder}”.
+            </p>
+          ) : null}
+        </>
+      ) : null}
 
-        <div className="saved-analyses">
-          <h3>Análisis guardados</h3>
-          {b.vizCanvasError && <p className="error-hint">{b.vizCanvasError}</p>}
-          {b.loadingAnalyses ? (
-            <p>Cargando…</p>
-          ) : b.analyses.length === 0 ? (
-            <p className="note">Todavía no hay análisis guardados para este dataset.</p>
-          ) : (
-            <ul>
-              {b.analyses.map((analysis) => (
-                <li className="analysis-row-container" key={analysis.id}>
-                  <div className="analysis-row-header">
-                    <button
-                      type="button"
-                      className="analysis-row"
-                      onClick={() => void b.openAnalysis(analysis)}
+      <div className="c-analysis-builder__saved">
+        <h3 className="c-analysis-builder__subtitle">Análisis guardados</h3>
+        {b.vizCanvasError ? (
+          <p className="c-analysis-builder__error" role="alert">
+            {b.vizCanvasError}
+          </p>
+        ) : null}
+        {b.loadingAnalyses ? (
+          <p className="c-analysis-builder__meta">Cargando…</p>
+        ) : b.analyses.length === 0 ? (
+          <p className="c-analysis-builder__meta">
+            Todavía no hay análisis guardados para este dataset.
+          </p>
+        ) : (
+          <ul className="c-analysis-builder__list">
+            {b.analyses.map((analysis) => (
+              <li className="c-analysis-builder__item" key={analysis.id}>
+                <div className="c-analysis-builder__item-header">
+                  <button
+                    type="button"
+                    className="c-analysis-builder__item-main"
+                    onClick={() => void b.openAnalysis(analysis)}
+                  >
+                    <span className="c-analysis-builder__folder">{analysis.folder}</span>
+                    <span className="c-analysis-builder__item-title">{analysis.title}</span>
+                    <span
+                      className={`c-analysis-builder__status c-analysis-builder__status--${analysis.status.toLowerCase()}`}
                     >
-                      <span className="chip">{analysis.folder}</span>
-                      <span className="title">{analysis.title}</span>
-                      <span className={`status ${analysis.status.toLowerCase()}`}>
-                        {analysis.status}
-                      </span>
-                    </button>
-                    <button
+                      {analysis.status}
+                    </span>
+                  </button>
+                  <div className="c-analysis-builder__item-actions">
+                    <Button
                       type="button"
-                      className="button button-secondary button-small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRequestEditResource?.(analysis);
-                      }}
+                      variant="secondary"
+                      icon="pictogram-edit"
+                      onClick={() => onRequestEditResource?.(analysis)}
                     >
                       Editar
-                    </button>
-                    {analysis.status === 'DONE' && (
-                      <button
+                    </Button>
+                    {analysis.status === 'DONE' ? (
+                      <Button
                         type="button"
-                        className="button button-secondary button-small"
-                        onClick={(e) => void b.openInVizCanvas(analysis, e)}
+                        variant="secondary"
+                        icon="pictogram-link-external"
+                        onClick={(e) => void b.openInVizCanvas(analysis, e as MouseEvent)}
                         disabled={b.openingVizCanvasId === analysis.id}
                       >
-                        {b.openingVizCanvasId === analysis.id ? 'Abriendo…' : 'Abrir en VizCanvas'}
-                      </button>
-                    )}
-                    <button
+                        {b.openingVizCanvasId === analysis.id ? 'Abriendo…' : 'VizCanvas'}
+                      </Button>
+                    ) : null}
+                    <Button
                       type="button"
-                      className="button button-secondary button-small button-delete"
-                      onClick={(e) => void b.removeAnalysis(analysis, e)}
+                      variant="secondary"
+                      icon="pictogram-delete"
+                      onClick={(e) => void b.removeAnalysis(analysis, e as MouseEvent)}
                       disabled={b.removingId === analysis.id}
                     >
                       {b.removingId === analysis.id ? 'Borrando…' : 'Borrar'}
-                    </button>
+                    </Button>
                   </div>
+                </div>
 
-                  {b.openAnalysisId === analysis.id &&
-                    (analysis.status === 'FAILED' ? (
-                      <p className="error-hint">{analysis.errorMessage}</p>
-                    ) : b.openAnalysisData ? (
-                      <div className="table-container">
+                {b.openAnalysisId === analysis.id ? (
+                  analysis.status === 'FAILED' ? (
+                    <p className="c-analysis-builder__error" role="alert">
+                      {analysis.errorMessage}
+                    </p>
+                  ) : b.openAnalysisData ? (
+                    <div className="c-analysis-builder__table-wrap">
+                      <div className="c-analysis-builder__table-scroll">
                         <table>
                           <thead>
                             <tr>
@@ -553,8 +634,7 @@ export function AnalysisBuilder({
                           </thead>
                           <tbody>
                             {b.openAnalysisData.rows.map((row, i) => (
-                              // eslint-disable-next-line react/no-array-index-key -- rows have no stable id
-                              <tr key={i}>
+                              <tr key={`open-${analysis.id}-${i}`}>
                                 {b.openAnalysisData!.columns.map((col) => (
                                   <td key={col}>{String(row[col] ?? '')}</td>
                                 ))}
@@ -563,14 +643,15 @@ export function AnalysisBuilder({
                           </tbody>
                         </table>
                       </div>
-                    ) : (
-                      <p className="note">Cargando resultado…</p>
-                    ))}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                    </div>
+                  ) : (
+                    <p className="c-analysis-builder__meta">Cargando resultado…</p>
+                  )
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

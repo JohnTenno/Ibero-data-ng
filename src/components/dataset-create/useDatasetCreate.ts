@@ -48,7 +48,10 @@ export function useDatasetCreate() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title || !slug) return;
+    if (!title.trim() || !slug.trim()) {
+      setError('Completa el título y la URL del dataset.');
+      return;
+    }
     setSaving(true);
     setError(null);
     try {

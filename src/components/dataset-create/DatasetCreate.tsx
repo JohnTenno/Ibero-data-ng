@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Button } from 'sectei-library';
 import {
   PERIOD_TYPE_OPTIONS,
   SURVEY_OPTIONS,
@@ -6,190 +6,250 @@ import {
   type PeriodType,
   type Survey,
 } from '../../core/models/dataset.model';
+import { PageHeader } from '../shared/page-header/PageHeader';
 import { useDatasetCreate } from './useDatasetCreate';
-import './dataset-create.scss';
+import './dataset-create.css';
 
 export function DatasetCreate() {
   const { organizationId, saving, error, revisionOf, fields, submit } = useDatasetCreate();
 
+  const crumbs = [
+    { label: 'Inicio', href: '/dashboard' },
+    { label: 'Organizaciones', href: '/organizations' },
+    { label: 'Datasets', href: `/organizations/${organizationId}` },
+    { label: revisionOf ? 'Nueva revisión' : 'Nuevo dataset' },
+  ];
+
   return (
     <div className="c-dataset-create">
-      <div className="page">
-        <Link to={`/organizations/${organizationId}`} className="back">
-          &larr; Organización
-        </Link>
+      <PageHeader
+        title={revisionOf ? 'Nueva revisión' : 'Nuevo dataset'}
+        intro={
+          revisionOf ? (
+            <p className="c-dataset-create__revision m-0">
+              Esta es una <strong>revisión</strong> de <strong>{revisionOf.title}</strong> (v
+              {revisionOf.revision}).
+            </p>
+          ) : (
+            'Define la identificación, clasificación y visibilidad del conjunto de datos.'
+          )
+        }
+        crumbs={crumbs}
+        action={
+          <Button type="button" variant="secondary" href={`/organizations/${organizationId}`}>
+            Cancelar
+          </Button>
+        }
+      />
 
-        <h1>Nuevo dataset</h1>
-        {revisionOf && (
-          <p className="revision-note">
-            Esta es una <strong>revisión</strong> de <strong>{revisionOf.title}</strong> (v
-            {revisionOf.revision}).
-          </p>
-        )}
+      <div className="container width-fixed c-dataset-create__body">
+        <form className="c-dataset-create__form" onSubmit={submit} noValidate>
+          <div className="c-dataset-create__columns">
+            <div className="c-dataset-create__column">
+              <fieldset className="c-dataset-create__section">
+                <legend className="c-dataset-create__legend">Identificación</legend>
 
-        <form onSubmit={submit} noValidate>
-          <fieldset>
-            <legend>Identificación</legend>
+                <div className="c-dataset-create__field">
+                  <label htmlFor="title">Título *</label>
+                  <input
+                    id="title"
+                    type="text"
+                    value={fields.title}
+                    onChange={(e) => fields.setTitle(e.target.value)}
+                    name="title"
+                    placeholder="Ej: ENIGH 2024 — Encuesta Nacional de Ingresos y Gastos"
+                  />
+                </div>
 
-            <label htmlFor="title">Título *</label>
-            <input
-              id="title"
-              type="text"
-              value={fields.title}
-              onChange={(e) => fields.setTitle(e.target.value)}
-              name="title"
-              placeholder="Ej: ENIGH 2024 — Encuesta Nacional de Ingresos y Gastos"
-            />
+                <div className="c-dataset-create__field">
+                  <label htmlFor="slug">URL del dataset *</label>
+                  <input
+                    id="slug"
+                    type="text"
+                    value={fields.slug}
+                    onChange={(e) => fields.setSlug(e.target.value)}
+                    name="slug"
+                    placeholder="ej. enigh_2024_v1"
+                  />
+                  <p className="form-help">Identificador único en la URL del dataset.</p>
+                </div>
 
-            <label htmlFor="slug">URL del dataset *</label>
-            <input
-              id="slug"
-              type="text"
-              value={fields.slug}
-              onChange={(e) => fields.setSlug(e.target.value)}
-              name="slug"
-              placeholder="ej. enigh_2024_v1"
-            />
+                <div className="c-dataset-create__field">
+                  <label htmlFor="description">Descripción</label>
+                  <textarea
+                    id="description"
+                    rows={3}
+                    value={fields.description}
+                    onChange={(e) => fields.setDescription(e.target.value)}
+                    name="description"
+                    placeholder="Qué contiene el dataset, metodología, fuente y notas relevantes."
+                  />
+                </div>
+              </fieldset>
 
-            <label htmlFor="description">Descripción *</label>
-            <textarea
-              id="description"
-              rows={3}
-              value={fields.description}
-              onChange={(e) => fields.setDescription(e.target.value)}
-              name="description"
-              placeholder="Qué contiene el dataset, metodología, fuente y notas relevantes."
-            />
-          </fieldset>
+              <fieldset className="c-dataset-create__section">
+                <legend className="c-dataset-create__legend">Clasificación temática</legend>
 
-          <fieldset>
-            <legend>Clasificación temática</legend>
+                <div className="c-dataset-create__field">
+                  <label htmlFor="survey">Programa / Encuesta</label>
+                  <select
+                    id="survey"
+                    value={fields.survey}
+                    onChange={(e) => fields.setSurvey(e.target.value as Survey | '')}
+                    name="survey"
+                  >
+                    <option value="">— Selecciona —</option>
+                    {SURVEY_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <label htmlFor="survey">Programa / Encuesta</label>
-            <select
-              id="survey"
-              value={fields.survey}
-              onChange={(e) => fields.setSurvey(e.target.value as Survey | '')}
-              name="survey"
-            >
-              <option value="">— Selecciona —</option>
-              {SURVEY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+                <div className="c-dataset-create__row">
+                  <div className="c-dataset-create__field">
+                    <label htmlFor="year">Año de la encuesta</label>
+                    <input
+                      id="year"
+                      type="number"
+                      min={1990}
+                      max={2099}
+                      value={fields.year}
+                      onChange={(e) => fields.setYear(e.target.value)}
+                      name="year"
+                      placeholder="2024"
+                    />
+                  </div>
 
-            <label htmlFor="year">Año de la encuesta</label>
-            <input
-              id="year"
-              type="number"
-              min="1990"
-              max="2099"
-              value={fields.year}
-              onChange={(e) => fields.setYear(e.target.value)}
-              name="year"
-              placeholder="2024"
-            />
+                  <div className="c-dataset-create__field">
+                    <label htmlFor="periodType">Tipo de periodo</label>
+                    <select
+                      id="periodType"
+                      value={fields.periodType}
+                      onChange={(e) => fields.setPeriodType(e.target.value as PeriodType | '')}
+                      name="periodType"
+                    >
+                      <option value="">— Selecciona —</option>
+                      {PERIOD_TYPE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
 
-            <label htmlFor="periodType">Tipo de periodo</label>
-            <select
-              id="periodType"
-              value={fields.periodType}
-              onChange={(e) => fields.setPeriodType(e.target.value as PeriodType | '')}
-              name="periodType"
-            >
-              <option value="">— Selecciona —</option>
-              {PERIOD_TYPE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </fieldset>
+            <div className="c-dataset-create__column">
+              <fieldset className="c-dataset-create__section">
+                <legend className="c-dataset-create__legend">Fuente y descubribilidad</legend>
 
-          <fieldset>
-            <legend>Fuente y descubribilidad (opcional)</legend>
+                <div className="c-dataset-create__field">
+                  <label htmlFor="sourceOrg">Organización fuente</label>
+                  <input
+                    id="sourceOrg"
+                    type="text"
+                    value={fields.sourceOrg}
+                    onChange={(e) => fields.setSourceOrg(e.target.value)}
+                    name="sourceOrg"
+                    placeholder="Ej: INEGI, CONEVAL, SEP. Vacío si es interno."
+                  />
+                </div>
 
-            <label htmlFor="sourceOrg">Organización fuente</label>
-            <input
-              id="sourceOrg"
-              type="text"
-              value={fields.sourceOrg}
-              onChange={(e) => fields.setSourceOrg(e.target.value)}
-              name="sourceOrg"
-              placeholder="Ej: INEGI, CONEVAL, SEP. Vacío si es interno."
-            />
+                <div className="c-dataset-create__field">
+                  <label htmlFor="sourceUrl">URL de la fuente original</label>
+                  <input
+                    id="sourceUrl"
+                    type="url"
+                    value={fields.sourceUrl}
+                    onChange={(e) => fields.setSourceUrl(e.target.value)}
+                    name="sourceUrl"
+                    placeholder="https://www.inegi.org.mx/programas/enigh/2024/"
+                  />
+                </div>
 
-            <label htmlFor="sourceUrl">URL de la fuente original</label>
-            <input
-              id="sourceUrl"
-              type="url"
-              value={fields.sourceUrl}
-              onChange={(e) => fields.setSourceUrl(e.target.value)}
-              name="sourceUrl"
-              placeholder="https://www.inegi.org.mx/programas/enigh/2024/"
-            />
+                <div className="c-dataset-create__field">
+                  <label htmlFor="tags">Etiquetas</label>
+                  <input
+                    id="tags"
+                    type="text"
+                    value={fields.tagsText}
+                    onChange={(e) => fields.setTagsText(e.target.value)}
+                    name="tags"
+                    placeholder="encuesta, hogares, ingreso"
+                  />
+                  <p className="form-help">Separa las etiquetas con comas.</p>
+                </div>
 
-            <label htmlFor="tags">Etiquetas</label>
-            <input
-              id="tags"
-              type="text"
-              value={fields.tagsText}
-              onChange={(e) => fields.setTagsText(e.target.value)}
-              name="tags"
-              placeholder="encuesta, hogares, ingreso"
-            />
+                <div className="c-dataset-create__field">
+                  <label htmlFor="licenseId">Licencia</label>
+                  <input
+                    id="licenseId"
+                    type="text"
+                    value={fields.licenseId}
+                    onChange={(e) => fields.setLicenseId(e.target.value)}
+                    name="licenseId"
+                    placeholder="Ej: cc-by, cc0"
+                  />
+                </div>
+              </fieldset>
 
-            <label htmlFor="licenseId">Licencia</label>
-            <input
-              id="licenseId"
-              type="text"
-              value={fields.licenseId}
-              onChange={(e) => fields.setLicenseId(e.target.value)}
-              name="licenseId"
-              placeholder="Ej: cc-by, cc0"
-            />
-          </fieldset>
+              {revisionOf ? (
+                <fieldset className="c-dataset-create__section">
+                  <legend className="c-dataset-create__legend">Versionado</legend>
+                  <div className="c-dataset-create__field">
+                    <label htmlFor="changelog">Cambios respecto a la versión anterior</label>
+                    <textarea
+                      id="changelog"
+                      rows={2}
+                      value={fields.changelog}
+                      onChange={(e) => fields.setChangelog(e.target.value)}
+                      name="changelog"
+                      placeholder="Ej: Corrección en columna ingreso_mensual."
+                    />
+                  </div>
+                </fieldset>
+              ) : null}
 
-          {revisionOf && (
-            <fieldset>
-              <legend>Versionado</legend>
-              <label htmlFor="changelog">Cambios respecto a la versión anterior</label>
-              <textarea
-                id="changelog"
-                rows={2}
-                value={fields.changelog}
-                onChange={(e) => fields.setChangelog(e.target.value)}
-                name="changelog"
-                placeholder="Ej: Corrección en columna ingreso_mensual."
-              />
-            </fieldset>
-          )}
+              <fieldset className="c-dataset-create__section">
+                <legend className="c-dataset-create__legend">Visibilidad</legend>
+                <div className="c-dataset-create__field">
+                  <label htmlFor="visibility">Visibilidad</label>
+                  <select
+                    id="visibility"
+                    value={fields.visibility}
+                    onChange={(e) => fields.setVisibility(e.target.value as DatasetVisibility)}
+                    name="visibility"
+                  >
+                    <option value="PRIVATE">Privado</option>
+                    <option value="PUBLIC">Público</option>
+                  </select>
+                </div>
+              </fieldset>
+            </div>
+          </div>
 
-          <fieldset>
-            <legend>Visibilidad</legend>
-            <label htmlFor="visibility">Visibilidad</label>
-            <select
-              id="visibility"
-              value={fields.visibility}
-              onChange={(e) => fields.setVisibility(e.target.value as DatasetVisibility)}
-              name="visibility"
-            >
-              <option value="PRIVATE">Privado</option>
-              <option value="PUBLIC">Público</option>
-            </select>
-          </fieldset>
+          {error ? (
+            <p className="c-dataset-create__error" role="alert">
+              {error}
+            </p>
+          ) : null}
 
-          {error && <p className="error-hint">{error}</p>}
-
-          <div className="form-actions">
-            <Link className="button button-secondary" to={`/organizations/${organizationId}`}>
-              Cancelar
-            </Link>
-            <button type="submit" className="button button-primary" disabled={saving}>
-              {saving ? 'Creando…' : 'Crear dataset'}
-            </button>
+          <div className="c-dataset-create__footer">
+            <div className="c-dataset-create__actions">
+              <Button
+                type="button"
+                variant="secondary"
+                href={`/organizations/${organizationId}`}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" variant="primary" disabled={saving} icon="pictogram-add">
+                {saving ? 'Creando…' : 'Crear dataset'}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

@@ -1,118 +1,186 @@
 import { Link } from 'react-router-dom';
-import { Icon } from '../shared/icon/Icon';
+import { PageHeader } from '../shared/page-header/PageHeader';
+import { AccessWidget } from '../shared/access-widget/AccessWidget';
+import { HorizontalCard } from '../shared/horizontal-card/HorizontalCard';
+import { OrganizationCard } from '../shared/organization-card/OrganizationCard';
+import { datasetToCardProps } from '../datasets-list/useDatasetsList';
 import { useHome } from './useHome';
-import './home.scss';
+import './home.css';
+
+const CRUMBS = [{ label: 'Inicio' }];
 
 export function Home() {
   const { loading, recentDatasets, recentOrganizations, totalDatasets, totalOrganizations } =
     useHome();
 
+  const recentRows = Array.from(
+    {
+      length: Math.max(recentDatasets.length, recentOrganizations.length),
+    },
+    (_, index) => ({
+      dataset: recentDatasets[index] ?? null,
+      organization: recentOrganizations[index] ?? null,
+    }),
+  );
+
   return (
     <div className="c-home">
-      <div className="home">
-        <p className="crumb"></p>
-        <h1>Inicio</h1>
-        <p className="subtitle">
-          Banco de bases de datos de Social Data Ibero. Datasets abiertos y privados, con acceso
-          programático vía DuckDB.
-        </p>
+      <PageHeader
+        title="Inicio"
+        intro="Banco de bases de datos de Ibero Data MX. Datasets abiertos y privados, con acceso programático vía DuckDB."
+        crumbs={CRUMBS}
+      />
 
-        <section className="section section-how" aria-labelledby="inicio-como-funciona">
-          <div className="content-band">
-            <h2 id="inicio-como-funciona">Cómo funciona</h2>
-            <ul>
-              <li>
-                <strong>Catálogo abierto:</strong> Explora datasets de organizaciones de sociedad
-                civil mexicana.
-              </li>
-              <li>
-                <strong>Privacidad:</strong> Cada organización gestiona quién accede a sus datasets.
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        <section className="section section-shortcuts" aria-labelledby="inicio-accesos">
-          <h2 id="inicio-accesos" className="section-subtitle">
-            Accesos rápidos
+      <section
+        className="container width-fixed c-home__section"
+        aria-labelledby="inicio-como-funciona"
+      >
+        <div className="width-read">
+          <h2 id="inicio-como-funciona" className="c-home__subtitle m-t-0">
+            Cómo funciona
           </h2>
-          <div className="access-cards">
-            <Link to="/datasets" className="access-card">
-              <Icon name="layers" size={24} />
-              <p className="title">Conjuntos de datos</p>
-              <p className="description">Explora, filtra y agrega datasets del catálogo.</p>
-              <p className="datum">{totalDatasets} conjuntos</p>
-            </Link>
-            <Link to="/organizations" className="access-card">
-              <Icon name="users" size={24} />
-              <p className="title">Organizaciones</p>
-              <p className="description">Consulta organizaciones, conjuntos y miembros.</p>
-              <p className="datum">{totalOrganizations} organizaciones</p>
-            </Link>
-            <Link to="/profile" className="access-card">
-              <Icon name="user" size={24} />
-              <p className="title">Configuración de perfil</p>
-              <p className="description">Actualiza tus datos, imagen y contraseña.</p>
-              <p className="datum">Datos de tu cuenta</p>
-            </Link>
+          <ul className="c-home__how-list">
+            <li>
+              <strong>Catálogo abierto:</strong> Explora datasets de organizaciones de sociedad
+              civil mexicana.
+            </li>
+            <li>
+              <strong>Privacidad:</strong> Cada organización gestiona quién accede a sus datasets.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section
+        className="container width-fixed c-home__section"
+        aria-labelledby="inicio-accesos"
+      >
+        <h2 id="inicio-accesos" className="c-home__subtitle m-t-0">
+          Accesos rápidos
+        </h2>
+
+        <ul className="c-home__access-list">
+          <li>
+            <AccessWidget
+              title="Conjuntos de datos"
+              description="Explora, filtra y agrega datasets del catálogo."
+              meta={`${totalDatasets} conjuntos`}
+              href="/datasets"
+              pictogram="pictogram-layers"
+            />
+          </li>
+          <li>
+            <AccessWidget
+              title="Organizaciones"
+              description="Consulta organizaciones, conjuntos y miembros."
+              meta={`${totalOrganizations} organizaciones`}
+              href="/organizations"
+              pictogram="pictogram-group"
+            />
+          </li>
+          <li>
+            <AccessWidget
+              title="Configuración de perfil"
+              description="Actualiza tus datos, imagen y contraseña."
+              meta="Datos de tu cuenta"
+              href="/profile"
+              pictogram="pictogram-person"
+            />
+          </li>
+        </ul>
+      </section>
+
+      <section className="container width-fixed c-home__section" aria-label="Contenido reciente">
+        {loading ? (
+          <p className="c-home__empty">Cargando…</p>
+        ) : (
+          <div className="c-home__recent">
+            <div className="c-home__recent-header">
+              <div className="c-home__recent-header-side">
+                <h2 id="inicio-conjuntos-recientes" className="c-home__subtitle m-t-0 m-b-0">
+                  Conjuntos de datos recientes
+                </h2>
+                <Link to="/datasets" className="c-home__see-all">
+                  Ver todos
+                </Link>
+              </div>
+
+              <div
+                className="c-home__recent-divider c-home__recent-divider--header"
+                aria-hidden="true"
+              />
+
+              <div className="c-home__recent-header-side">
+                <h2 id="inicio-orgs-recientes" className="c-home__subtitle m-t-0 m-b-0">
+                  Organizaciones recientes
+                </h2>
+                <Link to="/organizations" className="c-home__see-all">
+                  Ver todas
+                </Link>
+              </div>
+            </div>
+
+            {recentRows.length === 0 ? (
+              <p className="c-home__empty">Todavía no hay contenido reciente.</p>
+            ) : (
+              <ul className="c-home__recent-rows">
+                {recentRows.map((row, index) => {
+                  const dataset = row.dataset;
+                  const organization = row.organization;
+                  let datasetCard = null;
+                  if (dataset) {
+                    const mapped = datasetToCardProps(dataset);
+                    const {
+                      id: _id,
+                      organizationId: _organizationId,
+                      createdAt: _createdAt,
+                      updatedAt: _updatedAt,
+                      ...props
+                    } = mapped;
+                    datasetCard = props;
+                  }
+
+                  return (
+                    <li
+                      key={dataset?.id ?? organization?.id ?? `row-${index}`}
+                      className="c-home__recent-row"
+                    >
+                      <div className="c-home__recent-cell">
+                        {dataset && datasetCard ? (
+                          <Link
+                            className="horizontal-card__wrap"
+                            to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
+                          >
+                            <HorizontalCard compact {...datasetCard} />
+                          </Link>
+                        ) : null}
+                      </div>
+
+                      <div className="c-home__recent-divider" aria-hidden="true" />
+
+                      <div className="c-home__recent-cell">
+                        {organization ? (
+                          <OrganizationCard
+                            layout="horizontal"
+                            compact
+                            name={organization.name}
+                            description={organization.description ?? ''}
+                            datasets={organization._count?.datasets ?? 0}
+                            members={organization._count?.members ?? 0}
+                            coverSrc={'coverSrc' in organization ? organization.coverSrc : undefined}
+                            coverAlt={'coverAlt' in organization ? organization.coverAlt : undefined}
+                            href={`/organizations/${organization.id}`}
+                          />
+                        ) : null}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
-        </section>
-
-        {!loading && (
-          <section className="section recent" aria-label="Contenido reciente">
-            <div className="column">
-              <div className="column-header">
-                <h2>Conjuntos de datos recientes</h2>
-                <Link to="/datasets">Ver todos</Link>
-              </div>
-              {recentDatasets.length === 0 && <p className="empty">Todavía no hay datasets.</p>}
-              {recentDatasets.map((dataset) => (
-                <Link
-                  key={dataset.id}
-                  className="dataset-card"
-                  to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
-                >
-                  <p className="title">{dataset.title}</p>
-                  <span className="chip">{dataset.visibility}</span>
-                  {dataset.organization && (
-                    <p className="meta">
-                      <strong>Organización:</strong> {dataset.organization.name}
-                    </p>
-                  )}
-                </Link>
-              ))}
-            </div>
-
-            <div className="divider"></div>
-
-            <div className="column">
-              <div className="column-header">
-                <h2>Organizaciones recientes</h2>
-                <Link to="/organizations">Ver todas</Link>
-              </div>
-              {recentOrganizations.length === 0 && (
-                <p className="empty">Todavía no hay organizaciones.</p>
-              )}
-              {recentOrganizations.map((org) => (
-                <Link key={org.id} className="org-card" to={`/organizations/${org.id}`}>
-                  <div className="org-card-body">
-                    <p className="title">{org.name}</p>
-                    {org.description && <p className="meta">{org.description}</p>}
-                    <p className="stats">
-                      <span>
-                        <Icon name="layers" size={14} /> {org._count?.datasets ?? 0}
-                      </span>
-                      <span>
-                        <Icon name="users" size={14} /> {org._count?.members ?? 0}
-                      </span>
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
         )}
-      </div>
+      </section>
     </div>
   );
 }

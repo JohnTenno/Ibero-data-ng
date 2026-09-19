@@ -1,0 +1,242 @@
+.c-dataset-create {
+  --field-label-color: var(--color-secondary-8, #444);
+  --field-bg: var(--bg, #fff);
+  --field-border: var(--border, #e4e4e7);
+  --field-color: var(--ink, #18181b);
+  --field-hover-bg: var(--color-secondary-2, #f5f5f5);
+  --field-hover-border: var(--color-secondary-8, #444);
+  --field-focus-bg: var(--bg, #fff);
+  --field-focus-border: var(--state-focus, #005dff);
+  --field-focus-shadow: var(--state-focus, #005dff);
+  --field-placeholder-color: var(--color-neutral-4, #767677);
+
+  display: block;
+  margin: 0;
+}
+
+.c-dataset-create__body {
+  padding-block: 1.5rem; /* espaciado-3 */
+}
+
+@media (min-width: 768px) {
+  .c-dataset-create__body {
+    padding-block: 2.5rem; /* espaciado-5 */
+  }
+}
+
+.c-dataset-create__revision {
+  max-width: 40rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.c-dataset-create__form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.c-dataset-create__columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem; /* espaciado-3 */
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+/* Dos columnas solo en pantallas amplias; en chica/mediana todo va en una columna. */
+@media (min-width: 64rem) {
+  .c-dataset-create__columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem; /* espaciado-5 */
+  }
+
+  .c-dataset-create__column:last-child {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--color-secondary-3, #e6e6e6);
+  }
+}
+
+.c-dataset-create__column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.c-dataset-create__section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.c-dataset-create__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 64rem) {
+  .c-dataset-create__row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+  }
+}
+
+.c-dataset-create__row > .c-dataset-create__field {
+  margin-bottom: 0;
+}
+
+.c-dataset-create__legend {
+  display: block;
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary, var(--color-secondary-12));
+}
+
+.c-dataset-create__field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem; /* espaciado-minimo */
+  margin: 0 0 1.5rem; /* espaciado-3 entre campos */
+  min-width: 0;
+  width: 100%;
+}
+
+.c-dataset-create__section > .c-dataset-create__field:last-child {
+  margin-bottom: 0;
+}
+
+.c-dataset-create__field > label {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--field-label-color);
+}
+
+.c-dataset-create__field > input,
+.c-dataset-create__field > select,
+.c-dataset-create__field > textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-family, sans-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--field-color);
+  background-color: var(--field-bg);
+  border: 1px solid var(--field-border);
+  border-radius: 8px;
+  transition:
+    background-color 0.27s ease-in-out,
+    border-color 0.27s ease-in-out,
+    box-shadow 0.27s ease-in-out;
+}
+
+.c-dataset-create__field > input,
+.c-dataset-create__field > select {
+  height: 40px;
+  padding: 7px 16px;
+}
+
+.c-dataset-create__field > textarea {
+  min-height: 7.5rem;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.c-dataset-create__field > input:not(:disabled):hover,
+.c-dataset-create__field > select:not(:disabled):hover,
+.c-dataset-create__field > textarea:not(:disabled):hover {
+  background-color: var(--field-hover-bg);
+  border-color: var(--field-hover-border);
+}
+
+.c-dataset-create__field > input:not(:disabled):focus,
+.c-dataset-create__field > select:not(:disabled):focus,
+.c-dataset-create__field > textarea:not(:disabled):focus {
+  outline: none;
+  background-color: var(--field-focus-bg);
+  border-color: var(--field-focus-border);
+  box-shadow: 0 0 8px var(--field-focus-shadow);
+}
+
+.c-dataset-create__field ::placeholder {
+  font-style: italic;
+  color: var(--field-placeholder-color);
+  opacity: 1;
+}
+
+.c-dataset-create__field > .form-help {
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.c-dataset-create__error {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: var(--error, #b00020);
+}
+
+.c-dataset-create__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-secondary-3, #e6e6e6);
+}
+
+.c-dataset-create__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+@media (max-width: 40rem) {
+  .c-dataset-create__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .c-dataset-create__actions {
+    width: 100%;
+  }
+
+  .c-dataset-create__actions .boton,
+  .c-dataset-create__actions .button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+html.mode-dark .c-dataset-create__footer,
+body[data-theme='dark'] .c-dataset-create__footer {
+  border-top-color: var(--color-secondary-8, #555);
+}
+
+html.mode-dark .c-dataset-create__column:last-child,
+body[data-theme='dark'] .c-dataset-create__column:last-child {
+  border-left-color: var(--color-secondary-8, #555);
+}
+
+html.mode-dark .c-dataset-create__legend,
+body[data-theme='dark'] .c-dataset-create__legend {
+  color: var(--color-neutral-0, #fff);
+}
