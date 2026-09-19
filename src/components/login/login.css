@@ -175,7 +175,7 @@
 }
 
 .c-login__submit,
-.c-login__actions .c-login__actions .button {
+.c-login__actions .button {
   width: 100%;
   justify-content: center;
 }
@@ -193,13 +193,13 @@
     border-color: var(--color-secondary-8, #444);
   }
 
-.c-login__brand,
-.c-login__field > label {
+  .c-login__brand,
+  .c-login__field > label {
     color: var(--color-secondary-12, #111);
   }
 
-.c-login__field > input,
-.c-login__password > input {
+  .c-login__field > input,
+  .c-login__password > input {
     border-color: var(--color-secondary-8, #444);
   }
 }
