@@ -20,6 +20,31 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     pictogram: 'pictogram-group',
   },
   {
+    id: 'harmonizer',
+    label: 'Armonizador',
+    pictogram: 'pictogram-collaborate',
+    subItems: [
+      {
+        id: 'harmonizer-surveys',
+        label: 'Encuestas',
+        href: '/harmonizer',
+        pictogram: 'pictogram-layers',
+      },
+      {
+        id: 'harmonizer-new-survey',
+        label: 'Nueva encuesta',
+        href: '/harmonizer/new-survey',
+        pictogram: 'pictogram-add',
+      },
+      {
+        id: 'harmonizer-upload',
+        label: 'Subir CSV',
+        href: '/harmonizer/upload',
+        pictogram: 'pictogram-file-upload',
+      },
+    ],
+  },
+  {
     id: 'profile',
     label: 'Configuración de perfil',
     href: '/profile',

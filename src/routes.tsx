@@ -29,6 +29,31 @@ const DatasetDetail = lazy(() =>
 const Profile = lazy(() =>
   import('./components/profile/Profile').then((m) => ({ default: m.Profile })),
 );
+const HarmonizerHome = lazy(() =>
+  import('./components/harmonizer-home/HarmonizerHome').then((m) => ({
+    default: m.HarmonizerHome,
+  })),
+);
+const HarmonizerNewSurvey = lazy(() =>
+  import('./components/harmonizer-new-survey/HarmonizerNewSurvey').then((m) => ({
+    default: m.HarmonizerNewSurvey,
+  })),
+);
+const HarmonizerUpload = lazy(() =>
+  import('./components/harmonizer-upload/HarmonizerUpload').then((m) => ({
+    default: m.HarmonizerUpload,
+  })),
+);
+const HarmonizerMapping = lazy(() =>
+  import('./components/harmonizer-mapping/HarmonizerMapping').then((m) => ({
+    default: m.HarmonizerMapping,
+  })),
+);
+const HarmonizerView = lazy(() =>
+  import('./components/harmonizer-view/HarmonizerView').then((m) => ({
+    default: m.HarmonizerView,
+  })),
+);
 
 export function AppRoutes() {
   return (
@@ -52,6 +77,21 @@ export function AppRoutes() {
               element={<DatasetDetail />}
             />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/harmonizer" element={<HarmonizerHome />} />
+            <Route path="/harmonizer/new-survey" element={<HarmonizerNewSurvey />} />
+            <Route path="/harmonizer/upload" element={<HarmonizerUpload />} />
+            <Route
+              path="/harmonizer/datasets/:datasetId/mapping"
+              element={<HarmonizerMapping />}
+            />
+            <Route
+              path="/harmonizer/datasets/:datasetId/harmonized"
+              element={<HarmonizerView />}
+            />
+            <Route
+              path="/harmonizer/surveys/:surveyId/harmonized"
+              element={<HarmonizerView />}
+            />
           </Route>
         </Route>
       </Routes>

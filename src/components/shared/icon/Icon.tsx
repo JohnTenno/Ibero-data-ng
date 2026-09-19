@@ -20,6 +20,8 @@ const PICTOGRAMS: Record<string, string> = {
   moon: 'pictogram-contrast',
   database: 'pictogram-document',
   'bar-chart': 'pictogram-level',
+  'git-merge': 'pictogram-collaborate',
+  download: 'pictogram-file-download',
 };
 
 interface Props {

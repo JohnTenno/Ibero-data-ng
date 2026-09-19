@@ -1,0 +1,73 @@
+.c-harmonizer-home {
+  display: block;
+  margin: 0;
+}
+
+.c-harmonizer-home__header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.c-harmonizer-home__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-block: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .c-harmonizer-home__body {
+    padding-block: 2.5rem;
+  }
+}
+
+.c-harmonizer-home__subtitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.c-harmonizer-home__count {
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.c-harmonizer-home__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.c-harmonizer-home__footnote {
+  margin: 0.5rem 0 0;
+}
+
+.c-harmonizer-home__empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.c-harmonizer-home__empty-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  border-radius: 16px;
+  background-color: var(--bg-accent, var(--color-secondary-2));
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+}
+
+.c-harmonizer-home__empty-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+  color: var(--text-primary, var(--ink));
+}
+
+.c-harmonizer-home__empty-text {
+  margin: 0 auto 1.4rem;
+  max-width: 26rem;
+  color: var(--text-secondary, var(--color-secondary-7));
+}

@@ -26,8 +26,11 @@ function menuOpenInitially() {
 }
 
 function itemContainsActive(item: SideMenuItem, pathname: string): boolean {
-  if (item.href && pathname === item.href) return true;
-  return (item.subItems ?? []).some((child) => pathname === child.href);
+  if (item.href) {
+    if (pathname === item.href) return true;
+    if (pathname.startsWith(`${item.href}/`)) return true;
+  }
+  return (item.subItems ?? []).some((child) => itemContainsActive(child, pathname));
 }
 
 export function SideMenu({
@@ -55,6 +58,18 @@ export function SideMenu({
   useEffect(() => {
     setFiltered(items);
   }, [items]);
+
+  useEffect(() => {
+    setOpenSections((prev) => {
+      const next = { ...prev };
+      for (const item of items) {
+        if (item.subItems?.length && itemContainsActive(item, pathname)) {
+          next[item.id] = true;
+        }
+      }
+      return next;
+    });
+  }, [pathname, items]);
 
   function toggleSection(sectionId: string) {
     setOpenSections((prev) => ({
@@ -115,7 +130,12 @@ export function SideMenu({
                         tabIndex={tabMenu}
                         onClick={() => toggleSection(item.id)}
                       >
-                        <span>{item.label}</span>
+                        <span className="c-side-menu__section-label">
+                          {item.pictogram ? (
+                            <span className={item.pictogram} aria-hidden="true" />
+                          ) : null}
+                          <span>{item.label}</span>
+                        </span>
                         <span className="pictogram-angle-right" aria-hidden="true" />
                       </button>
 

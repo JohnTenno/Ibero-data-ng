@@ -1,0 +1,58 @@
+.c-harmonizer-mapping {
+  display: block;
+  margin: 0;
+}
+
+.c-harmonizer-mapping__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-block: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .c-harmonizer-mapping__body {
+    padding-block: 2.5rem;
+  }
+}
+
+.c-harmonizer-mapping__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.c-harmonizer-mapping__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.c-harmonizer-mapping__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 12rem;
+}
+
+.c-harmonizer-mapping__code {
+  font-family: var(--typography-code, var(--font-mono));
+  font-size: 0.9em;
+}
+
+.c-harmonizer-mapping__error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error, #b00020);
+}
+
+.c-harmonizer-mapping td {
+  vertical-align: top;
+}
+
+.c-harmonizer-mapping select,
+.c-harmonizer-mapping input[type='text'] {
+  width: 100%;
+}

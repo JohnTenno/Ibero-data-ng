@@ -5,6 +5,17 @@
   vertical-align: middle;
 }
 
+.c-side-menu__section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.c-side-menu__section-label [class^='pictogram-'],
+.c-side-menu__section-label [class*=' pictogram-'] {
+  font-size: 1.1em;
+}
+
 .menu-side-search {
   padding: 1rem 1rem 0.75rem;
 }

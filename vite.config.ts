@@ -1,6 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { realpathSync } from 'node:fs';
+
+const secteiComponents = fileURLToPath(new URL('../sectei-components', import.meta.url));
+let secteiResolved = secteiComponents;
+try {
+  secteiResolved = realpathSync(secteiComponents);
+} catch {
+  /* symlink may be missing in some setups */
+}
 
 export default defineConfig({
   plugins: [react()],
@@ -12,10 +21,7 @@ export default defineConfig({
     port: 4200,
     strictPort: true,
     fs: {
-      allow: [
-        '.',
-        fileURLToPath(new URL('../sectei-components', import.meta.url)),
-      ],
+      allow: ['.', secteiComponents, secteiResolved],
     },
   },
 });
