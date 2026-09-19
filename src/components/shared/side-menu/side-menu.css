@@ -14,14 +14,14 @@
 }
 
 @media screen and (min-width: 768px) {
-  .c-app-shell .admin-home > .menu-side-bg,
-  .admin-home > .menu-side-bg {
+.c-app-shell .admin-home > .menu-side-bg,
+.admin-home > .menu-side-bg {
     position: relative;
     z-index: 1;
   }
 
-  .c-app-shell .admin-home .menu-side,
-  .admin-home .menu-side {
+.c-app-shell .admin-home .menu-side,
+.admin-home .menu-side {
     position: sticky;
     top: var(--admin-nav-height, 3.5rem);
     flex: 1 1 auto;
@@ -33,8 +33,8 @@
     flex-direction: column;
   }
 
-  .c-app-shell .admin-home .menu-side .menu-side-container,
-  .admin-home .menu-side .menu-side-container {
+.c-app-shell .admin-home .menu-side .menu-side-container,
+.admin-home .menu-side .menu-side-container {
     flex: 1 1 auto;
     min-height: 100%;
     height: 100%;
@@ -43,8 +43,8 @@
     background: var(--nav-secondary-bg);
   }
 
-  .c-app-shell .admin-home .menu-side .menu-side-button,
-  .admin-home .menu-side .menu-side-button {
+.c-app-shell .admin-home .menu-side .menu-side-button,
+.admin-home .menu-side .menu-side-button {
     display: none !important;
   }
 }

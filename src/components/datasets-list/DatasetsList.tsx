@@ -8,7 +8,7 @@ import { HorizontalCard } from '../shared/horizontal-card/HorizontalCard';
 import { DATASET_FILTERS } from '../../data/dataset-filters';
 import { CRUMBS, SORT_OPTIONS, useDatasetsList, type SortOrder } from './useDatasetsList';
 import '../shared/cards-section/cards-section.css';
-import './datasets-list.scss';
+import './datasets-list.css';
 
 export function DatasetsList() {
   const sortId = useId();

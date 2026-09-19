@@ -1,24 +1,25 @@
-import './icon.scss';
+import './icon.css';
 
-const PICTOGRAMAS: Record<string, string> = {
-  compass: 'pictograma-explorar',
-  layers: 'pictograma-capas',
-  users: 'pictograma-grupo',
-  user: 'pictograma-persona',
-  search: 'pictograma-buscar',
-  x: 'pictograma-cerrar',
-  'chevron-left': 'pictograma-angulo-izquierdo',
-  'chevron-right': 'pictograma-angulo-derecho',
-  'log-out': 'pictograma-cerrar-sesion',
-  plus: 'pictograma-agregar',
-  trash: 'pictograma-eliminar',
-  accessibility: 'pictograma-accesibilidad',
-  type: 'pictograma-cambio-tipografia',
-  link: 'pictograma-enlace-subrayado',
-  'align-left': 'pictograma-vista-simplificada',
-  moon: 'pictograma-contraste',
-  database: 'pictograma-documento',
-  'bar-chart': 'pictograma-nivel',
+/** Lucide-style aliases → sectei-library pictogram classes. */
+const PICTOGRAMS: Record<string, string> = {
+  compass: 'pictogram-explore',
+  layers: 'pictogram-layers',
+  users: 'pictogram-group',
+  user: 'pictogram-person',
+  search: 'pictogram-search',
+  x: 'pictogram-close',
+  'chevron-left': 'pictogram-angle-left',
+  'chevron-right': 'pictogram-angle-right',
+  'log-out': 'pictogram-close-session',
+  plus: 'pictogram-add',
+  trash: 'pictogram-delete',
+  accessibility: 'pictogram-accessibility',
+  type: 'pictogram-change-typography',
+  link: 'pictogram-link-underline',
+  'align-left': 'pictogram-view-simplified',
+  moon: 'pictogram-contrast',
+  database: 'pictogram-document',
+  'bar-chart': 'pictogram-level',
 };
 
 interface Props {
@@ -28,13 +29,15 @@ interface Props {
 }
 
 export function Icon({ name = 'compass', size = 20, className }: Props) {
-  const clase = name.startsWith('pictograma-') ? name : (PICTOGRAMAS[name] ?? 'pictograma-ayuda');
+  const pictogramClass = name.startsWith('pictogram-')
+    ? name
+    : (PICTOGRAMS[name] ?? 'pictogram-help');
+
   return (
     <span
-      className={className ? `app-icon ${className}` : 'app-icon'}
+      className={['app-icon', pictogramClass, className].filter(Boolean).join(' ')}
       style={{ fontSize: `${size}px` }}
-    >
-      <span className={clase} aria-hidden="true" />
-    </span>
+      aria-hidden="true"
+    />
   );
 }

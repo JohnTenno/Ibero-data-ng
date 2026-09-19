@@ -39,7 +39,7 @@ export function OrganizationCard({
   const isLink = Boolean(href);
   const isHorizontal = layout === 'horizontal';
   const classes = [
-    'tarjeta',
+    'card',
     isLink ? 'card-hyperlink-inner' : '',
     'organization-card',
     isHorizontal ? 'organization-card--horizontal' : '',

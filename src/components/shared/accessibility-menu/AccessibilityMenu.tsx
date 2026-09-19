@@ -1,6 +1,6 @@
 import { Icon } from '../icon/Icon';
 import { useAccessibilityMenu } from './useAccessibilityMenu';
-import './accessibility-menu.scss';
+import './accessibility-menu.css';
 
 export function AccessibilityMenu() {
   const { options, open, active, canReset, togglePanel, toggleOption, reset } =
@@ -16,8 +16,8 @@ export function AccessibilityMenu() {
         aria-labelledby="menu-a11y-title"
         onClick={togglePanel}
       >
-        <Icon className="menu-a11y__icon-closed" name="pictograma-accesibilidad" size={24} />
-        <Icon className="menu-a11y__icon-open" name="pictograma-cerrar" size={22} />
+        <Icon className="menu-a11y__icon-closed" name="pictogram-accessibility" size={24} />
+        <Icon className="menu-a11y__icon-open" name="pictogram-close" size={22} />
       </button>
 
       <div className="menu-a11y__panel" id="menu-a11y-panel" aria-hidden={!open}>

@@ -175,13 +175,10 @@
   }
 }
 
-html.mode-dark .c-home__recent-divider,
 body[data-theme='dark'] .c-home__recent-divider {
   background: var(--color-secondary-8, #555);
 }
 
-html.mode-dark .c-home__see-all,
-html.mode-dark .c-home__see-all:visited,
 body[data-theme='dark'] .c-home__see-all,
 body[data-theme='dark'] .c-home__see-all:visited {
   color: var(--color-neutral-0, #fff);

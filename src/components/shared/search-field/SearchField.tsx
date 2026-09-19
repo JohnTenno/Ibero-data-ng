@@ -1,6 +1,6 @@
 import { Icon } from '../icon/Icon';
 import { useSearchField } from './useSearchField';
-import './search-field.scss';
+import './search-field.css';
 
 interface Props<T extends object> {
   catalog: T[];

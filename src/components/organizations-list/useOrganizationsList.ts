@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Crumb } from '../shared/page-header/PageHeader';
-import { organizationsService } from '../../core/services/organizations.service';
 import type { Organization } from '../../core/models/dataset.model';
 import {
   ORGANIZATION_FILTERS,
@@ -9,12 +8,16 @@ import {
 } from '../../data/organization-filters';
 import type { OrganizationCardProps } from '../shared/organization-card/OrganizationCard';
 
-/* inicio mock
+/* inicio mock */
 import {
   MOCK_ORGANIZATION_CARDS,
   type MockOrganizationCard,
 } from '../../data/mock-organizations';
-fin mock */
+/* fin mock */
+
+/* inicio api
+import { organizationsService } from '../../core/services/organizations.service';
+fin api */
 
 export type SortOrder =
   | 'recent'
@@ -88,7 +91,19 @@ function sortList(list: OrganizationListItem[], criteria: SortOrder): Organizati
   }
 }
 
+function mockToListItem(card: MockOrganizationCard): OrganizationListItem {
+  return { ...card };
+}
+
 export function useOrganizationsList() {
+  /* inicio mock */
+  const mockCards = useMemo(() => MOCK_ORGANIZATION_CARDS.map(mockToListItem), []);
+  const [catalog] = useState<OrganizationListItem[]>(mockCards);
+  const [searchFiltered, setSearchFiltered] = useState<OrganizationListItem[]>(mockCards);
+  const [loading] = useState(false);
+  /* fin mock */
+
+  /* inicio api
   const [catalog, setCatalog] = useState<OrganizationListItem[]>([]);
   const [searchFiltered, setSearchFiltered] = useState<OrganizationListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,13 +125,7 @@ export function useOrganizationsList() {
       active = false;
     };
   }, []);
-
-  /* inicio mock
-  const [catalog] = useState<MockOrganizationCard[]>(MOCK_ORGANIZATION_CARDS);
-  const [searchFiltered, setSearchFiltered] =
-    useState<MockOrganizationCard[]>(MOCK_ORGANIZATION_CARDS);
-  const [loading] = useState(false);
-  fin mock */
+  fin api */
 
   const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
   const [page, setPage] = useState(1);

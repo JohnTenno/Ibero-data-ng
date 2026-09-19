@@ -11,7 +11,7 @@ export interface AccessWidgetProps extends HTMLAttributes<HTMLAnchorElement> {
 }
 
 /**
- * Sisdai quick-access card (Link + .tarjeta / .card-body).
+ * Sisdai quick-access card (Link + .card / .card-body).
  */
 export function AccessWidget({
   title = '',
@@ -22,7 +22,7 @@ export function AccessWidget({
   className = '',
   ...rest
 }: AccessWidgetProps) {
-  const classes = ['tarjeta', 'card-hyperlink-inner', 'access-widget', className]
+  const classes = ['card', 'card-hyperlink-inner', 'access-widget', className]
     .filter(Boolean)
     .join(' ');
 

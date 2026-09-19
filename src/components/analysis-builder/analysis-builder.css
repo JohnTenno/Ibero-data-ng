@@ -17,7 +17,10 @@
 }
 
 .c-analysis-builder select,
-.c-analysis-builder input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit']),
+.c-analysis-builder input:not([type='checkbox'],
+[type='radio'],
+[type='button'],
+[type='submit']),
 .c-analysis-builder textarea {
   box-sizing: border-box;
   margin: 0;
@@ -36,7 +39,10 @@
 }
 
 .c-analysis-builder select,
-.c-analysis-builder input:not([type='checkbox'], [type='radio'], [type='button'], [type='submit']) {
+.c-analysis-builder input:not([type='checkbox'],
+[type='radio'],
+[type='button'],
+[type='submit']) {
   height: 40px;
   padding: 7px 16px;
 }
@@ -48,14 +54,16 @@
 }
 
 .c-analysis-builder select:not(:disabled):hover,
-.c-analysis-builder input:not([type='checkbox'], [type='radio']):not(:disabled):hover,
+.c-analysis-builder input:not([type='checkbox'],
+[type='radio']):not(:disabled):hover,
 .c-analysis-builder textarea:not(:disabled):hover {
   background-color: var(--field-hover-bg);
   border-color: var(--field-hover-border);
 }
 
 .c-analysis-builder select:not(:disabled):focus,
-.c-analysis-builder input:not([type='checkbox'], [type='radio']):not(:disabled):focus,
+.c-analysis-builder input:not([type='checkbox'],
+[type='radio']):not(:disabled):focus,
 .c-analysis-builder textarea:not(:disabled):focus {
   outline: none;
   background-color: var(--field-focus-bg);
@@ -501,8 +509,7 @@
     align-items: stretch;
   }
 
-  .c-analysis-builder__add-row .boton,
-  .c-analysis-builder__add-row .button {
+  .c-analysis-builder__add-row   .c-analysis-builder__add-row .button {
     width: 100%;
     justify-content: center;
   }
@@ -511,27 +518,22 @@
     width: 100%;
   }
 
-  .c-analysis-builder__item-actions .boton,
-  .c-analysis-builder__item-actions .button {
+  .c-analysis-builder__item-actions   .c-analysis-builder__item-actions .button {
     flex: 1 1 auto;
     justify-content: center;
   }
 }
 
-html.mode-dark .c-analysis-builder__step,
 body[data-theme='dark'] .c-analysis-builder__step {
   background: var(--color-secondary-10, #242424);
   border-color: var(--color-secondary-8, #444);
 }
 
-html.mode-dark .c-analysis-builder__step-header strong,
-html.mode-dark .c-analysis-builder__subtitle,
 body[data-theme='dark'] .c-analysis-builder__step-header strong,
 body[data-theme='dark'] .c-analysis-builder__subtitle {
   color: var(--color-neutral-0, #fff);
 }
 
-html.mode-dark .c-analysis-builder__folder,
 body[data-theme='dark'] .c-analysis-builder__folder {
   background: var(--color-secondary-9, #333);
   color: var(--color-secondary-2, #eee);

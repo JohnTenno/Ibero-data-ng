@@ -146,20 +146,17 @@ a.horizontal-card__wrap:focus-visible .card.horizontal-card {
   outline: none;
 }
 
-html.mode-dark .horizontal-card,
 body[data-theme='dark'] .horizontal-card {
   --card-bg: var(--color-secondary-11);
   --card-color: var(--color-secondary-2);
 }
 
-html.mode-dark .horizontal-card__label,
 body[data-theme='dark'] .horizontal-card__label {
   border-color: var(--color-secondary-5);
   background-color: var(--color-secondary-10);
   color: var(--color-secondary-2);
 }
 
-html.mode-dark .horizontal-card__link,
 body[data-theme='dark'] .horizontal-card__link {
   color: var(--color-secondary-4);
 }

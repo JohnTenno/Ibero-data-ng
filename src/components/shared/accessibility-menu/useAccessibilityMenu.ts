@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
+/** Accessibility classes aligned with sectei-library. */
 export type A11yMode =
-  | 'mode-readable-font'
-  | 'mode-underline-links'
-  | 'mode-text-only'
-  | 'mode-dark';
+  | 'a11y-typography'
+  | 'a11y-hyperlinks'
+  | 'a11y-simplified'
+  | 'a11y-dark';
 
 export interface A11yOption {
   id: A11yMode;
@@ -12,51 +13,75 @@ export interface A11yOption {
   icon: string;
 }
 
-const STORAGE_KEY = 'ibero-a11y-modos';
+const STORAGE_KEY = 'ibero-a11y-modes';
+
+const LEGACY_MODE_MAP: Record<string, A11yMode> = {
+  'mode-readable-font': 'a11y-typography',
+  'mode-underline-links': 'a11y-hyperlinks',
+  'mode-text-only': 'a11y-simplified',
+  'mode-dark': 'a11y-dark',
+};
 
 export const OPTIONS: A11yOption[] = [
   {
-    id: 'mode-readable-font',
+    id: 'a11y-typography',
     title: 'Cambio de fuente',
-    icon: 'pictograma-cambio-tipografia',
+    icon: 'pictogram-change-typography',
   },
   {
-    id: 'mode-underline-links',
+    id: 'a11y-hyperlinks',
     title: 'Enlaces subrayados',
-    icon: 'pictograma-enlace-subrayado',
+    icon: 'pictogram-link-underline',
   },
   {
-    id: 'mode-text-only',
+    id: 'a11y-simplified',
     title: 'Mostrar solo texto',
-    icon: 'pictograma-vista-simplificada',
+    icon: 'pictogram-view-simplified',
   },
   {
-    id: 'mode-dark',
+    id: 'a11y-dark',
     title: 'Vista oscura',
-    icon: 'pictograma-contraste',
+    icon: 'pictogram-contrast',
   },
 ];
 
 const ALL_MODES = OPTIONS.map((o) => o.id);
 
+function normalizeMode(value: string): A11yMode | null {
+  if (ALL_MODES.includes(value as A11yMode)) return value as A11yMode;
+  return LEGACY_MODE_MAP[value] ?? null;
+}
+
 function readSaved(): A11yMode[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw =
+      localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('ibero-a11y-modos');
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((v): v is A11yMode => ALL_MODES.includes(v as A11yMode));
+    return parsed
+      .map((v) => (typeof v === 'string' ? normalizeMode(v) : null))
+      .filter((v): v is A11yMode => v != null);
   } catch {
     return [];
   }
 }
 
 function applyToDocument(active: Set<A11yMode>): void {
-  const root = document.documentElement;
-  for (const mode of ALL_MODES) {
-    root.classList.toggle(mode, active.has(mode));
+  const { body, documentElement } = document;
+
+  // Clear legacy html.mode-* classes from older sessions.
+  for (const legacy of Object.keys(LEGACY_MODE_MAP)) {
+    documentElement.classList.remove(legacy);
   }
-  root.dataset['theme'] = active.has('mode-dark') ? 'dark' : 'light';
+
+  for (const mode of ALL_MODES) {
+    body.classList.toggle(mode, active.has(mode));
+  }
+
+  const theme = active.has('a11y-dark') ? 'dark' : 'light';
+  body.setAttribute('data-theme', theme);
+  body.setAttribute('data-profile', body.getAttribute('data-profile') ?? 'default');
 }
 
 export function useAccessibilityMenu() {
@@ -71,7 +96,7 @@ export function useAccessibilityMenu() {
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const onChange = () => {
-      if (!active.has('mode-dark') && localStorage.getItem('ibero-a11y-theme') === 'auto') {
+      if (!active.has('a11y-dark') && localStorage.getItem('ibero-a11y-theme') === 'auto') {
         applyToDocument(active);
       }
     };
@@ -86,10 +111,10 @@ export function useAccessibilityMenu() {
       const next = new Set(previous);
       if (next.has(id)) {
         next.delete(id);
-        if (id === 'mode-dark') localStorage.setItem('ibero-a11y-theme', 'light');
+        if (id === 'a11y-dark') localStorage.setItem('ibero-a11y-theme', 'light');
       } else {
         next.add(id);
-        if (id === 'mode-dark') localStorage.setItem('ibero-a11y-theme', 'dark');
+        if (id === 'a11y-dark') localStorage.setItem('ibero-a11y-theme', 'dark');
       }
       return next;
     });

@@ -6,7 +6,7 @@
   border-radius: 8px; /* borde-redondeado-8 */
 }
 
-.tarjeta.access-widget .card-body {
+.card.access-widget .card-body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* espaciado-1 */
@@ -14,7 +14,7 @@
   padding: 1.5rem; /* espaciado-3 */
 }
 
-.tarjeta.access-widget .card-body > * {
+.card.access-widget .card-body > * {
   margin: 0;
 }
 
@@ -28,7 +28,7 @@
   margin-bottom: 0.25rem;
 }
 
-.tarjeta.access-widget .card-title {
+.card.access-widget .card-title {
   font-size: 1.25rem; /* texto-5 */
   font-weight: 700;
   line-height: 1.25;
@@ -50,17 +50,14 @@
   color: var(--text-primary, var(--color-secondary-12));
 }
 
-html.mode-dark .access-widget__pictogram,
 body[data-theme='dark'] .access-widget__pictogram {
   color: var(--color-secondary-2);
 }
 
-html.mode-dark .access-widget__description,
 body[data-theme='dark'] .access-widget__description {
   color: var(--color-secondary-5);
 }
 
-html.mode-dark .access-widget__meta,
 body[data-theme='dark'] .access-widget__meta {
   color: var(--color-secondary-3);
 }

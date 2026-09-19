@@ -41,6 +41,15 @@
   transition: all 0.27s ease-in-out;
 }
 
+.menu-a11y__button .app-icon,
+.menu-a11y__button [class^='pictogram-'],
+.menu-a11y__button [class*=' pictogram-'] {
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0;
+  color: inherit;
+}
+
 .menu-a11y__button:hover {
   background-color: var(--menu-a11y-button-hover-bg);
   box-shadow:
@@ -147,10 +156,15 @@
   cursor: pointer;
 }
 
-.menu-a11y__option .app-icon {
+.menu-a11y__option .app-icon,
+.menu-a11y__option [class^='pictogram-'],
+.menu-a11y__option [class*=' pictogram-'] {
   display: inline-flex;
   flex: 0 0 auto;
   margin-right: 4px;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0;
   color: inherit;
 }
 
@@ -160,23 +174,23 @@
   justify-content: center;
 }
 
-html.mode-dark .menu-a11y {
+body[data-theme='dark'] .menu-a11y {
   --menu-a11y-panel-bg: #242424;
   --menu-a11y-panel-color: #d0d0d0;
   --menu-a11y-panel-border: #767677;
   --menu-a11y-panel-shadow: rgba(0, 0, 0, 0.55);
 }
 
-html.mode-dark .menu-a11y__title {
+body[data-theme='dark'] .menu-a11y__title {
   color: #f5f5f5;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-a11y,
-  .menu-a11y__button,
-  .menu-a11y__panel,
-  .menu-a11y__icon-closed,
-  .menu-a11y__icon-open {
+.menu-a11y,
+.menu-a11y__button,
+.menu-a11y__panel,
+.menu-a11y__icon-closed,
+.menu-a11y__icon-open {
     transition: none;
   }
 }

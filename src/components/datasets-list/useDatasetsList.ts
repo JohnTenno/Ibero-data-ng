@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Crumb } from '../shared/page-header/PageHeader';
-import { datasetsService } from '../../core/services/datasets.service';
 import type { Dataset } from '../../core/models/dataset.model';
 import {
   DATASET_FILTERS,
@@ -9,9 +8,13 @@ import {
 } from '../../data/dataset-filters';
 import type { HorizontalCardProps } from '../shared/horizontal-card/HorizontalCard';
 
-/* inicio mock
+/* inicio mock */
 import { MOCK_DATASET_CARDS, type MockDatasetCard } from '../../data/mock-datasets';
-fin mock */
+/* fin mock */
+
+/* inicio api
+import { datasetsService } from '../../core/services/datasets.service';
+fin api */
 
 export type SortOrder = 'recent' | 'title-asc' | 'title-desc' | 'year-desc' | 'year-asc';
 
@@ -83,7 +86,22 @@ function sortList(list: DatasetListItem[], criteria: SortOrder): DatasetListItem
   }
 }
 
+function mockToListItem(card: MockDatasetCard): DatasetListItem {
+  return {
+    ...card,
+    organizationId: 'mock-org',
+  };
+}
+
 export function useDatasetsList() {
+  /* inicio mock */
+  const mockCards = useMemo(() => MOCK_DATASET_CARDS.map(mockToListItem), []);
+  const [catalog] = useState<DatasetListItem[]>(mockCards);
+  const [searchFiltered, setSearchFiltered] = useState<DatasetListItem[]>(mockCards);
+  const [loading] = useState(false);
+  /* fin mock */
+
+  /* inicio api
   const [catalog, setCatalog] = useState<DatasetListItem[]>([]);
   const [searchFiltered, setSearchFiltered] = useState<DatasetListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,12 +123,7 @@ export function useDatasetsList() {
       active = false;
     };
   }, []);
-
-  /* inicio mock
-  const [catalog] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
-  const [searchFiltered, setSearchFiltered] = useState<MockDatasetCard[]>(MOCK_DATASET_CARDS);
-  const [loading] = useState(false);
-  fin mock */
+  fin api */
 
   const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
   const [page, setPage] = useState(1);

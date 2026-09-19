@@ -7,8 +7,8 @@
     padding-block: 2.5rem; /* spacing-5: 40px */
   }
 
-  .cards-section__list,
-  .cards-section__grid {
+.cards-section__list,
+.cards-section__grid {
     gap: 1.5rem; /* spacing-3 */
   }
 }
@@ -117,8 +117,7 @@
     width: 100%;
   }
 
-  .cards-section__actions .boton,
-  .cards-section__actions .button {
+  .cards-section__actions   .cards-section__actions .button {
     width: 100%;
     justify-content: center;
   }

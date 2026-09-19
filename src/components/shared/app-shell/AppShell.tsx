@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { AdminMainNav } from '../admin-main-nav';
 import { SideMenu } from '../side-menu/SideMenu';
 import { useAppShell } from './useAppShell';
-import './app-shell.scss';
+import './app-shell.css';
 
 export function AppShell() {
   const { pathname } = useLocation();
@@ -10,7 +10,7 @@ export function AppShell() {
 
   return (
     <div className="c-app-shell">
-      <a className="skip-content" href="#contenido-principal">
+      <a className="go-content-main" href="#main-content">
         Ir a contenido principal
       </a>
 
@@ -30,7 +30,7 @@ export function AppShell() {
         </div>
 
         <main
-          id="contenido-principal"
+          id="main-content"
           className="column-12-desktop column-7-mobile admin-home__contenido content"
         >
           <Outlet />

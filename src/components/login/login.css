@@ -175,8 +175,7 @@
 }
 
 .c-login__submit,
-.c-login__actions .boton,
-.c-login__actions .button {
+.c-login__actions .c-login__actions .button {
   width: 100%;
   justify-content: center;
 }
@@ -194,29 +193,26 @@
     border-color: var(--color-secondary-8, #444);
   }
 
-  .c-login__brand,
-  .c-login__field > label {
+.c-login__brand,
+.c-login__field > label {
     color: var(--color-secondary-12, #111);
   }
 
-  .c-login__field > input,
-  .c-login__password > input {
+.c-login__field > input,
+.c-login__password > input {
     border-color: var(--color-secondary-8, #444);
   }
 }
 
-html.mode-dark .c-login__card,
 body[data-theme='dark'] .c-login__card {
   background: var(--color-secondary-11, #1a1a1a);
   border-color: var(--color-secondary-8, #555);
 }
 
-html.mode-dark .c-login__brand,
 body[data-theme='dark'] .c-login__brand {
   color: var(--color-neutral-0, #fff);
 }
 
-html.mode-dark .c-login__title,
 body[data-theme='dark'] .c-login__title {
   color: var(--color-secondary-4, #ccc);
 }

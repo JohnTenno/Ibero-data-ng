@@ -6,9 +6,6 @@ const VIZ_PICTOGRAMS: Record<string, string> = {
   bars: 'pictogram-level',
   lines: 'pictogram-layer-lines',
   dots: 'pictogram-layer-dots',
-  barras: 'pictogram-level',
-  lineas: 'pictogram-layer-lines',
-  puntos: 'pictogram-layer-dots',
 };
 
 export interface CardDatasetRef {

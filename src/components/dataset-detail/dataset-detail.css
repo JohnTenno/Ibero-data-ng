@@ -224,25 +224,21 @@
   line-height: 1.4;
 }
 
-html.mode-dark .c-dataset-detail__metadata,
 body[data-theme='dark'] .c-dataset-detail__metadata {
   background-color: var(--color-secondary-10, #242424);
   border-color: var(--color-secondary-8, #444);
 }
 
-html.mode-dark .c-dataset-detail__chip,
 body[data-theme='dark'] .c-dataset-detail__chip {
   background: var(--color-secondary-9, #333);
   color: var(--color-secondary-2, #eee);
 }
 
-html.mode-dark .c-dataset-detail__survey,
 body[data-theme='dark'] .c-dataset-detail__survey {
   background: var(--color-secondary-11, #1a1a1a);
   border-color: var(--color-secondary-8, #444);
 }
 
-html.mode-dark .c-dataset-detail__note--alert,
 body[data-theme='dark'] .c-dataset-detail__note--alert {
   background: #3b2f14;
   border-color: #92680a;

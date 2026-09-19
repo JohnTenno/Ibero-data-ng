@@ -1,4 +1,3 @@
-@use './styles/pictogramas';
 
 :root,
 body[data-profile] {
@@ -148,50 +147,35 @@ th {
   font-size: 0.85rem;
 }
 
-.skip-content {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  background: var(--ink);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  z-index: 10000;
-}
-
-.skip-content:focus {
-  left: 0;
-}
-
-html.mode-readable-font {
+body.a11y-typography {
   --font-family: 'Atkinson Hyperlegible', 'Verdana', 'Tahoma', system-ui, sans-serif;
 }
 
-html.mode-readable-font,
-html.mode-readable-font body,
-html.mode-readable-font body * {
+body.a11y-typography,
+body.a11y-typography * {
   font-family: var(--font-family), sans-serif;
 }
 
-html.mode-underline-links a {
+body.a11y-hyperlinks a {
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
 
-html.mode-underline-links a:hover,
-html.mode-underline-links a:focus-visible {
+body.a11y-hyperlinks a:hover,
+body.a11y-hyperlinks a:focus-visible {
   text-decoration-thickness: 2px;
 }
 
-html.mode-text-only .app-icon,
-html.mode-text-only img:not(.login-logo__img) {
+body.a11y-simplified .app-icon,
+body.a11y-simplified img:not(.login-logo__img) {
   display: none !important;
 }
 
-html.mode-text-only .menu-a11y .app-icon {
+body.a11y-simplified .menu-a11y .app-icon {
   display: inline-flex !important;
 }
 
-html.mode-dark {
+body[data-theme='dark'] {
   --bg: #111111;
   --bg-accent: #242424;
   --bg-sidebar: #1a1a1a;
@@ -230,17 +214,17 @@ html.mode-dark {
   color-scheme: dark;
 }
 
-html.mode-dark .header-bar {
+body[data-theme='dark'] .header-bar {
   background: var(--bg);
   border-bottom-color: var(--border);
 }
 
-html.mode-dark .avatar {
+body[data-theme='dark'] .avatar {
   background: var(--color-neutral-1);
   color: #111111;
 }
 
-html.mode-dark .sidebar {
+body[data-theme='dark'] .sidebar {
   --nav-sec-color: #ffffff;
   --nav-sec-bg: #333333;
   --nav-sec-hover-color: #ffffff;
@@ -255,123 +239,123 @@ html.mode-dark .sidebar {
   --nav-sec-focus-shadow: var(--state-focus);
 }
 
-html.mode-dark .sidebar-menu-empty {
+body[data-theme='dark'] .sidebar-menu-empty {
   color: var(--text-secondary);
 }
 
-html.mode-dark .page-header__crumbs {
+body[data-theme='dark'] .page-header__crumbs {
   color: var(--color-secondary-5);
 }
 
-html.mode-dark .page-header__crumbs a,
-html.mode-dark .home > .crumb a {
+body[data-theme='dark'] .page-header__crumbs a,
+body[data-theme='dark'] .home > .crumb a {
   color: var(--color-secondary-4);
 }
 
-html.mode-dark .page-header__crumbs a:hover,
-html.mode-dark .page-header__crumbs a:focus-visible,
-html.mode-dark .page-header__crumbs strong,
-html.mode-dark .home > .crumb a:hover,
-html.mode-dark .home > .crumb a:focus-visible,
-html.mode-dark .home > .crumb strong {
+body[data-theme='dark'] .page-header__crumbs a:hover,
+body[data-theme='dark'] .page-header__crumbs a:focus-visible,
+body[data-theme='dark'] .page-header__crumbs strong,
+body[data-theme='dark'] .home > .crumb a:hover,
+body[data-theme='dark'] .home > .crumb a:focus-visible,
+body[data-theme='dark'] .home > .crumb strong {
   color: var(--color-neutral-0);
 }
 
-html.mode-dark .access-card {
+body[data-theme='dark'] .access-card {
   --card-inner-bg: #242424;
   --card-inner-color: #ffffff;
   --card-hover-bg: #444444;
 }
 
-html.mode-dark .access-card .app-icon {
+body[data-theme='dark'] .access-card .app-icon {
   color: var(--color-neutral-1);
 }
 
-html.mode-dark .access-card .description {
+body[data-theme='dark'] .access-card .description {
   color: var(--color-secondary-5);
 }
 
-html.mode-dark .access-card .datum {
+body[data-theme='dark'] .access-card .datum {
   color: var(--color-secondary-3);
 }
 
-html.mode-dark .dataset-card,
-html.mode-dark .org-card {
+body[data-theme='dark'] .dataset-card,
+body[data-theme='dark'] .org-card {
   background: var(--bg-card);
   border-color: var(--border);
 }
 
-html.mode-dark .login-page {
+body[data-theme='dark'] .login-page {
   background: var(--bg);
 }
 
-html.mode-dark .login-card {
+body[data-theme='dark'] .login-card {
   background: var(--bg-card);
   border-color: var(--border);
 }
 
-html.mode-dark .login-logo__img {
+body[data-theme='dark'] .login-logo__img {
   filter: grayscale(1) brightness(2);
 }
 
-html.mode-dark .version-note.alert {
+body[data-theme='dark'] .version-note.alert {
   color: #fbbf24;
   background: #422006;
   border-color: #92400e;
 }
 
-html.mode-dark .row,
-html.mode-dark .step,
-html.mode-dark .metadata,
-html.mode-dark .intermediary-list > li,
-html.mode-dark .analysis-row {
+body[data-theme='dark'] .row,
+body[data-theme='dark'] .step,
+body[data-theme='dark'] .metadata,
+body[data-theme='dark'] .intermediary-list > li,
+body[data-theme='dark'] .analysis-row {
   background: var(--bg-card);
   border-color: var(--border);
 }
 
-html.mode-dark th {
+body[data-theme='dark'] th {
   background: #333333;
 }
 
-html.mode-dark .chip {
+body[data-theme='dark'] .chip {
   background: var(--chip-bg);
   color: var(--ink-soft);
 }
 
-html.mode-dark .paginator__page,
-html.mode-dark .paginator__control {
+body[data-theme='dark'] .paginator__page,
+body[data-theme='dark'] .paginator__control {
   color: var(--color-secondary-5);
 }
 
-html.mode-dark .paginator__page:hover,
-html.mode-dark .paginator__page:focus-visible,
-html.mode-dark .paginator__control:hover,
-html.mode-dark .paginator__control:focus-visible,
-html.mode-dark .paginator__page--current {
+body[data-theme='dark'] .paginator__page:hover,
+body[data-theme='dark'] .paginator__page:focus-visible,
+body[data-theme='dark'] .paginator__control:hover,
+body[data-theme='dark'] .paginator__control:focus-visible,
+body[data-theme='dark'] .paginator__page--current {
   color: var(--color-neutral-1);
 }
 
-html.mode-dark select,
-html.mode-dark input:not([type='checkbox']):not([type='radio']),
-html.mode-dark textarea {
+body[data-theme='dark'] select,
+body[data-theme='dark'] input:not([type='checkbox']):not([type='radio']),
+body[data-theme='dark'] textarea {
   background-color: var(--bg);
   color: var(--ink);
   border-color: var(--color-secondary-5);
 }
 
-html.mode-dark .org-card,
-html.mode-dark .dataset-card {
+body[data-theme='dark'] .org-card,
+body[data-theme='dark'] .dataset-card {
   color: var(--ink);
 }
 
-html.mode-dark .analysis-step,
-html.mode-dark .step-block,
-html.mode-dark .step {
+body[data-theme='dark'] .analysis-step,
+body[data-theme='dark'] .step-block,
+body[data-theme='dark'] .step {
   background: var(--bg-card);
   border-color: var(--border);
 }
 
-html.mode-dark .step-num {
+body[data-theme='dark'] .step-num {
   background: #d4d4d4;
   color: #111111;
 }

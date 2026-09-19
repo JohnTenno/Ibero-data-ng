@@ -57,7 +57,7 @@ export function OrganizationDetail() {
           <ul className="c-organization-detail__grid">
             {datasets.map((dataset) => (
               <li key={dataset.id}>
-                <article className="tarjeta c-organization-detail__card">
+                <article className="card c-organization-detail__card">
                   <div className="c-organization-detail__tags">
                     <span className="c-organization-detail__chip">
                       {visibilityLabel(dataset.visibility)}
