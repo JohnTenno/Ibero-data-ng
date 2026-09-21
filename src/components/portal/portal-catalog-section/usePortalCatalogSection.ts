@@ -1,32 +1,11 @@
-import { useId, useMemo, useState } from 'react';
+import { useId } from 'react';
 
-export const SORT_AZ = 'az';
-export const SORT_ZA = 'za';
+export const SORT_AZ = 'name-asc';
+export const SORT_ZA = 'name-desc';
 
-export function usePortalCatalogSection<T extends Record<string, unknown>>({
-  catalog,
-  sortProperty,
-  disabled,
-  className,
-}: {
-  catalog: T[];
-  sortProperty: string;
-  disabled: boolean;
-  className: string;
-}) {
+export function usePortalCatalogSection({ className }: { className: string }) {
   const sortId = useId();
-  const [filtered, setFiltered] = useState<T[]>(catalog);
-  const [sort, setSort] = useState(SORT_AZ);
-
-  const visible = useMemo(() => {
-    const list = [...filtered].sort((a, b) =>
-      String(a[sortProperty] ?? '').localeCompare(String(b[sortProperty] ?? ''), 'es', { sensitivity: 'base' }),
-    );
-    if (sort === SORT_ZA) list.reverse();
-    return list;
-  }, [filtered, sort, sortProperty]);
-
   const classes = ['catalog-section', 'container', 'width-fixed', className].filter(Boolean).join(' ');
 
-  return { sortId, sort, setSort, setFiltered, visible, classes, disabled, SORT_AZ, SORT_ZA };
+  return { sortId, classes, SORT_AZ, SORT_ZA };
 }

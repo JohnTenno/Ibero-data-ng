@@ -10,6 +10,7 @@ export function HarmonizerView() {
     datasetId,
     datasetView,
     surveyView,
+    loading,
     loadError,
     downloading,
     downloadError,
@@ -91,7 +92,13 @@ export function HarmonizerView() {
       <div className="container width-fixed c-harmonizer-view__body">
         {loadError ? <p className="c-harmonizer-view__error">{loadError}</p> : null}
 
-        {!loadError ? (
+        {loading && !loadError ? (
+          <p className="text-color-secondary" aria-live="polite">
+            Cargando vista armonizada…
+          </p>
+        ) : null}
+
+        {!loading && !loadError ? (
           <>
             <div className="c-harmonizer-view__summary">
               <StatusBadge variant="neutral">

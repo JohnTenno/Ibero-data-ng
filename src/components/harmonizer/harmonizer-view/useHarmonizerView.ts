@@ -1,74 +1,65 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import type { ExportFormat, HarmonizedRow } from '../../../core/models/harmonizer.model';
-import {
-  MOCK_DATASET_HARMONIZED,
-  MOCK_SURVEY_HARMONIZED,
-} from '../../../data/mock-harmonizer';
+import type {
+  DatasetHarmonizedView,
+  ExportFormat,
+  HarmonizedRow,
+  SurveyHarmonizedView,
+} from '../../../core/models/harmonizer.model';
+import { harmonizerService } from '../../../core/services/harmonizer.service';
+import { errorMessage } from '../../../core/api/http';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 
 const SURVEY_ORIGIN_COLUMNS = ['_dataset', '_year'];
 export const MAX_VISIBLE_ROWS = 500;
 
-function downloadCsv(filename: string, headers: string[], rows: HarmonizedRow[]) {
-  const escape = (value: string | number) => {
-    const text = String(value ?? '');
-    if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
-    return text;
-  };
-  const lines = [
-    headers.join(','),
-    ...rows.map((row) => headers.map((h) => escape(row[h] ?? '')).join(',')),
-  ];
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = `${filename}.csv`;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
 export function useHarmonizerView() {
   const { datasetId, surveyId } = useParams<{ datasetId?: string; surveyId?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const datasetView = datasetId
-    ? (MOCK_DATASET_HARMONIZED[datasetId] ?? {
-        dataset: {
-          id: datasetId,
-          name: 'Edición de ejemplo',
-          year: new Date().getFullYear(),
-          surveyId: 'survey-new',
-          surveyName: 'Encuesta nueva',
-        },
-        headers: [] as string[],
-        availableVariables: [] as string[],
-        selectedCount: 0,
-        rows: [],
-      })
-    : null;
-  const baseSurveyView = surveyId
-    ? (MOCK_SURVEY_HARMONIZED[surveyId] ?? {
-        survey: { id: surveyId, name: 'Encuesta de ejemplo' },
-        headers: [] as string[],
-        rows: [],
-        availableVariables: [] as string[],
-        selected: [] as string[],
-        selectedCount: 0,
-      })
-    : null;
+
+  const [datasetView, setDatasetView] = useState<DatasetHarmonizedView | null>(null);
+  const [baseSurveyView, setBaseSurveyView] = useState<SurveyHarmonizedView | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const selectedFromUrl = searchParams.getAll('variables');
-  const [selectedVariables, setSelectedVariables] = useState<string[]>(() =>
-    selectedFromUrl.length > 0
-      ? selectedFromUrl
-      : (baseSurveyView?.selected ?? baseSurveyView?.availableVariables ?? []),
-  );
+  const [selectedVariables, setSelectedVariables] = useState<string[]>(selectedFromUrl);
 
   const [downloading, setDownloading] = useState<ExportFormat | null>(null);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
-  const loadError = null;
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    (async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        if (datasetId) {
+          const view = await harmonizerService.getDatasetHarmonized(datasetId, controller.signal);
+          if (!active) return;
+          setDatasetView(view);
+          setBaseSurveyView(null);
+        } else if (surveyId) {
+          const view = await harmonizerService.getSurveyHarmonized(surveyId, selectedFromUrl, controller.signal);
+          if (!active) return;
+          setBaseSurveyView(view);
+          setDatasetView(null);
+          setSelectedVariables(selectedFromUrl.length > 0 ? selectedFromUrl : view.selected);
+        }
+      } catch (err) {
+        if (!active) return;
+        setLoadError(errorMessage(err, 'No se pudo cargar la vista armonizada.'));
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [datasetId, surveyId]);
 
   const surveyView = useMemo(() => {
     if (!baseSurveyView) return null;
@@ -143,20 +134,21 @@ export function useHarmonizerView() {
     (format: ExportFormat) => {
       setDownloading(format);
       setDownloadError(null);
-      try {
-        if (format === 'parquet') {
-          setDownloadError('La descarga Parquet es solo de demostración (sin API).');
-          return;
+      void (async () => {
+        try {
+          if (datasetId) {
+            await harmonizerService.downloadDatasetExport(datasetId, format);
+          } else if (surveyId) {
+            await harmonizerService.downloadSurveyExport(surveyId, format, selectedVariables);
+          }
+        } catch (err) {
+          setDownloadError(errorMessage(err, 'No se pudo descargar el archivo.'));
+        } finally {
+          setDownloading(null);
         }
-        const filename = datasetView
-          ? `harmonized_${datasetView.dataset.name}_${datasetView.dataset.year}`
-          : `harmonized_${surveyView?.survey.name ?? 'survey'}`;
-        downloadCsv(filename.replace(/\s+/g, '_'), headers, rows);
-      } finally {
-        setDownloading(null);
-      }
+      })();
     },
-    [datasetView, surveyView, headers, rows],
+    [datasetId, surveyId, selectedVariables],
   );
 
   const crumbs: Crumb[] = [
@@ -170,6 +162,7 @@ export function useHarmonizerView() {
     surveyId,
     datasetView,
     surveyView,
+    loading,
     loadError,
     downloading,
     downloadError,

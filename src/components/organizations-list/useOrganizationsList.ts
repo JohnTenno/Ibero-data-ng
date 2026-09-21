@@ -1,30 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Crumb } from '../shared/page-header/PageHeader';
 import type { Organization } from '../../core/models/dataset.model';
-import {
-  ORGANIZATION_FILTERS,
-  mapFilterOptions,
-  organizationMatchesFilters,
-} from '../../data/organization-filters';
+import { ORGANIZATION_FILTERS, mapFilterOptions } from '../../data/organization-filters';
 import type { OrganizationCardProps } from '../shared/organization-card/OrganizationCard';
+import { organizationsService, type OrganizationSort } from '../../core/services/organizations.service';
 
-/* inicio mock */
-import {
-  MOCK_ORGANIZATION_CARDS,
-  type MockOrganizationCard,
-} from '../../data/mock-organizations';
-/* fin mock */
-
-/* inicio api
-import { organizationsService } from '../../core/services/organizations.service';
-fin api */
-
-export type SortOrder =
-  | 'recent'
-  | 'name-asc'
-  | 'name-desc'
-  | 'datasets-desc'
-  | 'members-desc';
+export type SortOrder = OrganizationSort;
 
 export type OrganizationListItem = OrganizationCardProps & {
   id: string;
@@ -46,8 +27,7 @@ export const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
   { value: 'members-desc', label: 'Más miembros' },
 ];
 
-const PAGE_SIZE = 4;
-
+const PAGE_SIZE = 12;
 const OPTIONS_BY_ID = mapFilterOptions(ORGANIZATION_FILTERS.sections);
 
 export function organizationToCardProps(org: Organization): OrganizationListItem {
@@ -62,121 +42,75 @@ export function organizationToCardProps(org: Organization): OrganizationListItem
   };
 }
 
-function sortList(list: OrganizationListItem[], criteria: SortOrder): OrganizationListItem[] {
-  const copy = [...list];
-  const byName = (a: OrganizationListItem, b: OrganizationListItem) =>
-    String(a.name ?? '').localeCompare(String(b.name ?? ''), 'es', { sensitivity: 'base' });
-
-  switch (criteria) {
-    case 'name-asc':
-      return copy.sort(byName);
-    case 'name-desc':
-      return copy.sort((a, b) => byName(b, a));
-    case 'datasets-desc':
-      return copy.sort(
-        (a, b) => Number(b.datasets ?? 0) - Number(a.datasets ?? 0) || byName(a, b),
-      );
-    case 'members-desc':
-      return copy.sort(
-        (a, b) => Number(b.members ?? 0) - Number(a.members ?? 0) || byName(a, b),
-      );
-    case 'recent':
-      return copy.sort(
-        (a, b) =>
-          new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime() ||
-          byName(a, b),
-      );
-    default:
-      return copy;
-  }
-}
-
-function mockToListItem(card: MockOrganizationCard): OrganizationListItem {
-  return { ...card };
-}
-
 export function useOrganizationsList() {
-  /* inicio mock */
-  const mockCards = useMemo(() => MOCK_ORGANIZATION_CARDS.map(mockToListItem), []);
-  const [catalog] = useState<OrganizationListItem[]>(mockCards);
-  const [searchFiltered, setSearchFiltered] = useState<OrganizationListItem[]>(mockCards);
-  const [loading] = useState(false);
-  /* fin mock */
+  const [query, setQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
+  const [page, setPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  /* inicio api
-  const [catalog, setCatalog] = useState<OrganizationListItem[]>([]);
-  const [searchFiltered, setSearchFiltered] = useState<OrganizationListItem[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const filterTerms = useMemo(
+    () => activeFilters.map((id) => OPTIONS_BY_ID.get(id)?.label).filter((label): label is string => Boolean(label)),
+    [activeFilters],
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [query, sortOrder, activeFilters]);
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
+    setLoading(true);
     (async () => {
       try {
-        const list = await organizationsService.list();
+        const { total: count, items } = await organizationsService.listPaged({
+          q: query,
+          terms: filterTerms,
+          sort: sortOrder,
+          limit: PAGE_SIZE,
+          offset: (page - 1) * PAGE_SIZE,
+        });
         if (!active) return;
-        const cards = list.map(organizationToCardProps);
-        setCatalog(cards);
-        setSearchFiltered(cards);
+        setOrganizations(items.map(organizationToCardProps));
+        setTotal(count);
       } finally {
         if (active) setLoading(false);
       }
     })();
     return () => {
       active = false;
+      controller.abort();
     };
-  }, []);
-  fin api */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, filterTerms, sortOrder, page]);
 
-  const [sortOrder, setSortOrder] = useState<SortOrder>('recent');
-  const [page, setPage] = useState(1);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-
-  const visible = useMemo(() => {
-    const filtered = searchFiltered.filter((card) =>
-      organizationMatchesFilters(card, activeFilters, OPTIONS_BY_ID),
-    );
-    return sortList(filtered, sortOrder);
-  }, [searchFiltered, activeFilters, sortOrder]);
-
-  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
-
-  useEffect(() => {
-    setPage(1);
-  }, [searchFiltered, activeFilters, sortOrder]);
-
-  useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
-
-  const pageItems = useMemo(() => {
-    const current = Math.min(page, totalPages);
-    const start = (current - 1) * PAGE_SIZE;
-    return visible.slice(start, start + PAGE_SIZE);
-  }, [visible, page, totalPages]);
-
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const goTo = (target: number) => setPage(Math.min(Math.max(1, target), totalPages));
 
-  const onFilterChange = (items: OrganizationListItem[]) => {
-    setSearchFiltered(items);
-  };
+  const onSearch = (text: string) => setQuery(text);
 
   const onSortChange = (value: SortOrder) => {
     setSortOrder(value);
   };
 
   return {
-    organizations: catalog,
+    organizations,
     loading,
     sortOrder,
     page,
     totalPages,
-    pageItems,
+    pageItems: organizations,
+    total,
     pageNumbers,
     goTo,
-    onFilterChange,
+    onSearch,
     onSortChange,
     filtersOpen,
     setFiltersOpen,

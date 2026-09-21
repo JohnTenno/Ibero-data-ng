@@ -6,7 +6,7 @@ import { CRUMBS, useHarmonizerHome } from './useHarmonizerHome';
 import './harmonizer-home.css';
 
 export function HarmonizerHome() {
-  const { surveys } = useHarmonizerHome();
+  const { surveys, loading, loadError } = useHarmonizerHome();
 
   return (
     <div className="c-harmonizer-home">
@@ -48,13 +48,23 @@ export function HarmonizerHome() {
       >
         <h2 id="surveys-title" className="c-harmonizer-home__subtitle">
           Encuestas
-          <span className="c-harmonizer-home__count text-color-secondary" aria-live="polite">
-            {' '}
-            · {surveys.length}
-          </span>
+          {!loading && !loadError ? (
+            <span className="c-harmonizer-home__count text-color-secondary" aria-live="polite">
+              {' '}
+              · {surveys.length}
+            </span>
+          ) : null}
         </h2>
 
-        {surveys.length === 0 ? (
+        {loadError ? (
+          <p className="c-harmonizer-home__empty-text" role="alert">
+            {loadError}
+          </p>
+        ) : loading ? (
+          <p className="text-color-secondary" aria-live="polite">
+            Cargando encuestas…
+          </p>
+        ) : surveys.length === 0 ? (
           <div className="c-harmonizer-home__empty">
             <div className="c-harmonizer-home__empty-icon" aria-hidden="true">
               <span className="pictogram-layers" />

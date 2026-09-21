@@ -1,15 +1,18 @@
-import { useCallback, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 import {
   CANONICAL_PREFIX,
   NEW_OPTION,
-  type MappingColumn,
+  type CanonicalVariable,
+  type HarmonizerDataset,
+  type MappingChoice,
 } from '../../../core/models/harmonizer.model';
-import { MOCK_MAPPING_BY_DATASET } from '../../../data/mock-harmonizer';
+import { harmonizerService } from '../../../core/services/harmonizer.service';
+import { errorMessage } from '../../../core/api/http';
 
 export interface ColumnRow {
-  column: MappingColumn;
+  column: { name: string; selectedCanonicalId: string | null; suggested: string | null; suggestionSource: 'history' | 'name' | null };
   choice: string;
   newName: string;
 }
@@ -22,48 +25,44 @@ export const SUGGESTION_LABEL: Record<'history' | 'name', string> = {
 export function useHarmonizerMapping() {
   const { datasetId = '' } = useParams<{ datasetId: string }>();
   const navigate = useNavigate();
-  const info = MOCK_MAPPING_BY_DATASET[datasetId] ?? {
-    dataset: {
-      id: datasetId,
-      name: 'Edición de ejemplo',
-      year: new Date().getFullYear(),
-      surveyId: 'survey-new',
-      surveyName: 'Encuesta nueva',
-    },
-    canonicalVariables: [
-      { id: 'cv-age', name: 'edad' },
-      { id: 'cv-sex', name: 'sexo' },
-      { id: 'cv-income', name: 'ingreso_trimestral' },
-    ],
-    columns: [
-      {
-        name: 'col_a',
-        selectedCanonicalId: null,
-        suggested: 'edad',
-        suggestionSource: 'name' as const,
-      },
-      {
-        name: 'col_b',
-        selectedCanonicalId: null,
-        suggested: null,
-        suggestionSource: null,
-      },
-    ],
-  };
 
-  const [rows, setRows] = useState<ColumnRow[]>(() =>
-    info.columns.map((column) => ({
-      column,
-      choice: column.selectedCanonicalId ? `${CANONICAL_PREFIX}${column.selectedCanonicalId}` : '',
-      newName: '',
-    })),
-  );
+  const [dataset, setDataset] = useState<HarmonizerDataset | null>(null);
+  const [canonicalVariables, setCanonicalVariables] = useState<CanonicalVariable[]>([]);
+  const [rows, setRows] = useState<ColumnRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const loadError = null;
-  const dataset = info.dataset;
-  const canonicalVariables = info.canonicalVariables;
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const info = await harmonizerService.getMapping(datasetId, controller.signal);
+        if (!active) return;
+        setDataset(info.dataset);
+        setCanonicalVariables(info.canonicalVariables);
+        setRows(
+          info.columns.map((column) => ({
+            column,
+            choice: column.selectedCanonicalId ? `${CANONICAL_PREFIX}${column.selectedCanonicalId}` : '',
+            newName: '',
+          })),
+        );
+      } catch (err) {
+        if (!active) return;
+        setLoadError(errorMessage(err, 'No se pudo cargar el mapeo de este dataset.'));
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [datasetId]);
+
   const mappedCount = useMemo(
     () =>
       rows.filter(
@@ -89,10 +88,27 @@ export function useHarmonizerMapping() {
       event.preventDefault();
       setSaving(true);
       setSaveError(null);
-      setSaving(false);
-      void navigate(`/harmonizer/datasets/${datasetId}/harmonized`);
+
+      const columns: MappingChoice[] = rows
+        .filter((row) => row.choice !== '')
+        .map((row) => ({
+          column: row.column.name,
+          choice: row.choice,
+          newName: row.choice === NEW_OPTION ? row.newName.trim() : undefined,
+        }));
+
+      void (async () => {
+        try {
+          await harmonizerService.saveMapping(datasetId, columns);
+          void navigate(`/harmonizer/datasets/${datasetId}/harmonized`);
+        } catch (err) {
+          setSaveError(errorMessage(err, 'No se pudo guardar el mapeo.'));
+        } finally {
+          setSaving(false);
+        }
+      })();
     },
-    [datasetId, navigate],
+    [datasetId, rows, navigate],
   );
 
   const crumbs: Crumb[] = [
@@ -106,6 +122,7 @@ export function useHarmonizerMapping() {
     dataset,
     canonicalVariables,
     rows,
+    loading,
     loadError,
     saving,
     saveError,

@@ -1,10 +1,8 @@
-import { useCallback, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { NEW_OPTION } from '../../../core/models/harmonizer.model';
-import {
-  harmonizerService,
-  useHarmonizerSurveys,
-} from '../../../core/services/harmonizer.service';
+import { NEW_OPTION, type HarmonizerSurvey } from '../../../core/models/harmonizer.model';
+import { harmonizerService } from '../../../core/services/harmonizer.service';
+import { errorMessage } from '../../../core/api/http';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 
 export const CRUMBS: Crumb[] = [
@@ -15,17 +13,33 @@ export const CRUMBS: Crumb[] = [
 
 export function useHarmonizerUpload() {
   const navigate = useNavigate();
-  const { surveys, updateSurveys } = useHarmonizerSurveys();
+  const [surveys, setSurveys] = useState<HarmonizerSurvey[]>([]);
 
   const [datasetName, setDatasetName] = useState('');
   const [datasetYear, setDatasetYear] = useState<number | ''>(new Date().getFullYear());
-  const [uploadSurveyId, setUploadSurveyId] = useState(
-    () => surveys[0]?.id ?? NEW_OPTION,
-  );
+  const [uploadSurveyId, setUploadSurveyId] = useState(NEW_OPTION);
   const [newSurveyName, setNewSurveyName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const list = await harmonizerService.listSurveys(controller.signal);
+        if (!active) return;
+        setSurveys(list);
+        if (list.length > 0) setUploadSurveyId((current) => (current === NEW_OPTION ? list[0].id : current));
+      } catch {
+      }
+    })();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
 
   const canUpload = useMemo(() => {
     if (!file || !datasetName.trim() || datasetYear === '') return false;
@@ -44,58 +58,26 @@ export function useHarmonizerUpload() {
       setUploading(true);
       setError(null);
 
-      let surveyId = uploadSurveyId;
-      let datasetId = '';
-
-      updateSurveys((prev) => {
-        let next = prev;
-        if (uploadSurveyId === NEW_OPTION) {
-          surveyId = harmonizerService.nextId('survey');
-          next = [
-            ...prev,
+      void (async () => {
+        try {
+          const { datasetId } = await harmonizerService.uploadDataset(
             {
-              id: surveyId,
-              name: newSurveyName.trim(),
-              description: null,
-              datasets: [],
+              name: datasetName.trim(),
+              year: Number(datasetYear),
+              surveyId: uploadSurveyId,
+              newSurvey: uploadSurveyId === NEW_OPTION ? newSurveyName.trim() : undefined,
             },
-          ];
+            file,
+          );
+          void navigate(`/harmonizer/datasets/${datasetId}/mapping`);
+        } catch (err) {
+          setError(errorMessage(err, 'No se pudo subir el archivo.'));
+        } finally {
+          setUploading(false);
         }
-
-        datasetId = harmonizerService.nextId('ds');
-        return next.map((survey) =>
-          survey.id === surveyId
-            ? {
-                ...survey,
-                datasets: [
-                  ...survey.datasets,
-                  {
-                    id: datasetId,
-                    name: datasetName.trim(),
-                    year: Number(datasetYear),
-                    rowCount: 0,
-                    mappedColumns: 0,
-                    totalColumns: 0,
-                  },
-                ],
-              }
-            : survey,
-        );
-      });
-
-      setUploading(false);
-      void navigate(`/harmonizer/datasets/${datasetId}/mapping`);
+      })();
     },
-    [
-      canUpload,
-      file,
-      datasetYear,
-      uploadSurveyId,
-      newSurveyName,
-      datasetName,
-      updateSurveys,
-      navigate,
-    ],
+    [canUpload, file, datasetYear, uploadSurveyId, newSurveyName, datasetName, navigate],
   );
 
   return {

@@ -13,7 +13,6 @@ import './datasets-list.css';
 export function DatasetsList() {
   const sortId = useId();
   const {
-    datasets,
     loading,
     sortOrder,
     page,
@@ -21,7 +20,7 @@ export function DatasetsList() {
     pageItems,
     pageNumbers,
     goTo,
-    onFilterChange,
+    onSearch,
     onSortChange,
     filtersOpen,
     setFiltersOpen,
@@ -53,11 +52,10 @@ export function DatasetsList() {
         <div className="cards-section__tools">
           <div className="cards-section__search">
             <SearchField
-              catalog={datasets}
               searchProperty="title"
               placeholder='Busca por título, por ejemplo "ENADIS"…'
               id="search-datasets"
-              onFilter={onFilterChange}
+              onSearch={(text) => onSearch(String(text ?? ''))}
             />
           </div>
 

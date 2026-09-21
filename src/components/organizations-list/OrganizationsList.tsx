@@ -12,7 +12,6 @@ import './organizations-list.css';
 export function OrganizationsList() {
   const sortId = useId();
   const {
-    organizations,
     loading,
     sortOrder,
     page,
@@ -20,7 +19,7 @@ export function OrganizationsList() {
     pageItems,
     pageNumbers,
     goTo,
-    onFilterChange,
+    onSearch,
     onSortChange,
     filtersOpen,
     setFiltersOpen,
@@ -52,11 +51,10 @@ export function OrganizationsList() {
         <div className="cards-section__tools">
           <div className="cards-section__search">
             <SearchField
-              catalog={organizations}
               searchProperty="name"
               placeholder='Busca por nombre, por ejemplo "Ibero"…'
               id="search-organizations"
-              onFilter={onFilterChange}
+              onSearch={(text) => onSearch(String(text ?? ''))}
             />
           </div>
 

@@ -11,44 +11,49 @@ export interface PortalCatalogItem {
 }
 
 export interface PortalCatalogSectionProps<T extends PortalCatalogItem> extends HTMLAttributes<HTMLElement> {
-  catalog?: T[];
+  items?: T[];
+  total?: number;
   searchLabel?: string;
   countLabel?: string;
-  sortProperty?: string;
+  sort?: string;
+  onSearch?: (query: string) => void;
+  onSortChange?: (sort: string) => void;
   disabled?: boolean;
   className?: string;
 }
 
 export function PortalCatalogSection<T extends PortalCatalogItem>({
-  catalog = [],
+  items = [],
+  total,
   searchLabel = 'Buscar...',
   countLabel = 'Resultados',
-  sortProperty = 'title',
+  sort,
+  onSearch,
+  onSortChange,
   disabled = false,
   className = '',
   ...rest
 }: PortalCatalogSectionProps<T>) {
-  const {
-    sortId,
-    sort,
-    setSort,
-    setFiltered,
-    visible,
-    classes,
-    disabled: isDisabled,
-    SORT_AZ,
-    SORT_ZA,
-  } = usePortalCatalogSection({ catalog, sortProperty, disabled, className });
+  const { sortId, classes, SORT_AZ, SORT_ZA } = usePortalCatalogSection({ className });
 
   return (
     <section className={classes} {...rest}>
       <div className="catalog-section__controls">
         <div className="catalog-section__search">
-          <SearchField catalog={catalog} placeholder={searchLabel} disabled={isDisabled} onFilter={setFiltered} />
+          <SearchField
+            placeholder={searchLabel}
+            disabled={disabled}
+            onSearch={(query) => onSearch?.(String(query ?? ''))}
+          />
         </div>
         <div className="catalog-section__sort">
           <label htmlFor={sortId}>Ordenar por:</label>
-          <select id={sortId} value={sort} disabled={isDisabled} onChange={(event) => setSort(event.target.value)}>
+          <select
+            id={sortId}
+            value={sort}
+            disabled={disabled}
+            onChange={(event) => onSortChange?.(event.target.value)}
+          >
             <option value={SORT_AZ}>De la A a la Z</option>
             <option value={SORT_ZA}>De la Z a la A</option>
           </select>
@@ -56,12 +61,12 @@ export function PortalCatalogSection<T extends PortalCatalogItem>({
       </div>
 
       <p className="text-color-secondary m-b-4" aria-live="polite">
-        {countLabel}: {visible.length}
+        {countLabel}: {total ?? items.length}
       </p>
 
-      {visible.length > 0 ? (
+      {items.length > 0 ? (
         <div className="catalog-section__grid">
-          {visible.map((item, index) => {
+          {items.map((item, index) => {
             const { id, key, name: _name, className: cardClassName, ...cardProps } = item as PortalCatalogItem & { name?: unknown };
             void _name;
 

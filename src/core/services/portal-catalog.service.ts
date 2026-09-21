@@ -33,13 +33,28 @@ export interface SearchPackagesResult {
   packages: CatalogPackage[];
 }
 
+export type CatalogSort = 'recent' | 'title-asc' | 'title-desc';
+
+export interface ListCatalogOrganizationsResult {
+  total: number;
+  items: CatalogOrganization[];
+}
+
 export const portalCatalogService = {
   searchPackages: async (
-    { q = '', rows = 24, offset = 0 }: { q?: string; rows?: number; offset?: number } = {},
+    {
+      q = '',
+      org = '',
+      sort,
+      rows = 24,
+      offset = 0,
+    }: { q?: string; org?: string; sort?: CatalogSort; rows?: number; offset?: number } = {},
     signal?: AbortSignal,
   ): Promise<SearchPackagesResult> => {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
+    if (org) params.set('org', org);
+    if (sort) params.set('sort', sort);
     params.set('limit', String(rows));
     params.set('offset', String(offset));
     const result = await http.get<{ total?: number; items?: CatalogPackage[] }>(
@@ -57,8 +72,22 @@ export const portalCatalogService = {
     return { ...r.pkg, resources: r.resources ?? [], recipe: r.recipe ?? null };
   },
 
-  listOrganizations: (signal?: AbortSignal) =>
-    http.get<CatalogOrganization[]>('/public/organizations', signal),
+  listOrganizations: (
+    {
+      q = '',
+      sort,
+      rows = 100,
+      offset = 0,
+    }: { q?: string; sort?: 'name-asc' | 'name-desc'; rows?: number; offset?: number } = {},
+    signal?: AbortSignal,
+  ): Promise<ListCatalogOrganizationsResult> => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (sort) params.set('sort', sort);
+    params.set('limit', String(rows));
+    params.set('offset', String(offset));
+    return http.get<ListCatalogOrganizationsResult>(`/public/organizations?${params.toString()}`, signal);
+  },
 
   organizationCounts: (signal?: AbortSignal) =>
     http.get<Record<string, { sources: number; charts: number }>>('/public/organizations/count', signal),

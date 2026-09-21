@@ -11,6 +11,7 @@ export function HarmonizerMapping() {
     dataset,
     canonicalVariables,
     rows,
+    loading,
     loadError,
     saving,
     saveError,
@@ -55,7 +56,13 @@ export function HarmonizerMapping() {
       <div className="container width-fixed c-harmonizer-mapping__body">
         {loadError ? <p className="c-harmonizer-mapping__error">{loadError}</p> : null}
 
-        {!loadError ? (
+        {loading && !loadError ? (
+          <p className="text-color-secondary" aria-live="polite">
+            Cargando mapeo…
+          </p>
+        ) : null}
+
+        {!loading && !loadError ? (
           <>
             <p className="text-color-secondary">
               Para cada columna del CSV elige la variable canónica a la que corresponde, crea una

@@ -1,9 +1,7 @@
 import { useCallback, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  harmonizerService,
-  useHarmonizerSurveys,
-} from '../../../core/services/harmonizer.service';
+import { harmonizerService } from '../../../core/services/harmonizer.service';
+import { errorMessage } from '../../../core/api/http';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 
 export const CRUMBS: Crumb[] = [
@@ -14,7 +12,6 @@ export const CRUMBS: Crumb[] = [
 
 export function useHarmonizerNewSurvey() {
   const navigate = useNavigate();
-  const { updateSurveys } = useHarmonizerSurveys();
   const [surveyName, setSurveyName] = useState('');
   const [surveyDescription, setSurveyDescription] = useState('');
   const [creating, setCreating] = useState(false);
@@ -29,22 +26,20 @@ export function useHarmonizerNewSurvey() {
       setCreating(true);
       setError(null);
 
-      const id = harmonizerService.nextId('survey');
-      updateSurveys((prev) => [
-        ...prev,
-        {
-          id,
-          name,
-          description: surveyDescription.trim() || null,
-          datasets: [],
-        },
-      ]);
-      setSurveyName('');
-      setSurveyDescription('');
-      setCreating(false);
-      void navigate('/harmonizer');
+      void (async () => {
+        try {
+          await harmonizerService.createSurvey(name, surveyDescription.trim() || undefined);
+          setSurveyName('');
+          setSurveyDescription('');
+          void navigate('/harmonizer');
+        } catch (err) {
+          setError(errorMessage(err, 'No se pudo crear la encuesta.'));
+        } finally {
+          setCreating(false);
+        }
+      })();
     },
-    [surveyName, surveyDescription, updateSurveys, navigate],
+    [surveyName, surveyDescription, navigate],
   );
 
   return {

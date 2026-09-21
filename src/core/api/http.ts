@@ -63,9 +63,48 @@ async function request<T>(path: string, { method = 'GET', body, signal }: Reques
   return (text ? JSON.parse(text) : undefined) as T;
 }
 
+export interface DownloadedFile {
+  blob: Blob;
+  filename: string | null;
+}
+
+export async function downloadBlob(path: string): Promise<DownloadedFile> {
+  const headers: Record<string, string> = {};
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${environment.apiUrl}${path}`, { headers });
+
+  if (!res.ok) {
+    let responseBody: { message?: string } | null = null;
+    try {
+      responseBody = (await res.json()) as { message?: string };
+    } catch {
+    }
+    throw new ApiError(res.status, responseBody);
+  }
+
+  const disposition = res.headers.get('Content-Disposition');
+  const filename = disposition?.match(/filename="?([^"]+)"?/)?.[1] ?? null;
+  const blob = await res.blob();
+  return { blob, filename };
+}
+
+export function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export const http = {
   get: <T>(path: string, signal?: AbortSignal) => request<T>(path, { signal }),
   post: <T>(path: string, body?: unknown) => request<T>(path, { method: 'POST', body }),
+  put: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PUT', body }),
   patch: <T>(path: string, body?: unknown) => request<T>(path, { method: 'PATCH', body }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };

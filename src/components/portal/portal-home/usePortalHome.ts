@@ -1,41 +1,55 @@
+import { useMemo } from 'react';
+import { portalCatalogService } from '../../../core/services/portal-catalog.service';
+import { usePortalRequest } from '../../../core/hooks/usePortalRequest';
 import cardMotif1 from '../../../assets/card-motif-1.png';
 import cardMotif2 from '../../../assets/card-motif-2.png';
 import cardMotif3 from '../../../assets/card-motif-3.png';
 import type { PortalTopicCard } from '../portal-topics-section/PortalTopicsSection';
 
-const TOPIC_CARDS: PortalTopicCard[] = [
-  {
-    id: 'educacion',
-    imageSrc: cardMotif1,
-    title: 'Educación',
-    sources: 2,
-    charts: 48,
-    description: 'Asistencia escolar, motivo de abandono, alfabetismo, nivel, becas, crédito educativo.',
-    sourcesLabel: 'ENADIS • ENIGH',
-    buttonText: 'Ir a los datos',
-  },
-  {
-    id: 'discapacidad',
-    imageSrc: cardMotif2,
-    title: 'Discapacidad',
-    sources: 2,
-    charts: 48,
-    description: 'Dificultades funcionales y sus causas.',
-    sourcesLabel: 'ENIGH',
-    buttonText: 'Ir a los datos',
-  },
-  {
-    id: 'discriminacion',
-    imageSrc: cardMotif3,
-    title: 'Discriminación percibida',
-    sources: 2,
-    charts: 48,
-    description: 'Justificación de conductas, acuerdos políticos, política migratoria, conflictos vecinales.',
-    sourcesLabel: 'ENADIS • ENIGH',
-    buttonText: 'Ir a los datos',
-  },
-];
+const IMAGES = [cardMotif1, cardMotif2, cardMotif3];
+const PREVIEW_COUNT = 3;
 
 export function usePortalHome() {
-  return { topicCards: TOPIC_CARDS };
+  const { data, loading } = usePortalRequest(
+    ({ signal }) =>
+      Promise.all([
+        portalCatalogService.listOrganizations({ rows: PREVIEW_COUNT }, signal),
+        portalCatalogService.organizationCounts(signal),
+        portalCatalogService.searchPackages({ rows: 1 }, signal),
+      ]),
+    [],
+  );
+
+  const organizations = data?.[0]?.items ?? [];
+  const totalOrganizations = data?.[0]?.total ?? 0;
+  const counts = data?.[1] ?? {};
+  const totalDatasets = data?.[2]?.total ?? 0;
+
+  const topicCards: PortalTopicCard[] = useMemo(
+    () =>
+      organizations.map((organization, index) => {
+        const title = organization.title || organization.name;
+        const count = counts[organization.name] ?? { sources: 0, charts: 0 };
+        return {
+          id: organization.id,
+          imageSrc: IMAGES[index % IMAGES.length],
+          title,
+          sources: count.sources,
+          charts: count.charts,
+          description: organization.description || 'Sin descripción registrada en el catálogo.',
+          sourcesLabel: title,
+          buttonText: 'Ir a los datos',
+          variant: 'link-inner',
+          href: `/datos?org=${encodeURIComponent(organization.name)}`,
+        };
+      }),
+    [organizations, counts],
+  );
+
+  return {
+    topicCards,
+    loading,
+    totalDatasets,
+    totalOrganizations,
+  };
 }

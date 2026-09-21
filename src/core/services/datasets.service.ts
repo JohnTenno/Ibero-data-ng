@@ -17,11 +17,51 @@ export interface CreateDatasetPayload {
   changelog?: string;
 }
 
-export const datasetsService = {
-  list: (organizationId: string) =>
-    http.get<Dataset[]>(`/organizations/${organizationId}/datasets`),
+export type DatasetSort = 'recent' | 'title-asc' | 'title-desc' | 'year-desc' | 'year-asc';
 
-  listAll: (limit?: number) => http.get<Dataset[]>(`/datasets${limit ? `?limit=${limit}` : ''}`),
+export interface ListDatasetsParams {
+  q?: string;
+  terms?: string[];
+  sort?: DatasetSort;
+  limit?: number;
+  offset?: number;
+}
+
+export interface ListDatasetsResult {
+  total: number;
+  items: Dataset[];
+}
+
+function buildQuery(params: ListDatasetsParams): string {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set('q', params.q);
+  for (const term of params.terms ?? []) qs.append('term', term);
+  if (params.sort) qs.set('sort', params.sort);
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  if (params.offset !== undefined) qs.set('offset', String(params.offset));
+  const query = qs.toString();
+  return query ? `?${query}` : '';
+}
+
+export const datasetsService = {
+  /** Paginated, filtered listing for an organization — drives the real list UI. */
+  listPaged: (organizationId: string, params: ListDatasetsParams = {}) =>
+    http.get<ListDatasetsResult>(`/organizations/${organizationId}/datasets${buildQuery(params)}`),
+
+  /** Paginated, filtered global listing — drives the admin Datasets page. */
+  listAllPaged: (params: ListDatasetsParams = {}) => http.get<ListDatasetsResult>(`/datasets${buildQuery(params)}`),
+
+  /** Bare list for callers that just need "all datasets of this org" (e.g. org detail page). */
+  list: async (organizationId: string): Promise<Dataset[]> => {
+    const { items } = await datasetsService.listPaged(organizationId, { limit: 200 });
+    return items;
+  },
+
+  /** Bare list for the dashboard's "recent datasets" widget. */
+  listAll: async (limit?: number): Promise<Dataset[]> => {
+    const { items } = await datasetsService.listAllPaged({ limit, sort: 'recent' });
+    return items;
+  },
 
   get: (organizationId: string, datasetId: string) =>
     http.get<Dataset>(`/organizations/${organizationId}/datasets/${datasetId}`),

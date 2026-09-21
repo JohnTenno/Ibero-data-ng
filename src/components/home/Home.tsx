@@ -167,8 +167,6 @@ export function Home() {
                             description={organization.description ?? ''}
                             datasets={organization._count?.datasets ?? 0}
                             members={organization._count?.members ?? 0}
-                            coverSrc={'coverSrc' in organization ? organization.coverSrc : undefined}
-                            coverAlt={'coverAlt' in organization ? organization.coverAlt : undefined}
                             href={`/organizations/${organization.id}`}
                           />
                         ) : null}
