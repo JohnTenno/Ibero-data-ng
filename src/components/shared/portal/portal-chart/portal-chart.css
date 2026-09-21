@@ -1,0 +1,82 @@
+/**
+ * Usage example for chart colors:
+ *
+ *   <Chart
+ *     variables={[{ id: 'value', name: '2017', color: 'var(--color-primary-3)' }]}
+ *     ...
+ *   />
+ *
+ * Default tokens: bars --color-primary-3 (80%),
+ * column background --color-neutral-2, axes --border-secondary / --text-primary.
+ */
+
+.chart {
+  width: 100%;
+}
+
+.chart__canvas {
+  width: 100%;
+  position: relative;
+}
+
+.chart__svg {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.chart__svg .viz-values-axes {
+  font-size: 0.75rem;
+  fill: var(--text-primary);
+}
+
+.chart__svg .viz-line-axes {
+  stroke: var(--border-secondary);
+  stroke-dasharray: 2 4;
+  stroke-width: 1px;
+}
+
+.chart__svg .viz-line-base {
+  stroke: var(--border);
+  stroke-width: 1px;
+}
+
+.chart__svg .bar-background {
+  fill: var(--color-neutral-2);
+  fill-opacity: 0.4;
+}
+
+.chart__svg .bar {
+  /* Example: default color; variables[].color can override it */
+  fill: var(--color-primary-3);
+  fill-opacity: 0.8;
+}
+
+.chart__axis-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  fill: var(--text-primary);
+}
+
+.chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+.chart__legend-color {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+  background-color: var(--color-primary-3);
+}

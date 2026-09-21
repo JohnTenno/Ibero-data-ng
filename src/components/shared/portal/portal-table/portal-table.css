@@ -1,0 +1,44 @@
+/**
+ * Ejemplo de uso: estilos de Table condensada.
+ *
+ * Tokens: --table-border, --table-color,
+ * --table-row-odd-bg, --table-row-even-bg, --table-row-footer-bg
+ *
+ * Condensada: encabezado 16×24, celdas 8×24.
+ */
+
+.table {
+  width: 100%;
+}
+
+.table--align-center th,
+.table--align-center td {
+  text-align: center;
+}
+
+.table--align-left th,
+.table--align-left td {
+  text-align: left;
+}
+
+.table--align-right th,
+.table--align-right td {
+  text-align: right;
+}
+
+.table.table-condensed thead th {
+  padding: 1rem 1.5rem;
+}
+
+.table.table-condensed tbody td,
+.table.table-condensed tfoot td {
+  padding: 0.5rem 1.5rem;
+}
+
+.table.table-condensed tfoot td {
+  font-weight: 600;
+}
+
+.table.table-condensed tfoot tr {
+  background-color: var(--table-row-odd-bg);
+}

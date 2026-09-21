@@ -30,15 +30,8 @@ export function DatasetDetail() {
     vizCanvasError,
     editingAnalysis,
     setEditingAnalysis,
-    intermediarioSurveys,
-    loadingIntermediario,
-    intermediarioError,
-    importingKey,
     onFileSelected,
     onRequestEditResource,
-    loadIntermediarioCatalog,
-    importSurvey,
-    importDataset,
     openInVizCanvas,
   } = useDatasetDetail();
 
@@ -213,87 +206,6 @@ export function DatasetDetail() {
               ) : null}
             </>
           )}
-        </section>
-
-        <section className="c-dataset-detail__section" aria-labelledby="intermediario-title">
-          <h2 id="intermediario-title" className="c-dataset-detail__subtitle">
-            Importar desde el intermediario
-          </h2>
-          <p className="c-dataset-detail__help">
-            Trae la vista armonizada del armonizador de encuestas (
-            <code>sectei-intermediario</code>) como un recurso nuevo de este dataset.
-          </p>
-
-          {intermediarioSurveys === null ? (
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={loadIntermediarioCatalog}
-              disabled={loadingIntermediario}
-            >
-              {loadingIntermediario ? 'Conectando…' : 'Ver encuestas disponibles'}
-            </Button>
-          ) : null}
-
-          {intermediarioError ? (
-            <p className="c-dataset-detail__error">{intermediarioError}</p>
-          ) : null}
-
-          {intermediarioSurveys !== null &&
-            (intermediarioSurveys.length === 0 ? (
-              <p className="c-dataset-detail__help">
-                Todavía no hay encuestas cargadas en el intermediario.
-              </p>
-            ) : (
-              <ul className="c-dataset-detail__surveys">
-                {intermediarioSurveys.map((survey) => (
-                  <li key={survey.id} className="c-dataset-detail__survey">
-                    <div className="c-dataset-detail__survey-row">
-                      <strong>{survey.name}</strong>
-                      {survey.description ? (
-                        <span className="c-dataset-detail__help">— {survey.description}</span>
-                      ) : null}
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="small"
-                        onClick={() => void importSurvey(survey)}
-                        disabled={
-                          importingKey === `survey-${survey.id}` || survey.datasets.length === 0
-                        }
-                      >
-                        {importingKey === `survey-${survey.id}`
-                          ? 'Importando…'
-                          : 'Importar encuesta completa'}
-                      </Button>
-                    </div>
-                    {survey.datasets.length > 0 ? (
-                      <ul className="c-dataset-detail__years">
-                        {survey.datasets.map((ds) => (
-                          <li key={ds.id}>
-                            <span>
-                              {ds.year} — {ds.name} ({ds.mappedColumns}/{ds.totalColumns} columnas
-                              mapeadas, {ds.rowCount} filas)
-                            </span>
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              size="small"
-                              onClick={() => void importDataset(survey, ds)}
-                              disabled={importingKey === `dataset-${ds.id}`}
-                            >
-                              {importingKey === `dataset-${ds.id}`
-                                ? 'Importando…'
-                                : 'Importar este año'}
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            ))}
         </section>
 
         {selectedResourceId ? (

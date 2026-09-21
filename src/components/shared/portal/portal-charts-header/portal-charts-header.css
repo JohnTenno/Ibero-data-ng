@@ -1,0 +1,141 @@
+/**
+ * Ejemplo de uso:
+ *   <ChartsHeader titulo="ENADIS …" tabs={[…]} />
+ */
+
+.charts-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* p-1 */
+  width: 100%;
+}
+
+.charts-header__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-family:
+    'Atkinson Hyperlegible Next',
+    'Atkinson Hyperlegible',
+    var(--typography-family, sans-serif);
+  font-size: 2rem; /* Nivel 2 — 32px */
+  font-weight: 500;
+  line-height: 2.5rem; /* 40px */
+}
+
+.charts-header__title-highlight {
+  font-weight: 500;
+}
+
+.charts-header__title-rest {
+  font-weight: 400;
+}
+
+/* Ejemplo de uso: pestañas a ancho completo con indicador activo */
+.charts-header__tabs.tabs [role='tablist'] {
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 2px solid var(--border-secondary);
+}
+
+.charts-header__tabs.tabs [role='tablist'] button[role='tab'] {
+  margin-bottom: -2px;
+}
+
+.charts-header__tabs .tabs__panels {
+  margin-top: 1.5rem; /* ~24px entre pestañas y primer bloque */
+}
+
+.charts-header__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.charts-header__block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 8px entre título / descripción / gráfica / acciones */
+  width: 100%;
+}
+
+.charts-header__block-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-family:
+    'Atkinson Hyperlegible Next',
+    'Atkinson Hyperlegible',
+    var(--typography-family, sans-serif);
+  font-size: 1.75rem; /* Nivel 3 — 28px */
+  font-weight: 500;
+  line-height: 2.1875rem; /* 35px */
+}
+
+.charts-header__block-description {
+  margin: 0;
+  color: var(--text-primary);
+  font-family:
+    'Atkinson Hyperlegible Next',
+    'Atkinson Hyperlegible',
+    var(--typography-family, sans-serif);
+  font-size: 1.25rem; /* Texto alto — 20px */
+  font-weight: 400;
+  line-height: 1.875rem; /* 30px */
+}
+
+.charts-header__block-body {
+  width: 100%;
+  padding-top: 0.5rem; /* m-1 */
+}
+
+.charts-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 1rem; /* 16px */
+  width: 100%;
+}
+
+/* Ejemplo: botones de acción 24×24 */
+.charts-header__action.button-pictogram {
+  box-sizing: border-box;
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  max-width: 1.5rem;
+  max-height: 1.5rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  justify-content: center;
+  color: var(--button-secondary-color, var(--button-secondary-border));
+}
+
+.charts-header__pictogram {
+  display: block;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.charts-header__pictogram--table {
+  -webkit-mask-image: url('./icons/table.svg');
+  mask-image: url('./icons/table.svg');
+}
+
+.charts-header__pictogram--download {
+  -webkit-mask-image: url('./icons/download.svg');
+  mask-image: url('./icons/download.svg');
+}
+
+.charts-header__pictogram--chart {
+  -webkit-mask-image: url('./icons/chart.svg');
+  mask-image: url('./icons/chart.svg');
+}

@@ -1,0 +1,40 @@
+/**
+ * Breadcrumbs — colores de `.breadcrumbs`.
+ */
+
+.breadcrumbs {
+  color: var(--color-neutral-5);
+}
+
+.breadcrumbs a {
+  color: var(--color-secondary-10);
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover,
+.breadcrumbs a:focus-visible {
+  color: var(--color-secondary-12);
+  text-decoration: underline;
+}
+
+.breadcrumbs [aria-current='page'] {
+  color: var(--color-secondary-12);
+  font-weight: 500;
+}
+
+body[data-theme='dark'] .breadcrumbs {
+  color: var(--color-secondary-5);
+}
+
+body[data-theme='dark'] .breadcrumbs a {
+  color: var(--color-secondary-4);
+}
+
+body[data-theme='dark'] .breadcrumbs a:hover,
+body[data-theme='dark'] .breadcrumbs a:focus-visible {
+  color: var(--color-neutral-0);
+}
+
+body[data-theme='dark'] .breadcrumbs [aria-current='page'] {
+  color: var(--color-neutral-0);
+}

@@ -1,0 +1,7 @@
+.c-portal-shell {
+  overflow: clip;
+}
+
+.c-portal-shell img {
+  filter: grayscale(1);
+}

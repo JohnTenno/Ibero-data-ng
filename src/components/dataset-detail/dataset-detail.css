@@ -176,54 +176,6 @@
   border: 0;
 }
 
-.c-dataset-detail__surveys {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.c-dataset-detail__survey {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--color-secondary-3, #e6e6e6);
-  border-radius: 8px;
-  background: var(--color-neutral-0, #fff);
-}
-
-.c-dataset-detail__survey-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-}
-
-.c-dataset-detail__years {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.c-dataset-detail__years > li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.35rem 0 0.35rem 0.75rem;
-  border-left: 2px solid var(--color-secondary-3, #e6e6e6);
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
 body[data-theme='dark'] .c-dataset-detail__metadata {
   background-color: var(--color-secondary-10, #242424);
   border-color: var(--color-secondary-8, #444);
@@ -232,11 +184,6 @@ body[data-theme='dark'] .c-dataset-detail__metadata {
 body[data-theme='dark'] .c-dataset-detail__chip {
   background: var(--color-secondary-9, #333);
   color: var(--color-secondary-2, #eee);
-}
-
-body[data-theme='dark'] .c-dataset-detail__survey {
-  background: var(--color-secondary-11, #1a1a1a);
-  border-color: var(--color-secondary-8, #444);
 }
 
 body[data-theme='dark'] .c-dataset-detail__note--alert {

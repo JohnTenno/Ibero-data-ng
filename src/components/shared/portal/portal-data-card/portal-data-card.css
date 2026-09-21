@@ -1,0 +1,95 @@
+.data-card {
+  --card-inner-bg: var(--bg-accent);
+  --card-inner-color: var(--text-secondary);
+  --card-hover-bg: var(--color-secondary-3);
+}
+
+.data-card .card-image {
+  height: 7.5rem;
+}
+
+.card.data-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.5rem;
+}
+
+.card.data-card .card-body > * {
+  margin: 0;
+}
+
+.card.data-card .card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.5625rem;
+  color: var(--text-secondary);
+}
+
+.data-card__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--button-secondary-border);
+  border-radius: 1.25rem;
+  background-color: var(--button-secondary-hover-bg);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3125rem;
+  white-space: nowrap;
+}
+
+.data-card__meta {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+}
+
+.data-card.card-hyperlink-inner:hover {
+  box-shadow: none;
+}
+
+/* En vista simplificada mantiene los colores de esta card, no los genéricos. */
+.a11y-simplified .data-card {
+  --card-simplified-bg: var(--card-inner-bg);
+  --card-simplified-color: var(--card-inner-color);
+  --card-simplified-border: transparent;
+  --card-simplified-hover-bg: var(--card-hover-bg);
+  --card-simplified-hover-border: transparent;
+  --card-simplified-hover-color: var(--card-inner-color);
+  --card-simplified-focus-bg: var(--card-hover-bg);
+  --card-simplified-focus-border: transparent;
+  --card-simplified-focus-color: var(--card-inner-color);
+  --card-content-simplified-bg: transparent;
+  --card-content-simplified-color: var(--text-secondary);
+  border: none;
+}
+
+.a11y-simplified .data-card.card-hyperlink-inner:focus,
+.a11y-simplified .data-card.card-hyperlink-inner:focus-visible {
+  border: none;
+  box-shadow:
+    0 0 0 2px var(--card-focus-border, var(--state-focus)),
+    0 0 8px 1px var(--card-focus-shadow, var(--state-focus));
+}
+
+.a11y-simplified .data-card__label {
+  border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-hover-bg);
+  color: var(--text-secondary);
+}
+
+body[data-theme='dark'] .data-card {
+  --card-inner-bg: var(--color-secondary-10);
+  --card-inner-color: var(--color-secondary-5);
+  --card-hover-bg: var(--color-secondary-9);
+  --text-secondary: var(--color-secondary-5);
+  --button-secondary-border: var(--color-secondary-5);
+  --button-secondary-hover-bg: var(--color-secondary-8);
+}

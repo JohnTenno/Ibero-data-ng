@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { RequireAuth } from './core/guards/RequireAuth';
 
 const Login = lazy(() => import('./components/login/Login').then((m) => ({ default: m.Login })));
@@ -7,6 +7,13 @@ const AppShell = lazy(() =>
   import('./components/shared/app-shell/AppShell').then((m) => ({ default: m.AppShell })),
 );
 const Home = lazy(() => import('./components/home/Home').then((m) => ({ default: m.Home })));
+const PortalShell = lazy(() =>
+  import('./components/shared/portal/portal-shell/PortalShell').then((m) => ({ default: m.PortalShell })),
+);
+const PortalHome = lazy(() => import('./components/portal/portal-home/PortalHome'));
+const PortalData = lazy(() => import('./components/portal/portal-data/PortalData'));
+const PortalTopics = lazy(() => import('./components/portal/portal-topics/PortalTopics'));
+const PortalChartsView = lazy(() => import('./components/portal/portal-charts-view/PortalChartsView'));
 const DatasetsList = lazy(() =>
   import('./components/datasets-list/DatasetsList').then((m) => ({ default: m.DatasetsList })),
 );
@@ -30,27 +37,27 @@ const Profile = lazy(() =>
   import('./components/profile/Profile').then((m) => ({ default: m.Profile })),
 );
 const HarmonizerHome = lazy(() =>
-  import('./components/harmonizer-home/HarmonizerHome').then((m) => ({
+  import('./components/harmonizer/harmonizer-home/HarmonizerHome').then((m) => ({
     default: m.HarmonizerHome,
   })),
 );
 const HarmonizerNewSurvey = lazy(() =>
-  import('./components/harmonizer-new-survey/HarmonizerNewSurvey').then((m) => ({
+  import('./components/harmonizer/harmonizer-new-survey/HarmonizerNewSurvey').then((m) => ({
     default: m.HarmonizerNewSurvey,
   })),
 );
 const HarmonizerUpload = lazy(() =>
-  import('./components/harmonizer-upload/HarmonizerUpload').then((m) => ({
+  import('./components/harmonizer/harmonizer-upload/HarmonizerUpload').then((m) => ({
     default: m.HarmonizerUpload,
   })),
 );
 const HarmonizerMapping = lazy(() =>
-  import('./components/harmonizer-mapping/HarmonizerMapping').then((m) => ({
+  import('./components/harmonizer/harmonizer-mapping/HarmonizerMapping').then((m) => ({
     default: m.HarmonizerMapping,
   })),
 );
 const HarmonizerView = lazy(() =>
-  import('./components/harmonizer-view/HarmonizerView').then((m) => ({
+  import('./components/harmonizer/harmonizer-view/HarmonizerView').then((m) => ({
     default: m.HarmonizerView,
   })),
 );
@@ -59,7 +66,14 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<p className="loading-route">Cargando…</p>}>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<PortalShell />}>
+          <Route path="/" element={<PortalHome />} />
+          <Route path="/datos" element={<PortalData />} />
+          <Route path="/temas" element={<PortalTopics />} />
+          <Route path="/vistagraficas" element={<PortalChartsView />} />
+          <Route path="/datos/vista-datos" element={<PortalChartsView />} />
+        </Route>
+
         <Route path="/login" element={<Login />} />
 
         <Route element={<RequireAuth />}>
