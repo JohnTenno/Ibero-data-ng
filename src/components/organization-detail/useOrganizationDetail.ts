@@ -13,6 +13,7 @@ export function useOrganizationDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Dataset | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -44,16 +45,17 @@ export function useOrganizationDetail() {
     [organization?.name],
   );
 
-  const removeDataset = async (dataset: Dataset, event: MouseEvent) => {
+  const requestRemoveDataset = (dataset: Dataset, event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    if (
-      !confirm(
-        `¿Borrar el dataset "${dataset.title}"? Se borran también sus resources y análisis. Esto no se puede deshacer.`,
-      )
-    ) {
-      return;
-    }
+    setPendingDelete(dataset);
+  };
+
+  const cancelRemoveDataset = () => setPendingDelete(null);
+
+  const confirmRemoveDataset = async () => {
+    if (!pendingDelete) return;
+    const dataset = pendingDelete;
     setRemovingId(dataset.id);
     setError(null);
     try {
@@ -63,6 +65,7 @@ export function useOrganizationDetail() {
       setError('No se pudo borrar el dataset.');
     } finally {
       setRemovingId(null);
+      setPendingDelete(null);
     }
   };
 
@@ -73,7 +76,10 @@ export function useOrganizationDetail() {
     loading,
     error,
     removingId,
-    removeDataset,
+    pendingDelete,
+    requestRemoveDataset,
+    cancelRemoveDataset,
+    confirmRemoveDataset,
     crumbs,
   };
 }

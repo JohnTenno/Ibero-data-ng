@@ -98,6 +98,7 @@ export function useAnalysisBuilder({
   const [openingVizCanvasId, setOpeningVizCanvasId] = useState<string | null>(null);
   const [vizCanvasError, setVizCanvasError] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Analysis | null>(null);
 
   const reloadAnalyses = useCallback(async () => {
     setLoadingAnalyses(true);
@@ -367,11 +368,16 @@ export function useAnalysisBuilder({
     }
   };
 
-  const removeAnalysis = async (analysis: Analysis, event: MouseEvent) => {
+  const requestRemoveAnalysis = (analysis: Analysis, event: MouseEvent) => {
     event.stopPropagation();
-    if (!confirm(`¿Borrar el análisis "${analysis.title}"? Esto no se puede deshacer.`)) {
-      return;
-    }
+    setPendingDelete(analysis);
+  };
+
+  const cancelRemoveAnalysis = () => setPendingDelete(null);
+
+  const confirmRemoveAnalysis = async () => {
+    if (!pendingDelete) return;
+    const analysis = pendingDelete;
     setRemovingId(analysis.id);
     setVizCanvasError(null);
     try {
@@ -385,6 +391,7 @@ export function useAnalysisBuilder({
       setVizCanvasError(errorMessage(err, 'No se pudo borrar el análisis.'));
     } finally {
       setRemovingId(null);
+      setPendingDelete(null);
     }
   };
 
@@ -443,7 +450,10 @@ export function useAnalysisBuilder({
     openingVizCanvasId,
     vizCanvasError,
     removingId,
+    pendingDelete,
     openInVizCanvas,
-    removeAnalysis,
+    requestRemoveAnalysis,
+    cancelRemoveAnalysis,
+    confirmRemoveAnalysis,
   };
 }

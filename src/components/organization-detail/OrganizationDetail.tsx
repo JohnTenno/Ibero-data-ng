@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import { Button } from 'sectei-library';
 import { PageHeader } from '../shared/page-header/PageHeader';
+import { ConfirmDialog } from '../shared/confirm-dialog/ConfirmDialog';
 import { useOrganizationDetail } from './useOrganizationDetail';
 import './organization-detail.css';
 
@@ -18,7 +19,10 @@ export function OrganizationDetail() {
     loading,
     error,
     removingId,
-    removeDataset,
+    pendingDelete,
+    requestRemoveDataset,
+    cancelRemoveDataset,
+    confirmRemoveDataset,
     crumbs,
   } = useOrganizationDetail();
 
@@ -98,7 +102,7 @@ export function OrganizationDetail() {
                       icon="pictogram-delete"
                       aria-label={`Eliminar dataset ${dataset.title}`}
                       disabled={removingId === dataset.id}
-                      onClick={(event) => void removeDataset(dataset, event as MouseEvent)}
+                      onClick={(event) => requestRemoveDataset(dataset, event as MouseEvent)}
                     >
                       Eliminar
                     </Button>
@@ -109,6 +113,24 @@ export function OrganizationDetail() {
           </ul>
         )}
       </section>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Borrar dataset"
+        message={
+          pendingDelete ? (
+            <>
+              ¿Borrar el dataset "{pendingDelete.title}"? Se borran también sus resources y
+              análisis. Esto no se puede deshacer.
+            </>
+          ) : null
+        }
+        confirmLabel="Borrar"
+        danger
+        confirming={removingId === pendingDelete?.id}
+        onConfirm={() => void confirmRemoveDataset()}
+        onCancel={cancelRemoveDataset}
+      />
     </div>
   );
 }

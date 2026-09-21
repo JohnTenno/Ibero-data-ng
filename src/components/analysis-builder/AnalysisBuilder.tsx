@@ -3,6 +3,7 @@ import type { MouseEvent } from 'react';
 import type { Analysis, Step } from '../../core/models/analysis.model';
 import type { Resource, ResourceColumn } from '../../core/models/resource.model';
 import type { DatasetVisibility } from '../../core/models/dataset.model';
+import { ConfirmDialog } from '../shared/confirm-dialog/ConfirmDialog';
 import {
   AGG_FUNCS,
   JOIN_TYPES,
@@ -629,7 +630,7 @@ export function AnalysisBuilder({
                       type="button"
                       variant="secondary"
                       icon="pictogram-delete"
-                      onClick={(e) => void b.removeAnalysis(analysis, e as MouseEvent)}
+                      onClick={(e) => b.requestRemoveAnalysis(analysis, e as MouseEvent)}
                       disabled={b.removingId === analysis.id}
                     >
                       {b.removingId === analysis.id ? 'Borrando…' : 'Borrar'}
@@ -674,6 +675,21 @@ export function AnalysisBuilder({
           </ul>
         )}
       </div>
+
+      <ConfirmDialog
+        open={b.pendingDelete !== null}
+        title="Borrar análisis"
+        message={
+          b.pendingDelete ? (
+            <>¿Borrar el análisis "{b.pendingDelete.title}"? Esto no se puede deshacer.</>
+          ) : null
+        }
+        confirmLabel="Borrar"
+        danger
+        confirming={b.removingId === b.pendingDelete?.id}
+        onConfirm={() => void b.confirmRemoveAnalysis()}
+        onCancel={b.cancelRemoveAnalysis}
+      />
     </div>
   );
 }
