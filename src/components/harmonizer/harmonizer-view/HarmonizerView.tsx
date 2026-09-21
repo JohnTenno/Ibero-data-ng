@@ -21,6 +21,19 @@ export function HarmonizerView() {
     isSelected,
     toggleVariable,
     download,
+    attachOpen,
+    attachQuery,
+    setAttachQuery,
+    attachResults,
+    attachSearching,
+    attachTarget,
+    attaching,
+    attachError,
+    attachedTo,
+    openAttach,
+    closeAttach,
+    selectAttachTarget,
+    confirmAttach,
     crumbs,
     maxVisibleRows,
   } = useHarmonizerView();
@@ -59,6 +72,15 @@ export function HarmonizerView() {
                 Editar mapeo
               </Button>
             ) : null}
+            <Button
+              type="button"
+              variant="primary"
+              icon="pictogram-arrow-right"
+              onClick={openAttach}
+              disabled={headers.length === 0}
+            >
+              Usar en un dataset
+            </Button>
             <Button
               type="button"
               variant="secondary"
@@ -109,6 +131,91 @@ export function HarmonizerView() {
             </div>
 
             {downloadError ? <p className="c-harmonizer-view__error">{downloadError}</p> : null}
+
+            {attachedTo ? (
+              <p className="c-harmonizer-view__success">
+                Se adjuntó como recurso de{' '}
+                <Link to={`/organizations/${attachedTo.organizationId}/datasets/${attachedTo.id}`}>
+                  {attachedTo.title}
+                </Link>
+                .
+              </p>
+            ) : null}
+
+            {attachOpen ? (
+              <section className="c-harmonizer-view__panel" aria-labelledby="attach-title">
+                <header className="c-harmonizer-view__panel-heading">
+                  <h2 id="attach-title" className="c-harmonizer-view__panel-title">
+                    Usar en un dataset
+                  </h2>
+                </header>
+                <div className="c-harmonizer-view__panel-body">
+                  <p className="text-color-secondary">
+                    Se adjuntará este armonizado (Parquet) como un nuevo recurso del dataset que
+                    elijas.
+                  </p>
+                  <label htmlFor="attach-search">Buscar dataset</label>
+                  <input
+                    id="attach-search"
+                    type="text"
+                    value={attachQuery}
+                    onChange={(e) => setAttachQuery(e.target.value)}
+                    placeholder="Título del dataset u organización…"
+                  />
+                  {attachSearching ? (
+                    <p className="text-color-secondary" aria-live="polite">
+                      Buscando…
+                    </p>
+                  ) : (
+                    <ul className="c-harmonizer-view__attach-results">
+                      {attachResults.length === 0 ? (
+                        <li className="text-color-secondary">Sin resultados.</li>
+                      ) : (
+                        attachResults.map((d) => (
+                          <li key={d.id}>
+                            <button
+                              type="button"
+                              className={
+                                attachTarget?.id === d.id
+                                  ? 'c-harmonizer-view__attach-option is-selected'
+                                  : 'c-harmonizer-view__attach-option'
+                              }
+                              aria-pressed={attachTarget?.id === d.id}
+                              onClick={() => selectAttachTarget(d)}
+                            >
+                              {d.title}{' '}
+                              <span className="text-color-secondary">
+                                — {d.organization?.name}
+                              </span>
+                            </button>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
+
+                  {attachError ? (
+                    <p className="c-harmonizer-view__error" role="alert">
+                      {attachError}
+                    </p>
+                  ) : null}
+
+                  <div className="c-harmonizer-view__attach-actions">
+                    <Button type="button" variant="secondary" onClick={closeAttach}>
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="primary"
+                      disabled={!attachTarget || attaching}
+                      onClick={confirmAttach}
+                    >
+                      {attaching ? 'Adjuntando…' : 'Adjuntar a este dataset'}
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            ) : null}
 
             {surveyView ? (
               <section className="c-harmonizer-view__panel" aria-labelledby="filter-title">

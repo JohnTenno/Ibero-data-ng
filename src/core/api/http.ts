@@ -17,7 +17,7 @@ export function clearToken(): void {
 export class ApiError extends Error {
   constructor(
     readonly status: number,
-    readonly body: { message?: string; code?: string | null } | null,
+    readonly body: { message?: string; code?: string | null; details?: string[] } | null,
   ) {
     super(body?.message ?? `Error ${status}`);
     this.name = 'ApiError';
@@ -26,6 +26,23 @@ export class ApiError extends Error {
 
 export function errorMessage(err: unknown, fallback: string): string {
   return err instanceof ApiError && err.body?.message ? err.body.message : fallback;
+}
+
+/**
+ * Maps a NestJS/class-validator error to per-field messages. Each violation string
+ * follows the "<field> <rule description>" convention (e.g. "sourceUrl must be a URL
+ * address"), so a field is matched by that prefix. Returns {} when the error isn't a
+ * field-level validation error (e.g. a network failure or a generic 500).
+ */
+export function fieldErrors(err: unknown, fields: string[]): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (!(err instanceof ApiError)) return result;
+  const messages = err.body?.details ?? (err.body?.message ? [err.body.message] : []);
+  for (const detail of messages) {
+    const field = fields.find((f) => detail.startsWith(`${f} `));
+    if (field && !result[field]) result[field] = detail;
+  }
+  return result;
 }
 
 interface RequestOptions {

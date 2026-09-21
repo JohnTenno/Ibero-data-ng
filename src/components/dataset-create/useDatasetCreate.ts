@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { datasetsService } from '../../core/services/datasets.service';
-import { errorMessage } from '../../core/api/http';
+import { errorMessage, fieldErrors } from '../../core/api/http';
+import { isValidSlug, isValidUrl, isValidYear } from '../../core/utils/validation';
 import type {
   Dataset,
   DatasetVisibility,
@@ -31,6 +32,11 @@ export function useDatasetCreate() {
   const [licenseId, setLicenseId] = useState('');
   const [changelog, setChangelog] = useState('');
 
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorSlug, setErrorSlug] = useState('');
+  const [errorYear, setErrorYear] = useState('');
+  const [errorSourceUrl, setErrorSourceUrl] = useState('');
+
   useEffect(() => {
     const revisionOfId = searchParams.get('revisionOf');
     if (!revisionOfId) return;
@@ -46,14 +52,46 @@ export function useDatasetCreate() {
     };
   }, [organizationId, searchParams]);
 
+  const validate = (): boolean => {
+    let ok = true;
+
+    if (!title.trim()) {
+      setErrorTitle('El título es obligatorio.');
+      ok = false;
+    }
+
+    if (!slug.trim()) {
+      setErrorSlug('La URL del dataset es obligatoria.');
+      ok = false;
+    } else if (!isValidSlug(slug)) {
+      setErrorSlug('Solo se permiten minúsculas, números y guiones.');
+      ok = false;
+    }
+
+    if (year.trim() && !isValidYear(year.trim(), 1990, 2099)) {
+      setErrorYear('Ingresa un año válido entre 1990 y 2099.');
+      ok = false;
+    }
+
+    if (sourceUrl.trim() && !isValidUrl(sourceUrl.trim())) {
+      setErrorSourceUrl('Ingresa una URL válida (ej: https://…).');
+      ok = false;
+    }
+
+    return ok;
+  };
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title.trim() || !slug.trim()) {
-      setError('Completa el título y la URL del dataset.');
-      return;
-    }
-    setSaving(true);
+    setErrorTitle('');
+    setErrorSlug('');
+    setErrorYear('');
+    setErrorSourceUrl('');
     setError(null);
+
+    if (!validate()) return;
+
+    setSaving(true);
     try {
       const tags = tagsText
         .split(',')
@@ -77,7 +115,19 @@ export function useDatasetCreate() {
       });
       navigate(`/organizations/${organizationId}/datasets/${dataset.id}`);
     } catch (err) {
-      setError(errorMessage(err, 'No se pudo crear el dataset (¿el slug ya existe?).'));
+      const matched = fieldErrors(err, ['title', 'slug', 'year', 'sourceUrl']);
+      if (matched.title) setErrorTitle(matched.title);
+      if (matched.slug) setErrorSlug(matched.slug);
+      if (matched.year) setErrorYear(matched.year);
+      if (matched.sourceUrl) setErrorSourceUrl(matched.sourceUrl);
+
+      if (Object.keys(matched).length === 0) {
+        if (errorMessage(err, '').toLowerCase().includes('slug')) {
+          setErrorSlug('Ese identificador ya está en uso; prueba con otro.');
+        } else {
+          setError(errorMessage(err, 'No se pudo crear el dataset.'));
+        }
+      }
     } finally {
       setSaving(false);
     }
@@ -113,6 +163,12 @@ export function useDatasetCreate() {
       setLicenseId,
       changelog,
       setChangelog,
+    },
+    fieldErrors: {
+      title: errorTitle,
+      slug: errorSlug,
+      year: errorYear,
+      sourceUrl: errorSourceUrl,
     },
     submit,
   };

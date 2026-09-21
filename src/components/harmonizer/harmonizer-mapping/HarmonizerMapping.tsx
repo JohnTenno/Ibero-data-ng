@@ -15,6 +15,7 @@ export function HarmonizerMapping() {
     loadError,
     saving,
     saveError,
+    rowErrors,
     mappedCount,
     setChoice,
     setNewName,
@@ -128,8 +129,16 @@ export function HarmonizerMapping() {
                                   onChange={(e) => setNewName(index, e.target.value)}
                                   name={`new-${row.column.name}`}
                                   placeholder="nombre canónico (ej. edad)"
+                                  aria-invalid={rowErrors.has(index)}
+                                  aria-describedby={rowErrors.has(index) ? `new-${row.column.name}-error` : undefined}
                                 />
-                                <p className="form-help">Escribe el nombre canónico a crear.</p>
+                                {rowErrors.has(index) ? (
+                                  <p id={`new-${row.column.name}-error`} className="c-harmonizer-mapping__error" role="alert">
+                                    Escribe el nombre canónico o cambia la selección.
+                                  </p>
+                                ) : (
+                                  <p className="form-help">Escribe el nombre canónico a crear.</p>
+                                )}
                               </>
                             ) : null}
                           </div>

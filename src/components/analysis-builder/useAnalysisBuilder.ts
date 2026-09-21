@@ -8,7 +8,8 @@ import {
   type MouseEvent,
 } from 'react';
 import { analysesService } from '../../core/services/analyses.service';
-import { errorMessage } from '../../core/api/http';
+import { errorMessage, fieldErrors } from '../../core/api/http';
+import { isValidSlug } from '../../core/utils/validation';
 import type {
   Analysis,
   OpCatalog,
@@ -85,6 +86,10 @@ export function useAnalysisBuilder({
   const [description, setDescription] = useState('');
   const [visibility, setVisibility] = useState<DatasetVisibility>('PRIVATE');
 
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorSlug, setErrorSlug] = useState('');
+  const [errorFolder, setErrorFolder] = useState('');
+
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loadingAnalyses, setLoadingAnalyses] = useState(true);
   const [openAnalysisId, setOpenAnalysisId] = useState<string | null>(null);
@@ -133,6 +138,9 @@ export function useAnalysisBuilder({
     setPreviewError(null);
     setSaveError(null);
     setSavedAnalysis(null);
+    setErrorTitle('');
+    setErrorSlug('');
+    setErrorFolder('');
     onEditingConsumed?.();
   }, [editingAnalysis, onEditingConsumed]);
 
@@ -245,13 +253,45 @@ export function useAnalysisBuilder({
     setDescription('');
     setPreviewResult(null);
     setSaveError(null);
+    setErrorTitle('');
+    setErrorSlug('');
+    setErrorFolder('');
+  };
+
+  const validateSaveForm = (): boolean => {
+    let ok = true;
+
+    if (!title.trim()) {
+      setErrorTitle('El título es obligatorio.');
+      ok = false;
+    }
+
+    if (!slug.trim()) {
+      setErrorSlug('El slug es obligatorio.');
+      ok = false;
+    } else if (!isValidSlug(slug)) {
+      setErrorSlug('Solo se permiten minúsculas, números y guiones.');
+      ok = false;
+    }
+
+    if (!folder.trim()) {
+      setErrorFolder('La carpeta es obligatoria.');
+      ok = false;
+    }
+
+    return ok;
   };
 
   const save = async (event: FormEvent) => {
     event.preventDefault();
-    if (!title || !slug || !folder) return;
-    setSaving(true);
+    setErrorTitle('');
+    setErrorSlug('');
+    setErrorFolder('');
     setSaveError(null);
+
+    if (!validateSaveForm()) return;
+
+    setSaving(true);
     const payload = {
       resourceId,
       title,
@@ -276,14 +316,22 @@ export function useAnalysisBuilder({
       setSteps([]);
       await reloadAnalyses();
     } catch (err) {
-      setSaveError(
-        errorMessage(
+      const matched = fieldErrors(err, ['title', 'slug', 'folder']);
+      if (matched.title) setErrorTitle(matched.title);
+      if (matched.slug) setErrorSlug(matched.slug);
+      if (matched.folder) setErrorFolder(matched.folder);
+
+      if (Object.keys(matched).length === 0) {
+        const message = errorMessage(
           err,
-          editingAnalysisId
-            ? 'No se pudo actualizar el análisis.'
-            : 'No se pudo guardar el análisis.',
-        ),
-      );
+          editingAnalysisId ? 'No se pudo actualizar el análisis.' : 'No se pudo guardar el análisis.',
+        );
+        if (message.toLowerCase().includes('slug')) {
+          setErrorSlug('Ese slug ya está en uso; prueba con otro.');
+        } else {
+          setSaveError(message);
+        }
+      }
     } finally {
       setSaving(false);
     }
@@ -381,6 +429,11 @@ export function useAnalysisBuilder({
       setDescription,
       visibility,
       setVisibility,
+    },
+    formErrors: {
+      title: errorTitle,
+      slug: errorSlug,
+      folder: errorFolder,
     },
     analyses,
     loadingAnalyses,

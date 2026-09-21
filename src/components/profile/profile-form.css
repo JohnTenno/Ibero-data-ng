@@ -3,6 +3,13 @@
   max-width: none;
 }
 
+.profile-form__error {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: var(--error, #b00020);
+}
+
 .profile-form__columns {
   display: grid;
   grid-template-columns: 1fr;

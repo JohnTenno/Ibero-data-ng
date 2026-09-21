@@ -73,6 +73,45 @@
   font-size: 0.9em;
 }
 
+.c-harmonizer-view__success {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--success, #1a7f37);
+}
+
+.c-harmonizer-view__attach-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.c-harmonizer-view__attach-option {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  background-color: transparent;
+  border: 1px solid var(--color-secondary-3, #e6e6e6);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.c-harmonizer-view__attach-option.is-selected {
+  border-color: var(--color-primary, #7a1436);
+  background-color: var(--bg-accent, var(--color-secondary-2));
+}
+
+.c-harmonizer-view__attach-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
 .c-harmonizer-view .container-table table {
   white-space: nowrap;
 }

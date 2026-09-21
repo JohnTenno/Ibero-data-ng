@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormE
 import { useNavigate } from 'react-router-dom';
 import { NEW_OPTION, type HarmonizerSurvey } from '../../../core/models/harmonizer.model';
 import { harmonizerService } from '../../../core/services/harmonizer.service';
-import { errorMessage } from '../../../core/api/http';
+import { errorMessage, fieldErrors } from '../../../core/api/http';
+import { isValidYear } from '../../../core/utils/validation';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 
 export const CRUMBS: Crumb[] = [
@@ -22,6 +23,11 @@ export function useHarmonizerUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [errorDatasetName, setErrorDatasetName] = useState('');
+  const [errorDatasetYear, setErrorDatasetYear] = useState('');
+  const [errorNewSurveyName, setErrorNewSurveyName] = useState('');
+  const [errorFile, setErrorFile] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -50,13 +56,44 @@ export function useHarmonizerUpload() {
     setFile(event.target.files?.[0] ?? null);
   }, []);
 
+  const validate = useCallback((): boolean => {
+    let ok = true;
+
+    if (!datasetName.trim()) {
+      setErrorDatasetName('El nombre de la edición es obligatorio.');
+      ok = false;
+    }
+
+    if (datasetYear === '' || !isValidYear(String(datasetYear), 1900, 2100)) {
+      setErrorDatasetYear('Ingresa un año válido entre 1900 y 2100.');
+      ok = false;
+    }
+
+    if (uploadSurveyId === NEW_OPTION && !newSurveyName.trim()) {
+      setErrorNewSurveyName('El nombre de la nueva encuesta es obligatorio.');
+      ok = false;
+    }
+
+    if (!file) {
+      setErrorFile('Selecciona un archivo CSV.');
+      ok = false;
+    }
+
+    return ok;
+  }, [datasetName, datasetYear, uploadSurveyId, newSurveyName, file]);
+
   const submit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
-      if (!canUpload || !file || datasetYear === '') return;
+      setErrorDatasetName('');
+      setErrorDatasetYear('');
+      setErrorNewSurveyName('');
+      setErrorFile('');
+      setError(null);
+
+      if (!validate() || !file || datasetYear === '') return;
 
       setUploading(true);
-      setError(null);
 
       void (async () => {
         try {
@@ -71,13 +108,20 @@ export function useHarmonizerUpload() {
           );
           void navigate(`/harmonizer/datasets/${datasetId}/mapping`);
         } catch (err) {
-          setError(errorMessage(err, 'No se pudo subir el archivo.'));
+          const matched = fieldErrors(err, ['name', 'year', 'surveyId', 'newSurvey']);
+          if (matched.name) setErrorDatasetName(matched.name);
+          if (matched.year) setErrorDatasetYear(matched.year);
+          if (matched.newSurvey) setErrorNewSurveyName(matched.newSurvey);
+
+          if (Object.keys(matched).length === 0) {
+            setError(errorMessage(err, 'No se pudo subir el archivo.'));
+          }
         } finally {
           setUploading(false);
         }
       })();
     },
-    [canUpload, file, datasetYear, uploadSurveyId, newSurveyName, datasetName, navigate],
+    [validate, file, datasetYear, uploadSurveyId, newSurveyName, datasetName, navigate],
   );
 
   return {
@@ -93,6 +137,12 @@ export function useHarmonizerUpload() {
     onFileSelected,
     uploading,
     error,
+    fieldErrors: {
+      datasetName: errorDatasetName,
+      datasetYear: errorDatasetYear,
+      newSurveyName: errorNewSurveyName,
+      file: errorFile,
+    },
     canUpload,
     submit,
     newOption: NEW_OPTION,

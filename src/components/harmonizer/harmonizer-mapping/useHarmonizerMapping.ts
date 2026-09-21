@@ -33,6 +33,7 @@ export function useHarmonizerMapping() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     let active = true;
@@ -73,21 +74,45 @@ export function useHarmonizerMapping() {
 
   const setChoice = useCallback((index: number, choice: string) => {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, choice } : row)));
+    setRowErrors((prev) => {
+      if (!prev.has(index)) return prev;
+      const next = new Set(prev);
+      next.delete(index);
+      return next;
+    });
   }, []);
 
   const setNewName = useCallback((index: number, newName: string) => {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, newName } : row)));
+    setRowErrors((prev) => {
+      if (!prev.has(index)) return prev;
+      const next = new Set(prev);
+      next.delete(index);
+      return next;
+    });
   }, []);
 
   const clearAll = useCallback(() => {
     setRows((prev) => prev.map((row) => ({ ...row, choice: '', newName: '' })));
+    setRowErrors(new Set());
   }, []);
 
   const save = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
-      setSaving(true);
       setSaveError(null);
+
+      const invalidIndexes = new Set<number>();
+      rows.forEach((row, index) => {
+        if (row.choice === NEW_OPTION && row.newName.trim() === '') invalidIndexes.add(index);
+      });
+      if (invalidIndexes.size > 0) {
+        setRowErrors(invalidIndexes);
+        setSaveError('Escribe el nombre canónico nuevo en cada columna marcada como "Crear nueva…", o cambia esa selección.');
+        return;
+      }
+      setRowErrors(new Set());
+      setSaving(true);
 
       const columns: MappingChoice[] = rows
         .filter((row) => row.choice !== '')
@@ -126,6 +151,7 @@ export function useHarmonizerMapping() {
     loadError,
     saving,
     saveError,
+    rowErrors,
     mappedCount,
     setChoice,
     setNewName,

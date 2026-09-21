@@ -11,7 +11,7 @@ import { useDatasetCreate } from './useDatasetCreate';
 import './dataset-create.css';
 
 export function DatasetCreate() {
-  const { organizationId, saving, error, revisionOf, fields, submit } = useDatasetCreate();
+  const { organizationId, saving, error, revisionOf, fields, fieldErrors, submit } = useDatasetCreate();
 
   const crumbs = [
     { label: 'Inicio', href: '/dashboard' },
@@ -58,7 +58,14 @@ export function DatasetCreate() {
                     onChange={(e) => fields.setTitle(e.target.value)}
                     name="title"
                     placeholder="Ej: ENIGH 2024 — Encuesta Nacional de Ingresos y Gastos"
+                    aria-invalid={!!fieldErrors.title}
+                    aria-describedby={fieldErrors.title ? 'title-error' : undefined}
                   />
+                  {fieldErrors.title ? (
+                    <p id="title-error" className="c-dataset-create__error" role="alert">
+                      {fieldErrors.title}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="c-dataset-create__field">
@@ -69,9 +76,19 @@ export function DatasetCreate() {
                     value={fields.slug}
                     onChange={(e) => fields.setSlug(e.target.value)}
                     name="slug"
-                    placeholder="ej. enigh_2024_v1"
+                    placeholder="ej. enigh-2024-v1"
+                    aria-invalid={!!fieldErrors.slug}
+                    aria-describedby={fieldErrors.slug ? 'slug-error' : 'slug-help'}
                   />
-                  <p className="form-help">Identificador único en la URL del dataset.</p>
+                  {fieldErrors.slug ? (
+                    <p id="slug-error" className="c-dataset-create__error" role="alert">
+                      {fieldErrors.slug}
+                    </p>
+                  ) : (
+                    <p id="slug-help" className="form-help">
+                      Solo minúsculas, números y guiones (ej. enigh-2024-v1).
+                    </p>
+                  )}
                 </div>
 
                 <div className="c-dataset-create__field">
@@ -119,7 +136,14 @@ export function DatasetCreate() {
                       onChange={(e) => fields.setYear(e.target.value)}
                       name="year"
                       placeholder="2024"
+                      aria-invalid={!!fieldErrors.year}
+                      aria-describedby={fieldErrors.year ? 'year-error' : undefined}
                     />
+                    {fieldErrors.year ? (
+                      <p id="year-error" className="c-dataset-create__error" role="alert">
+                        {fieldErrors.year}
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="c-dataset-create__field">
@@ -166,8 +190,16 @@ export function DatasetCreate() {
                     value={fields.sourceUrl}
                     onChange={(e) => fields.setSourceUrl(e.target.value)}
                     name="sourceUrl"
+                    autoComplete="off"
                     placeholder="https://www.inegi.org.mx/programas/enigh/2024/"
+                    aria-invalid={!!fieldErrors.sourceUrl}
+                    aria-describedby={fieldErrors.sourceUrl ? 'sourceUrl-error' : undefined}
                   />
+                  {fieldErrors.sourceUrl ? (
+                    <p id="sourceUrl-error" className="c-dataset-create__error" role="alert">
+                      {fieldErrors.sourceUrl}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="c-dataset-create__field">

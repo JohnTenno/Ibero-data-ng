@@ -11,6 +11,7 @@ export function HarmonizerNewSurvey() {
     setSurveyDescription,
     creating,
     error,
+    errorName,
     submit,
   } = useHarmonizerNewSurvey();
 
@@ -47,7 +48,14 @@ export function HarmonizerNewSurvey() {
                 name="surveyName"
                 placeholder="Ej: Socioeconómica"
                 required
+                aria-invalid={!!errorName}
+                aria-describedby={errorName ? 'survey-name-error' : undefined}
               />
+              {errorName ? (
+                <p id="survey-name-error" className="c-harmonizer-new-survey__error" role="alert">
+                  {errorName}
+                </p>
+              ) : null}
             </div>
 
             <div className="c-harmonizer-new-survey__field">

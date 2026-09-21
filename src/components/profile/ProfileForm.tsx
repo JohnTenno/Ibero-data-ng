@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { Button } from 'sectei-library';
+import { isValidEmail } from '../../core/utils/validation';
 import './profile-form.css';
 
 export interface ProfileFormValues {
@@ -31,6 +32,7 @@ function PasswordField({
   onChange,
   visible,
   onToggle,
+  error,
 }: {
   id: string;
   label: string;
@@ -38,7 +40,9 @@ function PasswordField({
   onChange: (value: string) => void;
   visible: boolean;
   onToggle: () => void;
+  error?: string;
 }) {
+  const errorId = `${id}-error`;
   return (
     <div className="profile-form__field">
       <label htmlFor={id}>{label}</label>
@@ -50,6 +54,8 @@ function PasswordField({
           autoComplete="new-password"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         />
         <Button
           type="button"
@@ -65,6 +71,11 @@ function PasswordField({
           {visible ? 'Ocultar' : 'Mostrar'}
         </Button>
       </div>
+      {error ? (
+        <p id={errorId} className="profile-form__error" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -92,6 +103,12 @@ export function ProfileForm({
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const [errorEmail, setErrorEmail] = useState('');
+  const [errorImageUrl, setErrorImageUrl] = useState('');
+  const [errorPreviousPassword, setErrorPreviousPassword] = useState('');
+  const [errorPassword, setErrorPassword] = useState('');
+  const [errorPasswordConfirm, setErrorPasswordConfirm] = useState('');
+
   const ids = {
     username: `${baseId}-username`,
     fullName: `${baseId}-full-name`,
@@ -103,8 +120,57 @@ export function ProfileForm({
     passwordConfirm: `${baseId}-pass-confirm`,
   };
 
+  function validate(): boolean {
+    let ok = true;
+
+    if (!email.trim()) {
+      setErrorEmail('El correo electrónico es obligatorio.');
+      ok = false;
+    } else if (!isValidEmail(email.trim())) {
+      setErrorEmail('Ingresa un correo electrónico válido.');
+      ok = false;
+    }
+
+    if (imageMode === 'link' && imageUrl.trim() && !/^https?:\/\/\S+$/i.test(imageUrl.trim())) {
+      setErrorImageUrl('Ingresa una URL válida (http:// o https://).');
+      ok = false;
+    }
+
+    const changingPassword = !!(previousPassword || password || passwordConfirm);
+    if (changingPassword) {
+      if (!previousPassword) {
+        setErrorPreviousPassword('Ingresa tu contraseña anterior.');
+        ok = false;
+      }
+      if (!password) {
+        setErrorPassword('Ingresa la nueva contraseña.');
+        ok = false;
+      } else if (password.length < 8) {
+        setErrorPassword('La contraseña debe tener al menos 8 caracteres.');
+        ok = false;
+      }
+      if (!passwordConfirm) {
+        setErrorPasswordConfirm('Confirma la nueva contraseña.');
+        ok = false;
+      } else if (password && passwordConfirm !== password) {
+        setErrorPasswordConfirm('Las contraseñas no coinciden.');
+        ok = false;
+      }
+    }
+
+    return ok;
+  }
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    setErrorEmail('');
+    setErrorImageUrl('');
+    setErrorPreviousPassword('');
+    setErrorPassword('');
+    setErrorPasswordConfirm('');
+
+    if (!validate()) return;
+
     onUpdate?.({
       username,
       fullName,
@@ -127,6 +193,11 @@ export function ProfileForm({
     setPassword('');
     setPasswordConfirm('');
     if (fileRef.current) fileRef.current.value = '';
+    setErrorEmail('');
+    setErrorImageUrl('');
+    setErrorPreviousPassword('');
+    setErrorPassword('');
+    setErrorPasswordConfirm('');
     onClear?.();
   }
 
@@ -180,8 +251,14 @@ export function ProfileForm({
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={!!errorEmail}
+              aria-describedby={errorEmail ? `${ids.email}-error` : undefined}
             />
-            <p className="form-help" aria-live="polite" role="status" />
+            {errorEmail ? (
+              <p id={`${ids.email}-error`} className="profile-form__error" role="alert">
+                {errorEmail}
+              </p>
+            ) : null}
           </div>
 
           <div className="profile-form__field">
@@ -267,8 +344,16 @@ export function ProfileForm({
                   placeholder="https://…"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
+                  aria-invalid={!!errorImageUrl}
+                  aria-describedby={errorImageUrl ? `${ids.imageUrl}-error` : undefined}
                 />
-                <p className="form-help">Pega la dirección de una imagen pública.</p>
+                {errorImageUrl ? (
+                  <p id={`${ids.imageUrl}-error`} className="profile-form__error" role="alert">
+                    {errorImageUrl}
+                  </p>
+                ) : (
+                  <p className="form-help">Pega la dirección de una imagen pública.</p>
+                )}
               </>
             )}
           </div>
@@ -284,6 +369,7 @@ export function ProfileForm({
             onChange={setPreviousPassword}
             visible={showPrevious}
             onToggle={() => setShowPrevious((v) => !v)}
+            error={errorPreviousPassword}
           />
           <PasswordField
             id={ids.password}
@@ -292,6 +378,7 @@ export function ProfileForm({
             onChange={setPassword}
             visible={showNew}
             onToggle={() => setShowNew((v) => !v)}
+            error={errorPassword}
           />
           <PasswordField
             id={ids.passwordConfirm}
@@ -300,6 +387,7 @@ export function ProfileForm({
             onChange={setPasswordConfirm}
             visible={showConfirm}
             onToggle={() => setShowConfirm((v) => !v)}
+            error={errorPasswordConfirm}
           />
         </fieldset>
       </div>

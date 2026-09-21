@@ -1,7 +1,7 @@
 import { useCallback, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { harmonizerService } from '../../../core/services/harmonizer.service';
-import { errorMessage } from '../../../core/api/http';
+import { errorMessage, fieldErrors } from '../../../core/api/http';
 import type { Crumb } from '../../shared/page-header/PageHeader';
 
 export const CRUMBS: Crumb[] = [
@@ -16,15 +16,25 @@ export function useHarmonizerNewSurvey() {
   const [surveyDescription, setSurveyDescription] = useState('');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorName, setErrorName] = useState('');
 
   const submit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
+      setErrorName('');
+      setError(null);
+
       const name = surveyName.trim();
-      if (!name) return;
+      if (!name) {
+        setErrorName('El nombre de la encuesta es obligatorio.');
+        return;
+      }
+      if (name.length < 2) {
+        setErrorName('El nombre debe tener al menos 2 caracteres.');
+        return;
+      }
 
       setCreating(true);
-      setError(null);
 
       void (async () => {
         try {
@@ -33,7 +43,12 @@ export function useHarmonizerNewSurvey() {
           setSurveyDescription('');
           void navigate('/harmonizer');
         } catch (err) {
-          setError(errorMessage(err, 'No se pudo crear la encuesta.'));
+          const matched = fieldErrors(err, ['name']);
+          if (matched.name) {
+            setErrorName(matched.name);
+          } else {
+            setError(errorMessage(err, 'No se pudo crear la encuesta.'));
+          }
         } finally {
           setCreating(false);
         }
@@ -49,6 +64,7 @@ export function useHarmonizerNewSurvey() {
     setSurveyDescription,
     creating,
     error,
+    errorName,
     submit,
   };
 }

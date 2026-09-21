@@ -17,6 +17,7 @@ export function HarmonizerUpload() {
     onFileSelected,
     uploading,
     error,
+    fieldErrors,
     canUpload,
     submit,
     newOption,
@@ -55,7 +56,14 @@ export function HarmonizerUpload() {
                 name="datasetName"
                 placeholder="Ej: ENIGH 2024"
                 required
+                aria-invalid={!!fieldErrors.datasetName}
+                aria-describedby={fieldErrors.datasetName ? 'dataset-name-error' : undefined}
               />
+              {fieldErrors.datasetName ? (
+                <p id="dataset-name-error" className="c-harmonizer-upload__error" role="alert">
+                  {fieldErrors.datasetName}
+                </p>
+              ) : null}
             </div>
 
             <div className="c-harmonizer-upload__field">
@@ -71,7 +79,14 @@ export function HarmonizerUpload() {
                 }
                 name="datasetYear"
                 required
+                aria-invalid={!!fieldErrors.datasetYear}
+                aria-describedby={fieldErrors.datasetYear ? 'dataset-year-error' : undefined}
               />
+              {fieldErrors.datasetYear ? (
+                <p id="dataset-year-error" className="c-harmonizer-upload__error" role="alert">
+                  {fieldErrors.datasetYear}
+                </p>
+              ) : null}
             </div>
 
             <div className="c-harmonizer-upload__field">
@@ -101,7 +116,14 @@ export function HarmonizerUpload() {
                   onChange={(e) => setNewSurveyName(e.target.value)}
                   name="newSurveyName"
                   required
+                  aria-invalid={!!fieldErrors.newSurveyName}
+                  aria-describedby={fieldErrors.newSurveyName ? 'new-survey-error' : undefined}
                 />
+                {fieldErrors.newSurveyName ? (
+                  <p id="new-survey-error" className="c-harmonizer-upload__error" role="alert">
+                    {fieldErrors.newSurveyName}
+                  </p>
+                ) : null}
               </div>
             ) : null}
 
@@ -113,11 +135,18 @@ export function HarmonizerUpload() {
                 accept=".csv,text/csv"
                 onChange={onFileSelected}
                 required
+                aria-invalid={!!fieldErrors.file}
+                aria-describedby={fieldErrors.file ? 'dataset-file-error' : undefined}
               />
               <p className="form-help">
                 Se guarda todo como texto, sin inferir tipos; las celdas vacías quedan como cadena
                 vacía.
               </p>
+              {fieldErrors.file ? (
+                <p id="dataset-file-error" className="c-harmonizer-upload__error" role="alert">
+                  {fieldErrors.file}
+                </p>
+              ) : null}
             </div>
 
             {error ? <p className="c-harmonizer-upload__error">{error}</p> : null}

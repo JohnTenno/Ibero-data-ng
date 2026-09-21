@@ -470,7 +470,14 @@ export function AnalysisBuilder({
                           value={f.title}
                           onChange={(e) => f.setTitle(e.target.value)}
                           name="title"
+                          aria-invalid={!!b.formErrors.title}
+                          aria-describedby={b.formErrors.title ? 'analysis-title-error' : undefined}
                         />
+                        {b.formErrors.title ? (
+                          <p id="analysis-title-error" className="c-analysis-builder__error" role="alert">
+                            {b.formErrors.title}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="c-analysis-builder__field">
                         <label htmlFor="analysis-slug">Slug</label>
@@ -481,7 +488,14 @@ export function AnalysisBuilder({
                           value={f.slug}
                           onChange={(e) => f.setSlug(e.target.value)}
                           name="slug"
+                          aria-invalid={!!b.formErrors.slug}
+                          aria-describedby={b.formErrors.slug ? 'analysis-slug-error' : undefined}
                         />
+                        {b.formErrors.slug ? (
+                          <p id="analysis-slug-error" className="c-analysis-builder__error" role="alert">
+                            {b.formErrors.slug}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="c-analysis-builder__field">
                         <label htmlFor="analysis-folder">Carpeta</label>
@@ -492,7 +506,14 @@ export function AnalysisBuilder({
                           value={f.folder}
                           onChange={(e) => f.setFolder(e.target.value)}
                           name="folder"
+                          aria-invalid={!!b.formErrors.folder}
+                          aria-describedby={b.formErrors.folder ? 'analysis-folder-error' : undefined}
                         />
+                        {b.formErrors.folder ? (
+                          <p id="analysis-folder-error" className="c-analysis-builder__error" role="alert">
+                            {b.formErrors.folder}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="c-analysis-builder__field c-analysis-builder__field--full">
                         <label htmlFor="analysis-description">Descripción</label>
