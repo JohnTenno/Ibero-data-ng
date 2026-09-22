@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from 'sectei-library';
 import './horizontal-card.css';
 
@@ -31,6 +32,7 @@ export interface HorizontalCardProps extends HTMLAttributes<HTMLElement> {
   updated?: string;
   visualizations?: Array<string | CardVisualization>;
   compact?: boolean;
+  href?: string;
   children?: ReactNode;
 }
 
@@ -44,10 +46,14 @@ export function HorizontalCard({
   updated = '',
   visualizations = [],
   compact = false,
+  href,
   className = '',
   ...rest
 }: HorizontalCardProps) {
+  const isLink = Boolean(href);
   const classes = [
+    isLink ? 'card' : '',
+    isLink ? 'card-hyperlink-inner' : '',
     'horizontal-card',
     compact ? 'horizontal-card--compact' : '',
     className,
@@ -75,9 +81,10 @@ export function HorizontalCard({
 
   const showInstitution = !compact && institution;
   const showDataset = !compact && dataset?.label;
+  const datasetAsLink = Boolean(dataset?.href) && !isLink;
 
-  return (
-    <Card className={classes} {...rest}>
+  const body = (
+    <>
       <div className="horizontal-card__header">
         {title ? <p className="card-title horizontal-card__title">{title}</p> : null}
         {label ? <span className="horizontal-card__label">{label}</span> : null}
@@ -106,17 +113,17 @@ export function HorizontalCard({
           <div>
             <dt>Dataset</dt>
             <dd>
-              {dataset?.href ? (
+              {datasetAsLink ? (
                 <a
-                  href={dataset.href}
+                  href={dataset!.href}
                   className="horizontal-card__link"
-                  {...(dataset.external
+                  {...(dataset!.external
                     ? { target: '_blank', rel: 'noopener noreferrer' }
                     : {})}
                   onClick={(event) => event.stopPropagation()}
                 >
-                  {dataset.label}
-                  {dataset.external ? (
+                  {dataset!.label}
+                  {dataset!.external ? (
                     <span className="pictogram-link-external" aria-hidden="true" />
                   ) : null}
                 </a>
@@ -156,6 +163,20 @@ export function HorizontalCard({
           ) : null}
         </div>
       ) : null}
+    </>
+  );
+
+  if (isLink && href) {
+    return (
+      <Link to={href} className={classes} {...rest}>
+        <div className="card-body">{body}</div>
+      </Link>
+    );
+  }
+
+  return (
+    <Card className={classes} {...rest}>
+      {body}
     </Card>
   );
 }

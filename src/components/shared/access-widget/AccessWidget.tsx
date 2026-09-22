@@ -10,9 +10,6 @@ export interface AccessWidgetProps extends HTMLAttributes<HTMLAnchorElement> {
   pictogram?: string;
 }
 
-/**
- * Sisdai quick-access card (Link + .card / .card-body).
- */
 export function AccessWidget({
   title = '',
   description = '',

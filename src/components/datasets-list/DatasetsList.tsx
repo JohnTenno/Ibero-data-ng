@@ -1,5 +1,4 @@
 import { useId } from 'react';
-import { Link } from 'react-router-dom';
 import { Button, SearchField } from 'sectei-library';
 import { Icon } from '../shared/icon/Icon';
 import { PageHeader } from '../shared/page-header/PageHeader';
@@ -106,12 +105,10 @@ export function DatasetsList() {
                   ...card
                 }) => (
                   <li key={id}>
-                    <Link
-                      className="horizontal-card__wrap"
-                      to={`/organizations/${organizationId}/datasets/${id}`}
-                    >
-                      <HorizontalCard {...card} />
-                    </Link>
+                    <HorizontalCard
+                      {...card}
+                      href={`/organizations/${organizationId}/datasets/${id}`}
+                    />
                   </li>
                 ),
               )}

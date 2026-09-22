@@ -147,12 +147,11 @@ export function Home() {
                     >
                       <div className="c-home__recent-cell">
                         {dataset && datasetCard ? (
-                          <Link
-                            className="horizontal-card__wrap"
-                            to={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
-                          >
-                            <HorizontalCard compact {...datasetCard} />
-                          </Link>
+                          <HorizontalCard
+                            compact
+                            {...datasetCard}
+                            href={`/organizations/${dataset.organizationId}/datasets/${dataset.id}`}
+                          />
                         ) : null}
                       </div>
 
