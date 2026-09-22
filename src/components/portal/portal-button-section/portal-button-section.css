@@ -1,0 +1,79 @@
+/**
+ * Sección con botón de acción.
+ * Espejo de SearchSection: title, intro y Button en lugar del campo.
+ * Clases: `.button-section`, `__content`, `__title`, `__intro`, `__action`
+ */
+
+.button-section {
+  --button-section-pad-inline: clamp(1.5rem, 5vw, 3rem);
+  --button-section-pad-block: clamp(3rem, 7vw, 5rem);
+  --button-section-max: 36rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28.3rem;
+  padding: var(--button-section-pad-block) var(--button-section-pad-inline);
+  background-color: var(--bg-accent);
+  box-sizing: border-box;
+}
+
+.button-section__content {
+  width: min(100%, var(--button-section-max));
+  margin: 0 auto;
+  text-align: center;
+}
+
+.button-section__title {
+  margin: 0 0 0.75rem;
+  color: var(--text-accent);
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.button-section__intro {
+  margin: 0 0 1.75rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.button-section__action {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 767px) {
+  .button-section {
+    min-height: auto;
+  }
+}
+
+body[data-theme='dark'] .button-section {
+  --text-accent: var(--color-primary-2);
+  --text-secondary: var(--color-secondary-4);
+  --bg-accent: var(--color-secondary-10);
+
+  --button-primary-bg: var(--color-primary-2);
+  --button-primary-border: var(--color-primary-2);
+  --button-primary-color: var(--color-secondary-12);
+  --button-primary-hover-bg: var(--color-primary-1);
+  --button-primary-hover-border: var(--color-primary-1);
+  --button-primary-hover-color: var(--color-secondary-12);
+  --button-primary-focus-bg: var(--color-primary-1);
+  --button-primary-focus-border: var(--color-secondary-12);
+  --button-primary-focus-color: var(--color-secondary-12);
+
+  --button-secondary-bg: transparent;
+  --button-secondary-border: var(--color-secondary-5);
+  --button-secondary-color: var(--color-secondary-5);
+  --button-secondary-hover-bg: var(--color-secondary-8);
+  --button-secondary-hover-border: var(--color-secondary-5);
+  --button-secondary-hover-color: var(--color-neutral-0);
+  --button-secondary-focus-bg: var(--color-secondary-8);
+  --button-secondary-focus-border: var(--color-secondary-5);
+  --button-secondary-focus-color: var(--color-neutral-0);
+}

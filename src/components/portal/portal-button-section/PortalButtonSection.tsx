@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react';
 import { Button } from 'sectei-library';
 import { usePortalButtonSection } from './usePortalButtonSection';
+import './portal-button-section.css';
 
 export interface PortalButtonSectionProps extends HTMLAttributes<HTMLElement> {
   title?: string;

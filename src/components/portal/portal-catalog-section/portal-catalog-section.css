@@ -6,15 +6,15 @@
   --card-bg: var(--bg-accent);
   --card-color: var(--text-secondary);
 
-  padding-block: 0 clamp(2rem, 5vw, 4rem);
+  padding-block: 2rem clamp(2rem, 5vw, 4rem);
 }
 
 .catalog-section__controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem 1.5rem;
-  margin-bottom: 1rem;
+  gap: 1.25rem 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .catalog-section__search {

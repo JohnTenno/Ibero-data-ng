@@ -60,6 +60,7 @@ export function usePortalTopics() {
 
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   const goTo = (target: number) => setPage(Math.min(Math.max(1, target), totalPages));
 
   return {
@@ -72,6 +73,7 @@ export function usePortalTopics() {
     setQuery,
     page,
     totalPages,
+    pageNumbers,
     goTo,
   };
 }
